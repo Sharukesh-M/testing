@@ -6,7 +6,7 @@ import './home-majestic.css';
 import brochurePdf from '../assets/docs/brochure.pdf?url';
 import busPdf from '../assets/docs/bus.pdf?url';
 import rulesPdf from '../assets/docs/rules.pdf?url';
-import posterHtml from '../assets/docs/POSTER.html?url';
+import posterImg from '../assets/docs/POSTER.png?url';
 
 const Resources = () => {
   const documents = [
@@ -27,7 +27,7 @@ const Resources = () => {
     {
       name: "Event Poster",
       icon: <ImageIcon size={40} />,
-      link: posterHtml,
+      link: posterImg,
       desc: "Majestic visual summary",
       target: "_blank"
     },
