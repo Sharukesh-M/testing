@@ -7,7 +7,7 @@ import '../components/register-premium.css';
 // -------------------------------------------------------------------------
 // CONFIGURATION: PASTE YOUR GOOGLE WEB APP URL HERE
 // -------------------------------------------------------------------------
-const GSHEET_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycbysH-LhqqNmi39QqYnqtKvSv5fmn9WwT-hFnCw9xZIduOu7egZX_hweEcMzX7FSOzTp/exec";
 
 const RegisterPage = () => {
     const playSound = useMagicSound();
