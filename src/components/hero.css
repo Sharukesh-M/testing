@@ -1,0 +1,114 @@
+.hero {
+  min-height: 60vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding-top: 40px;
+  /* ✅ brings hero DOWN gracefully */
+  padding-bottom: 20px;
+
+  position: relative;
+  z-index: 2;
+}
+
+/* Glass card - Inheriting from global.css */
+
+/* Logo */
+.hero-logo {
+  width: 140px;
+  margin-bottom: 24px;
+  filter: drop-shadow(0 0 16px rgba(168, 85, 247, 0.6));
+}
+
+.college-name {
+  font-size: 2.2rem;
+  letter-spacing: 3px;
+  font-weight: 700;
+  color: #a855f7;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+}
+
+/* Autonomous text */
+.college-sub {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  color: #cbbdff;
+}
+
+/* Department */
+.dept-name {
+  margin-top: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #d8cfff;
+  text-shadow: 0 0 10px rgba(180, 130, 255, 0.5);
+}
+
+/* Proudly presents */
+.presents {
+  margin-top: 20px;
+  font-size: 1.1rem;
+  letter-spacing: 3px;
+  font-style: italic;
+  color: #bdafff;
+}
+
+/* Event name */
+.event-name {
+  margin-top: 20px;
+  font-size: 4.2rem;
+  font-weight: 800;
+  letter-spacing: 6px;
+  color: #f1ebff;
+  text-shadow:
+    0 0 20px rgba(190, 150, 255, 0.942),
+    0 0 40px rgba(190, 150, 255, 0.875);
+}
+
+.event-name span {
+  color: #b897ff;
+}
+
+/* Breathing animation */
+.breathing {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0% {
+    transform: scale(1);
+    text-shadow:
+      0 0 15px rgba(190, 150, 255, 0.6),
+      0 0 30px rgba(190, 150, 255, 0.4);
+  }
+
+  50% {
+    transform: scale(1.06);
+    text-shadow:
+      0 0 30px rgba(210, 180, 255, 1),
+      0 0 60px rgba(210, 180, 255, 0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* National level */
+.national {
+  margin-top: 18px;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  color: #e0d6ff;
+}
+
+/* Date */
+.date {
+  margin-top: 10px;
+  font-size: 1.4rem;
+  letter-spacing: 4px;
+  color: #d1c4ff;
+}

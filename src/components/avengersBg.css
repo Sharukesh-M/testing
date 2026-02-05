@@ -1,0 +1,49 @@
+.avengers-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  display: grid;
+  grid-template-columns: repeat(16, 1fr);
+  grid-template-rows: repeat(9, 1fr);
+
+  background: #05000c; /* IMPORTANT: no image here */
+  pointer-events: none;
+}
+
+/* Tiles */
+.avengers-tile {
+  opacity: 0;
+  animation: tileFade 10s ease-in-out infinite;
+  filter: brightness(1.05) saturate(1.1);
+}
+
+/* TRUE FADE ANIMATION */
+@keyframes tileFade {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Dark cinematic overlay */
+.avengers-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(5, 0, 12, 0.3),
+      rgba(5, 0, 12, 0.7)
+    );
+  z-index: 1;
+}

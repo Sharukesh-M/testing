@@ -1,0 +1,119 @@
+.prize-section {
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Glass container */
+.prize-glass {
+  width: 90%;
+  max-width: 900px;
+  text-align: center;
+  padding: 40px 30px;
+
+  border-radius: 30px;
+  backdrop-filter: blur(24px);
+  background: rgba(28, 14, 52, 0.6);
+
+  border: 1px solid #a855f7;
+  box-shadow:
+    0 0 30px rgba(168, 85, 247, 0.4),
+    inset 0 0 20px rgba(124, 58, 237, 0.2);
+}
+
+@media (max-width: 768px) {
+  .prize-glass {
+    padding: 40px 15px;
+    /* Squeeze padding slightly */
+    width: 95%;
+  }
+
+  .section-heading {
+    font-size: 1.2rem;
+    /* Reduced further from 1.5rem for mobile */
+    letter-spacing: 1.5px;
+  }
+
+  .amount {
+    font-size: 2.2rem;
+    /* Reduced from 3rem */
+  }
+
+  .trophy {
+    font-size: 2rem;
+  }
+}
+
+/* Heading */
+.section-heading {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: #f0e9ff;
+  margin-bottom: 30px;
+}
+
+/* Prize amount */
+.prize-amount {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 20px;
+}
+
+.trophy {
+  font-size: 2.5rem;
+  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+}
+
+.amount {
+  font-size: 3rem;
+
+  font-weight: 900;
+  color: #cbb2ff;
+  text-shadow:
+    0 0 25px rgba(190, 150, 255, 0.9),
+    0 0 50px rgba(190, 150, 255, 0.6);
+}
+
+/* Certificate line */
+.certificate-text {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+  color: #ddd3ff;
+}
+
+/* Document buttons */
+.doc-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.doc-btn {
+  padding: 14px 28px;
+  border-radius: 16px;
+  text-decoration: none;
+
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: #f4efff;
+
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(180, 130, 255, 0.4);
+  backdrop-filter: blur(12px);
+
+  transition: all 0.35s ease;
+}
+
+.doc-btn:hover {
+  background: rgba(180, 130, 255, 0.18);
+  box-shadow:
+    0 0 16px rgba(180, 130, 255, 0.7),
+    inset 0 0 12px rgba(180, 130, 255, 0.4);
+  transform: translateY(-3px);
+}

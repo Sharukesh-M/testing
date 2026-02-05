@@ -1,0 +1,147 @@
+/* ================= PORTAL ================= */
+@keyframes portalSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes portalPulse {
+
+  0%,
+  100% {
+    opacity: .4;
+    transform: scale(.9);
+  }
+
+  50% {
+    opacity: .8;
+    transform: scale(1);
+  }
+}
+
+@keyframes portalSparks {
+  to {
+    box-shadow:
+      0 -160px #a855f7,
+      160px 0 #a855f7,
+      0 160px #a855f7,
+      -160px 0 #a855f7;
+  }
+}
+
+.animate-portal-spin {
+  animation: portalSpin 2.5s linear infinite;
+}
+
+.animate-portal-pulse {
+  animation: portalPulse 1.3s ease-in-out infinite;
+}
+
+.animate-portal-sparks {
+  animation: portalSparks 2.5s ease-out forwards;
+}
+
+/* ================= BLACK PANTHER ================= */
+.reveal-claw {
+  clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+  animation: clawReveal 1s ease forwards;
+}
+
+@keyframes clawReveal {
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  }
+}
+
+/* ================= CAPTAIN AMERICA ================= */
+.reveal-shield {
+  animation: shieldHit .9s ease-out forwards;
+}
+
+@keyframes shieldHit {
+  0% {
+    transform: translateX(-80px) scale(.8) rotate(-20deg);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ================= THOR ================= */
+.reveal-lightning {
+  animation: lightningFlash .7s ease-out;
+}
+
+@keyframes lightningFlash {
+  0% {
+    box-shadow: none;
+  }
+
+  50% {
+    box-shadow: 0 0 40px rgba(255, 255, 255, .4);
+  }
+
+  100% {
+    box-shadow: none;
+  }
+}
+
+/* ================= IRON MAN ================= */
+.reveal-arc {
+  animation: arcBoot 1.2s ease-out forwards;
+}
+
+@keyframes arcBoot {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: .6;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* ================= STRANGE ================= */
+.reveal-portal {
+  animation: portalExpand 1s ease-out forwards;
+}
+
+@keyframes portalExpand {
+  from {
+    clip-path: circle(0%);
+  }
+
+  to {
+    clip-path: circle(150%);
+  }
+}
+
+/* ================= HULK ================= */
+.reveal-smash {
+  animation: smashIn .6s ease-out;
+}
+
+@keyframes smashIn {
+  0% {
+    transform: scale(.85);
+  }
+
+  80% {
+    transform: scale(1.05);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}

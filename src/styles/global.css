@@ -1,0 +1,330 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Montserrat:wght@400;500;600&family=Orbitron:wght@500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================
+   GLOBAL RESET
+========================================================= */
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: linear-gradient(135deg, #3b0764, #1e0a3d, #000000, #0f061e, #000000);
+  background-size: 300% 300%;
+  background-attachment: fixed;
+  animation: backgroundShift 6s ease-in-out infinite;
+  color: #ffffff;
+  overflow-x: hidden;
+  font-family: "Montserrat", sans-serif;
+}
+
+@keyframes backgroundShift {
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* =========================================================
+   TECHATHON TEXT BACKGROUND (FINAL & STABLE)
+========================================================= */
+.dataflow-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* ONE CONTINUOUS MOVING BLOCK */
+.dataflow-conveyor {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  will-change: transform;
+  animation: techathonScroll 70s linear infinite;
+}
+
+/* FULL-WIDTH ROBOTIC TEXT LINE */
+.dataflow-line {
+  width: 100%;
+  white-space: nowrap;
+  text-align: left;
+
+  font-family: "Orbitron", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 3px;
+
+  color: rgba(190, 180, 255, 0.38);
+}
+
+/* TOP → BOTTOM FLOW */
+@keyframes techathonScroll {
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
+}
+
+/* SUBTLE ROBOTIC SHAKE */
+@keyframes robotJitter {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-0.4px);
+  }
+
+  50% {
+    transform: translateX(0.4px);
+  }
+
+  75% {
+    transform: translateX(-0.2px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* =========================================================
+   CONTENT ABOVE BACKGROUND
+========================================================= */
+.app-content,
+nav,
+section,
+.hero,
+.glass,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================================================
+   HERO SECTION
+========================================================= */
+/* HERO SECTION */
+.hero {
+  width: 100%;
+  min-height: 60vh;
+  margin-top: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px 20px;
+}
+
+@media (min-width: 768px) {
+  .hero {
+    min-height: 70vh;
+    margin-top: 0;
+    padding-top: 80px;
+    padding-bottom: 30px;
+  }
+}
+
+/* HERO GLASS */
+/* HERO GLASS - Removed box as requested, kept for layout structure */
+.hero-glass {
+  width: 92%;
+  max-width: 1200px;
+  padding: 2rem 1.5rem;
+  /* Mobile default */
+  text-align: center;
+
+  background: rgba(15, 0, 30, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  border-radius: 32px;
+  border: 1px solid #a855f7;
+  box-shadow:
+    0 0 40px rgba(168, 85, 247, 0.3),
+    inset 0 0 30px rgba(124, 58, 237, 0.1);
+}
+
+/* =========================================================
+   LOGO + COLLEGE NAME (SAME LINE)
+========================================================= */
+.college-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  /* Allow wrapping on small screens */
+  margin-bottom: 18px;
+}
+
+.hero-logo {
+  width: 90px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.college-name {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  /* Responsive */
+  font-weight: 700;
+  margin: 0;
+  white-space: normal;
+  /* Allow wrap */
+  text-align: center;
+  line-height: 1.1;
+
+  color: #a855f7;
+  text-shadow: 0 0 10px rgba(168, 85, 247, 0.6);
+}
+
+/* =========================================================
+   HERO TEXT
+========================================================= */
+.sub-text {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #e9d5ff;
+  /* Purple-200 */
+}
+
+.dept {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  margin: 20px 0;
+  color: #a855f7;
+  /* Purple-500 Glowing */
+  text-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+}
+
+.presents {
+  font-size: 0.9rem;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.4);
+  margin-bottom: 22px;
+}
+
+/* =========================================================
+   EVENT TITLE
+========================================================= */
+/* Standardized Glass Style for all sections */
+.glass,
+.hero-glass,
+.about-glass,
+.prize-glass,
+.domains-glass,
+.rules-glass,
+.agenda-glass,
+.arena-glass,
+.contact-glass,
+.footer-glass {
+  background: rgba(15, 0, 30, 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid #a855f7 !important;
+  border-radius: 32px !important;
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.4) !important;
+  margin: 15px auto !important;
+  width: 92% !important;
+  max-width: 1100px !important;
+  padding: 2rem 1.5rem !important;
+}
+
+.event-title {
+  font-family: "Orbitron", sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: clamp(2px, 1vw, 6px);
+  color: #a855f7;
+  /* Vibrant Purple */
+  line-height: 1.1;
+  margin: 10px 0;
+}
+
+@media (max-width: 640px) {
+  .glass {
+    margin: 15px auto;
+    padding: 1rem 0.8rem;
+    width: 95%;
+  }
+
+  .section-heading,
+  .section-title {
+    font-size: 1.8rem !important;
+    letter-spacing: 2px !important;
+  }
+}
+
+/* BUTTONS */
+.assemble-btn {
+  background: linear-gradient(135deg, #7c3aed, #4c1d95) !important;
+  box-shadow: 0 0 25px rgba(168, 85, 247, 0.6) !important;
+}
+
+.register-btn {
+  background: linear-gradient(135deg, #7c3aed, #9333ea, #6d28d9);
+  color: #ffffff;
+  box-shadow:
+    0 0 14px rgba(124, 58, 237, 0.8),
+    0 0 36px rgba(109, 40, 217, 0.85);
+}
+
+.assemble-btn:hover,
+.register-btn:hover {
+  transform: scale(1.06);
+}
+
+.event-type {
+  font-size: 1.3rem;
+  letter-spacing: 2px;
+  color: #ede9fe;
+  text-align: center;
+}
+
+.event-date {
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 3px;
+  margin-top: 10px;
+  color: #ddd6fe;
+  text-align: center;
+}
+
+/* =========================================================
+   TEXT
+========================================================= */
+p,
+li {
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #f5f5f5;
+}

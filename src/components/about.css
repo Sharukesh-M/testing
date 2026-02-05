@@ -1,0 +1,51 @@
+.about-section {
+  padding: 10px 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.about-glass {
+  width: 90%;
+  max-width: 1100px;
+  padding: 50px 30px;
+
+  border-radius: 32px;
+  backdrop-filter: blur(24px);
+  background: rgba(26, 14, 50, 0.6);
+
+  border: 1px solid rgba(180, 130, 255, 0.4);
+  box-shadow:
+    0 0 45px rgba(180, 130, 255, 0.35),
+    inset 0 0 45px rgba(180, 130, 255, 0.18);
+}
+
+/* Heading centered */
+.about-glass .section-heading {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* Content LEFT aligned (as you demanded) */
+.about-content {
+  text-align: left;
+}
+
+.about-content p {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  letter-spacing: 1.2px;
+  color: #dcd2ff;
+  margin-bottom: 18px;
+}
+
+@media (max-width: 768px) {
+  .about-glass {
+    padding: 60px 30px;
+    width: 95%;
+  }
+
+  .about-content p {
+    font-size: 1rem;
+    text-align: left;
+  }
+}

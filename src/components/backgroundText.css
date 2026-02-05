@@ -1,0 +1,69 @@
+.bg-text-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 0;
+    /* Behind transparent glass, but above parallax bg */
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    opacity: 0.15;
+    /* Subtle */
+}
+
+.bg-text-wrapper {
+    display: flex;
+    white-space: nowrap;
+    gap: 40px;
+    animation: scrollText 40s linear infinite;
+    transform: rotate(-5deg);
+    /* Slanted style */
+    margin: 30px 0;
+}
+
+.reverse {
+    animation: scrollTextReverse 45s linear infinite;
+}
+
+.bg-text-span {
+    font-family: "Orbitron", sans-serif;
+    font-size: 8rem;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 2px #ff0000;
+    /* Bright Red */
+    text-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+    /* Glowing effect */
+}
+
+@keyframes scrollText {
+    from {
+        transform: translateX(0) rotate(-5deg);
+    }
+
+    to {
+        transform: translateX(-50%) rotate(-5deg);
+    }
+}
+
+@keyframes scrollTextReverse {
+    from {
+        transform: translateX(-50%) rotate(-5deg);
+    }
+
+    to {
+        transform: translateX(0) rotate(-5deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .bg-text-span {
+        font-size: 4rem;
+        -webkit-text-stroke: 1px #ef4444;
+    }
+}

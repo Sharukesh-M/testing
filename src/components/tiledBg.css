@@ -1,0 +1,34 @@
+.tiled-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(6, 1fr);
+
+  background: #05000c;
+  pointer-events: none;
+}
+
+/* individual tiles */
+.tile {
+  opacity: 0;
+  animation: tileLoad 9s linear infinite;
+}
+
+/* TILE LOADING SEQUENCE */
+@keyframes tileLoad {
+  0% {
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
