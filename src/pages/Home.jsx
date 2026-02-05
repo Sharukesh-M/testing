@@ -2,7 +2,8 @@ import React from 'react';
 import LandingHero from '../components/LandingHero';
 import About from '../components/About';
 import Countdown from '../components/Countdown';
-import VideoBackground from '../components/VideoBackground'; // Moving video here
+import Resources from '../components/Resources';
+import VideoBackground from '../components/VideoBackground';
 import '../components/about.css';
 import '../components/countdown.css';
 
@@ -16,6 +17,7 @@ const Home = () => {
                 <LandingHero />
                 <About />
                 <Countdown />
+                <Resources />
             </div>
         </div>
     );

@@ -118,18 +118,109 @@
     color: rgba(255, 255, 255, 0.2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
+    .majestic-card-glass {
+        padding: 60px 30px;
+    }
+
     .countdown-majestic-row {
-        gap: 15px;
+        gap: 30px;
         flex-wrap: wrap;
     }
 
     .time-val-majestic {
-        font-size: 2.5rem;
+        font-size: 3.5rem;
     }
 
     .majestic-section-title {
-        font-size: 2rem;
-        letter-spacing: 6px;
+        font-size: 2.5rem;
+        letter-spacing: 10px;
     }
+
+    .time-unit-majestic {
+        min-width: 100px;
+    }
+}
+
+/* --- RESOURCES GRID --- */
+.resources-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+@media (max-width: 1024px) {
+    .resources-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .resources-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.resource-item-glass {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    text-decoration: none;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.resource-item-glass:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(241, 196, 15, 0.4);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.resource-icon-aura {
+    color: #f1c40f;
+    margin-bottom: 25px;
+    filter: drop-shadow(0 0 10px rgba(241, 196, 15, 0.3));
+    transition: all 0.3s ease;
+}
+
+.resource-item-glass:hover .resource-icon-aura {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 20px rgba(241, 196, 15, 0.6));
+}
+
+.resource-item-glass h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 15px;
+    letter-spacing: 2px;
+}
+
+.resource-item-glass p {
+    font-family: 'Alice', serif;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 25px;
+}
+
+.download-label-ink {
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    color: #f1c40f;
+    padding: 8px 20px;
+    border: 1px solid rgba(241, 196, 15, 0.3);
+    border-radius: 4px;
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+}
+
+.resource-item-glass:hover .download-label-ink {
+    background: #f1c40f;
+    color: #000;
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
 }
