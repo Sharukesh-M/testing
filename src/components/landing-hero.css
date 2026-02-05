@@ -1,0 +1,119 @@
+.landing-hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.landing-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 1200px;
+    z-index: 10;
+    padding: 0 20px;
+}
+
+.landing-logo-container {
+    margin-bottom: 30px;
+}
+
+.landing-seal-img {
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 0 20px rgba(241, 196, 15, 0.4));
+}
+
+.landing-college-group {
+    margin-bottom: 30px;
+}
+
+.landing-college-name {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    letter-spacing: 8px;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.landing-college-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 4px;
+    color: #f1c40f;
+    text-transform: uppercase;
+}
+
+.landing-techathon-container {
+    margin: 40px 0;
+}
+
+.landing-main-title {
+    font-family: 'Cinzel', serif;
+    font-size: 6rem;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(241, 196, 15, 0.4);
+    letter-spacing: 2px;
+}
+
+.landing-presents-text {
+    font-family: 'Alice', serif;
+    font-size: 1.2rem;
+    color: #f1c40f;
+    letter-spacing: 5px;
+    margin-bottom: 10px;
+}
+
+.landing-tagline-text {
+    font-family: 'Alice', serif;
+    font-size: 1.1rem;
+    letter-spacing: 10px;
+    color: #fff;
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+.landing-date-badge {
+    margin-top: 40px;
+    padding: 10px 40px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #f1c40f;
+    letter-spacing: 8px;
+}
+
+.candle {
+    position: absolute;
+    width: 2px;
+    height: 30px;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 10px #f1c40f;
+    animation: floatCandle 15s linear infinite;
+}
+
+@keyframes floatCandle {
+    0% {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+
+    10% {
+        opacity: 1;
+    }
+
+    90% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateY(-10vh);
+        opacity: 0;
+    }
+}

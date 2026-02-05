@@ -1,0 +1,135 @@
+.home-page {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+/* --- SECTION WRAPPERS --- */
+.home-section-container {
+    padding: 100px 20px;
+    position: relative;
+    z-index: 10;
+    display: flex;
+    justify-content: center;
+}
+
+.majestic-card-glass {
+    width: 100%;
+    max-width: 1200px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 40px;
+    padding: 80px 60px;
+    position: relative;
+    box-shadow:
+        0 40px 100px rgba(0, 0, 0, 0.5),
+        inset 0 0 40px rgba(255, 255, 255, 0.05);
+}
+
+.majestic-card-glass::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 40px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent, rgba(241, 196, 15, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* --- TYPOGRAPHY --- */
+.majestic-heading-group {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.majestic-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: #fff;
+    letter-spacing: 12px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.majestic-section-subtitle {
+    font-family: 'Alice', serif;
+    font-size: 1.1rem;
+    color: #f1c40f;
+    letter-spacing: 4px;
+    opacity: 0.8;
+}
+
+/* --- ABOUT CONTENT --- */
+.about-text-majestic {
+    column-count: 2;
+    column-gap: 60px;
+    text-align: justify;
+}
+
+@media (max-width: 968px) {
+    .about-text-majestic {
+        column-count: 1;
+    }
+}
+
+.about-text-majestic p {
+    font-family: 'Alice', serif;
+    font-size: 1.15rem;
+    line-height: 2;
+    color: rgba(255, 255, 255, 0.85);
+    margin-bottom: 30px;
+}
+
+/* --- COUNTDOWN --- */
+.countdown-majestic-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.time-unit-majestic {
+    text-align: center;
+}
+
+.time-val-majestic {
+    font-family: 'Cinzel', serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+    margin-bottom: 10px;
+    text-shadow: 0 0 30px rgba(255, 255, 255, 0.2);
+}
+
+.time-lab-majestic {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    color: #f1c40f;
+    letter-spacing: 5px;
+}
+
+.time-sep-majestic {
+    font-family: 'Cinzel', serif;
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .countdown-majestic-row {
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .time-val-majestic {
+        font-size: 2.5rem;
+    }
+
+    .majestic-section-title {
+        font-size: 2rem;
+        letter-spacing: 6px;
+    }
+}

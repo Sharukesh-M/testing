@@ -1,51 +1,67 @@
+import React from "react";
+import { useMagicSound } from "../hooks/useMagicSound";
 import "./contact.css";
 
-export default function Contact() {
+const staff = [
+  { name: "Dr. R. Kannamma", role: "HOD, AI & DS", phone: "XXX-XXX-XXXX", house: "ravenclaw" },
+  { name: "Mrs. R. Anitha", role: "Faculty Coordinator", phone: "XXX-XXX-XXXX", house: "gryffindor" }
+];
+
+const students = [
+  { name: "Harish", role: "Student Coordinator", phone: "9360432312", house: "slytherin" },
+  { name: "Nithyasri S G", role: "Student Coordinator", phone: "XXX-XXX-XXXX", house: "gryffindor" },
+  { name: "Chandru B", role: "Student Coordinator", phone: "XXX-XXX-XXXX", house: "ravenclaw" },
+  { name: "Nirmal", role: "Student Coordinator", phone: "XXX-XXX-XXXX", house: "hufflepuff" }
+];
+
+const Contact = () => {
+  const playSound = useMagicSound();
+
   return (
     <section className="contact-section" id="contact">
-
       <div className="contact-glass">
-
-        <h2 className="section-heading">
-          CONTACT
-        </h2>
-
         <div className="contact-groups">
-
-          {/* Student Coordinators */}
-          <div className="contact-card">
-            <h3>STUDENT COORDINATORS</h3>
-
-            <button className="contact-btn">
-              Nithyasri S G<br />
-              <span>XXX-XXX-XXXX</span>
-            </button>
-
-            <button className="contact-btn">
-              Chandru B<br />
-              <span>XXX-XXX-XXXX</span>
-            </button>
+          {/* STAFF */}
+          <div className="group-container">
+            <h3 className="group-title text-gold">Staff Coordinators</h3>
+            <div className="cards-row">
+              {staff.map((person, index) => (
+                <div
+                  key={index}
+                  className={`magic-card house-${person.house}`}
+                  onMouseEnter={() => playSound('hover')}
+                >
+                  <div className="card-border"></div>
+                  <h4 className="person-name">{person.name}</h4>
+                  <p className="person-role">{person.role}</p>
+                  <p className="person-phone">{person.phone}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Staff Coordinators */}
-          <div className="contact-card">
-            <h3>STAFF COORDINATORS</h3>
-
-            <button className="contact-btn">
-              Dr. R. Kannamma – HOD, AI & DS<br />
-              <span>XXX-XXX-XXXX</span>
-            </button>
-
-            <button className="contact-btn">
-              Dr. R. Anitha – Faculty Coordinator<br />
-              <span>XXX-XXX-XXXX</span>
-            </button>
+          {/* STUDENTS */}
+          <div className="group-container">
+            <h3 className="group-title text-silver">Student Coordinators</h3>
+            <div className="cards-row">
+              {students.map((person, index) => (
+                <div
+                  key={index}
+                  className={`magic-card house-${person.house}`}
+                  onMouseEnter={() => playSound('hover')}
+                >
+                  <div className="card-border"></div>
+                  <h4 className="person-name">{person.name}</h4>
+                  <p className="person-role">{person.role}</p>
+                  <p className="person-phone">{person.phone}</p>
+                </div>
+              ))}
+            </div>
           </div>
-
         </div>
-
       </div>
-
     </section>
   );
-}
+};
+
+export default Contact;

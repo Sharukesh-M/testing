@@ -11,6 +11,7 @@
   font-size: 1rem;
   opacity: 0.85;
   letter-spacing: 1px;
+  color: #F8F9FA;
 }
 
 .agenda-days {
@@ -23,10 +24,17 @@
 .agenda-day {
   padding: 35px;
   border-radius: 20px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(26, 35, 126, 0.1);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 0 25px rgba(159, 122, 234, 0.35);
+  border: 1px solid rgba(192, 192, 192, 0.3);
+  box-shadow: 0 0 30px rgba(192, 192, 192, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.agenda-day:hover {
+  transform: translateY(-5px);
+  background: rgba(93, 58, 141, 0.15);
+  border-color: #C0C0C0;
 }
 
 .day-title {
@@ -34,7 +42,8 @@
   font-size: 1.4rem;
   letter-spacing: 2px;
   margin-bottom: 25px;
-  color: #e9d8fd;
+  color: #C0C0C0;
+  text-shadow: 0 0 15px rgba(192, 192, 192, 0.5);
 }
 
 .agenda-timeline {
@@ -54,19 +63,21 @@
 .time {
   font-size: 0.9rem;
   opacity: 0.85;
+  color: #F8F9FA;
 }
 
 .dot {
   width: 10px;
   height: 10px;
-  background: #9f7aea;
+  background: linear-gradient(135deg, #C0C0C0, #8B0000);
   border-radius: 50%;
-  box-shadow: 0 0 10px rgba(159, 122, 234, 0.9);
+  box-shadow: 0 0 15px rgba(192, 192, 192, 0.9);
 }
 
 .event {
   font-size: 0.95rem;
   letter-spacing: 0.6px;
+  color: #F8F9FA;
 }
 
 @media (max-width: 640px) {

@@ -1,0 +1,450 @@
+.contact-premium-wrapper {
+    position: relative;
+    padding: 120px 20px 100px;
+    min-height: 100vh;
+    z-index: 10;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.majestic-contact-header {
+    text-align: center;
+    margin-bottom: 80px;
+    animation: fadeInDown 1.5s ease;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+.majestic-contact-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 4rem;
+    color: #fff;
+    letter-spacing: 15px;
+    text-transform: uppercase;
+    text-shadow: 0 0 30px rgba(241, 196, 15, 0.4);
+    margin-bottom: 20px;
+}
+
+.majestic-contact-header p {
+    font-family: 'Alice', serif;
+    font-size: 1.2rem;
+    color: #f1c40f;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+}
+
+/* --- CONTACT GRID --- */
+.contact-grid-main {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 60px;
+    margin-bottom: 100px;
+}
+
+@media (max-width: 1024px) {
+    .contact-grid-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- INFO CARDS --- */
+.contact-info-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.info-card-glass {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 40px;
+    transition: all 0.4s ease;
+    display: flex;
+    align-items: flex-start;
+    gap: 25px;
+}
+
+.info-card-glass:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(10px);
+    border-color: #f1c40f;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(241, 196, 15, 0.1);
+}
+
+.info-icon-glow {
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 10px #f1c40f);
+}
+
+.info-text h3 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.4rem;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.info-text p {
+    font-family: 'Alice', serif;
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    line-height: 1.6;
+}
+
+/* --- FORM PANEL --- */
+.contact-form-panel {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(251, 196, 15, 0.2);
+    border-radius: 30px;
+    padding: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-form-panel::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(241, 196, 15, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.form-title-majestic {
+    font-family: 'Cinzel', serif;
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 40px;
+    text-align: center;
+    letter-spacing: 4px;
+}
+
+.majestic-form {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.form-group-majestic {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.form-group-majestic label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.8rem;
+    color: #f1c40f;
+    letter-spacing: 2px;
+}
+
+.form-group-majestic input,
+.form-group-majestic textarea {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 15px;
+    color: #fff;
+    font-family: 'Alice', serif;
+    font-size: 1.1rem;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.form-group-majestic input:focus,
+.form-group-majestic textarea:focus {
+    border-color: #f1c40f;
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.2);
+}
+
+.btn-send-majestic {
+    background: #f1c40f;
+    color: #000;
+    border: none;
+    padding: 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 4px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+}
+
+.btn-send-majestic:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px rgba(241, 196, 15, 0.5);
+}
+
+/* --- COORDINATORS SECTION --- */
+.majestic-coordinators {
+    margin-top: 80px;
+}
+
+.coordinators-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+}
+
+.coordinator-card-luxury {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.coordinator-card-luxury:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.house-logo-placeholder {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 20px;
+    transition: all 0.4s ease;
+}
+
+.house-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.coordinator-card-luxury:hover .house-logo-img {
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6));
+    transform: scale(1.1);
+}
+
+
+/* HOUSE SPECIFIC THEMES - DARK & BRIGHT GLOWY */
+.staff-silver {
+    background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(40, 40, 40, 0.8) 100%);
+    border: 2px solid rgba(192, 192, 192, 0.5);
+    box-shadow: 0 0 20px rgba(192, 192, 192, 0.1);
+}
+
+.staff-silver:hover {
+    border-color: #ffffff;
+    box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), inset 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+.house-slytherin {
+    background: linear-gradient(135deg, rgba(5, 20, 10, 0.95) 0%, rgba(10, 40, 20, 0.9) 100%);
+    border: 2px solid rgba(46, 204, 113, 0.4);
+    box-shadow: 0 0 25px rgba(46, 204, 113, 0.15);
+}
+
+.house-slytherin:hover {
+    border-color: #2ecc71;
+    box-shadow: 0 0 50px rgba(46, 204, 113, 0.5), inset 0 0 30px rgba(46, 204, 113, 0.2);
+    transform: translateY(-8px) scale(1.02);
+}
+
+.house-gryffindor {
+    background: linear-gradient(135deg, rgba(30, 0, 0, 0.95) 0%, rgba(60, 0, 0, 0.9) 100%);
+    border: 2px solid rgba(231, 76, 60, 0.4);
+    box-shadow: 0 0 25px rgba(231, 76, 60, 0.15);
+}
+
+.house-gryffindor:hover {
+    border-color: #e74c3c;
+    box-shadow: 0 0 50px rgba(231, 76, 60, 0.5), inset 0 0 30px rgba(231, 76, 60, 0.2);
+    transform: translateY(-8px) scale(1.02);
+}
+
+.house-ravenclaw {
+    background: linear-gradient(135deg, rgba(0, 10, 30, 0.95) 0%, rgba(0, 20, 60, 0.9) 100%);
+    border: 2px solid rgba(52, 152, 219, 0.4);
+    box-shadow: 0 0 25px rgba(52, 152, 219, 0.15);
+}
+
+.house-ravenclaw:hover {
+    border-color: #3498db;
+    box-shadow: 0 0 50px rgba(52, 152, 219, 0.5), inset 0 0 30px rgba(52, 152, 219, 0.2);
+    transform: translateY(-8px) scale(1.02);
+}
+
+.house-hufflepuff {
+    background: linear-gradient(135deg, rgba(30, 25, 5, 0.95) 0%, rgba(60, 50, 10, 0.9) 100%);
+    border: 2px solid rgba(241, 196, 15, 0.4);
+    box-shadow: 0 0 25px rgba(241, 196, 15, 0.15);
+}
+
+.house-hufflepuff:hover {
+    border-color: #f1c40f;
+    box-shadow: 0 0 50px rgba(241, 196, 15, 0.5), inset 0 0 30px rgba(241, 196, 15, 0.2);
+    transform: translateY(-8px) scale(1.02);
+}
+
+.coordinator-card-luxury h4 {
+    font-family: 'Cinzel', serif;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.coordinator-card-luxury .role-text {
+    font-family: 'Alice', serif;
+    font-size: 0.9rem;
+    color: #fff;
+    opacity: 0.8;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+
+.coordinator-card-luxury .phone-text {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.section-label-contact {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.label-text-gold {
+    font-family: 'Cinzel', serif;
+    color: #f1c40f;
+    letter-spacing: 6px;
+    font-size: 1rem;
+    position: relative;
+    display: inline-block;
+}
+
+.label-text-gold::before,
+.label-text-gold::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #f1c40f);
+}
+
+.label-text-gold::before {
+    right: 100%;
+    margin-right: 30px;
+}
+
+.label-text-gold::after {
+    left: 100%;
+    margin-left: 30px;
+    background: linear-gradient(to left, transparent, #f1c40f);
+}
+
+/* --- DYNAMIC EFFECTS --- */
+.magic-particle-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.contact-particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #f1c40f;
+    border-radius: 50%;
+    animation: floatParticle 10s linear infinite;
+    opacity: 0.2;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translate(0, 110vh);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(100px, -10vh);
+        opacity: 0;
+    }
+}
+
+.aurora-glow-effect {
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 60%;
+    height: 80%;
+    background: radial-gradient(circle, rgba(241, 196, 15, 0.1) 0%, transparent 70%);
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 1;
+    animation: auroraMove 20s ease-in-out infinite alternate;
+}
+
+@keyframes auroraMove {
+    from {
+        transform: translate(0, 0) scale(1);
+    }
+
+    to {
+        transform: translate(20%, 30%) scale(1.2);
+    }
+}
+
+/* --- SNOWFALL EFFECT --- */
+.snowfall-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 6;
+}
+
+.snowflake {
+    position: absolute;
+    top: -20px;
+    color: #fff;
+    font-size: 1rem;
+    user-select: none;
+    pointer-events: none;
+    animation-name: snowfall;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    opacity: 0.6;
+}
+
+@keyframes snowfall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    100% {
+        transform: translateY(110vh) rotate(360deg);
+    }
+}

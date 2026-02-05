@@ -1,44 +1,45 @@
-import "./about.css";
+import React from 'react';
+import './home-majestic.css';
 
-export default function About() {
+const About = () => {
   return (
-    <section className="about-section" id="about">
-      <div className="about-glass">
+    <section className="home-section-container" id="about">
+      <div className="majestic-card-glass">
 
-        <h2 className="section-heading">
-          ABOUT THE HACKATHON
-        </h2>
+        <div className="majestic-heading-group">
+          <h2 className="majestic-section-title">THE GRAND VISION</h2>
+          <p className="majestic-section-subtitle">INNOVATING THE FUTURE OF AI & DATA SCIENCE</p>
+        </div>
 
-        <div className="about-content">
+        <div className="about-text-majestic">
           <p>
-            TECHATHON 2K26 is a National Level Hackathon organized by the
-            Department of Artificial Intelligence and Data Science,
-            Prathyusha Engineering College. This event is designed to bring
-            together innovative minds to solve real-world problems using
-            cutting-edge technologies.
+            TECHATHONX 2K26 is a premier National Level Hackathon organized by the
+            Department of Artificial Intelligence and Data Science at Prathyusha Engineering College.
+            This event serves as a high-stakes arena for the most innovative minds in the country
+            to converge and tackle complex real-world challenges.
           </p>
-
           <p>
-            Participants will work collaboratively to ideate, design, and
-            develop impactful solutions within a limited time frame. The
-            hackathon encourages creativity, critical thinking, and hands-on
-            problem-solving skills.
+            Our mission is to foster a professional environment where technical excellence meets
+            creative problem-solving. Participants are challenged to architect, develop, and
+            demonstrate working prototypes that leverage cutting-edge advancements in
+            Artificial Intelligence, Machine Learning, and Big Data.
           </p>
-
           <p>
-            The problem statements will be revealed on the spot, challenging
-            teams to adapt quickly and showcase their technical expertise,
-            teamwork, and innovation.
+            With problem statements revealed at the commencement of the duel, teams are tested
+            on their agility, collaborative strength, and implementation precision.
+            It is more than a competition; it is a celebration of technical prowess and
+            experimental innovation.
           </p>
-
           <p>
-            TECHATHON 2K26 aims to foster a culture of innovation, learning,
-            and collaboration while providing participants with an opportunity
-            to compete at a national level.
+            Prathyusha Engineering College invites all aspiring engineers and developers
+            to join us in this 32-hour journey. Secure your place in the chronicles
+            of TechathonX and demonstrate your potential to lead the next revolution in technology.
           </p>
         </div>
 
       </div>
     </section>
   );
-}
+};
+
+export default About;

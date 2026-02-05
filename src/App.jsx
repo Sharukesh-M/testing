@@ -1,86 +1,77 @@
-import { useEffect, useState } from "react";
-import { AnimatePresence } from "framer-motion";
-
-/* Core */
-import Loader from "./components/Loader";
-import GridScan from "./components/GridScan";
-
-/* Background components */
-
-/* Sections */
-import TopMarquee from "./components/TopMarquee";
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Prize from "./components/Prize";
-import About from "./components/About";
-import Register from "./components/Register";
-import Countdown from "./components/Countdown";
-import Domains from "./components/Domains";
-import Rules from "./components/Rules";
-import Agenda from "./components/Agenda";
-import Arena from "./components/Arena";
-import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import VideoLoader from "./components/VideoLoader";
+import TopMarquee from "./components/TopMarquee";
+import { SoundProvider } from "./hooks/useMagicSound"; // Import Provider
 
-import VideoSection from "./components/VideoSection";
+// Import Pages
+import Home from "./pages/Home";
+import Events from "./pages/Events";
+import Competitions from "./pages/Competitions";
+import RegisterPage from "./pages/RegisterPage";
+import ContactPage from "./pages/ContactPage";
 
-// Wrapper for scroll reveals
-import SectionReveal from "./components/SectionReveal";
+import "./styles/global.css";
 
-export default function App() {
-  const [loading, setLoading] = useState(true);
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
+};
+
+const AppContent = () => {
+  const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
-    // Scroll to top on refresh
-    window.scrollTo(0, 0);
-    const t = setTimeout(() => setLoading(false), 1500);
-    return () => clearTimeout(t);
+    const hasPlayed = sessionStorage.getItem("introPlayed");
+    if (hasPlayed) {
+      setShowIntro(false);
+    }
   }, []);
 
-  /* REMOVED loading guard to allow AnimatePresence to work */
-  /* if (loading) return <Loader />; */
+  const handleIntroComplete = () => {
+    sessionStorage.setItem("introPlayed", "true");
+    setShowIntro(false);
+  };
 
   return (
     <>
-      <AnimatePresence mode="wait">
-        {loading && <Loader key="loader" />}
-      </AnimatePresence>
+      {showIntro ? (
+        <VideoLoader onComplete={handleIntroComplete} />
+      ) : (
+        <Router>
+          <ScrollToTop />
+          <div className="app-content relative z-10 w-full min-h-screen text-white overflow-x-hidden">
+            <Navbar />
+            <TopMarquee />
 
-      <div className={`transition-opacity duration-1000 ${loading ? 'opacity-0' : 'opacity-100'}`}>
-        {/* GLOBAL BACKGROUND GRID SCAN */}
-        <div className="fixed inset-0 z-[1] opacity-40 pointer-events-none">
-          <GridScan
-            sensitivity={0.55}
-            lineThickness={1}
-            linesColor="#392e4e"
-            gridScale={0.1}
-            scanColor="#FF9FFC"
-            scanOpacity={0.35}
-            enablePost
-            bloomIntensity={0.5}
-            chromaticAberration={0.002}
-            noiseIntensity={0.005}
-          />
-        </div>
-
-        {/* CONTENT */}
-        <div className="app-content relative z-10">
-          <TopMarquee />
-          <Navbar />
-          <SectionReveal effect="animate-fadeIn"><Hero /></SectionReveal>
-          <VideoSection />
-          <SectionReveal effect="animate-slideUp"><Prize /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><About /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Register /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Countdown /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Domains /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Rules /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Agenda /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Arena /></SectionReveal>
-          <SectionReveal effect="animate-slideUp"><Contact /></SectionReveal>
-          <Footer />
-        </div>
-      </div>
+            <main>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/events" element={<Events />} />
+                <Route path="/competitions" element={<Competitions />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/contact" element={<ContactPage />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </Router>
+      )}
     </>
   );
-}
+};
+
+const App = () => {
+  return (
+    <SoundProvider>
+      <AppContent />
+    </SoundProvider>
+  );
+};
+
+export default App;

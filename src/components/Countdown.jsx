@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./countdown.css";
+import "./home-majestic.css";
 
 const EVENT_DATE = new Date("March 4, 2026 09:00:00").getTime();
 
@@ -30,31 +30,34 @@ export default function Countdown() {
   }, []);
 
   return (
-    <section className="glass countdown-section">
-      <h2 className="section-title">EVENT COUNTDOWN</h2>
+    <section className="home-section-container">
+      <div className="majestic-card-glass">
 
-      <div className="countdown-row">
-        <TimeBox label="DAYS" value={time.d} />
-        <Separator />
-        <TimeBox label="HOURS" value={time.h} />
-        <Separator />
-        <TimeBox label="MINUTES" value={time.m} />
-        <Separator />
-        <TimeBox label="SECONDS" value={time.s} />
+        <div className="majestic-heading-group">
+          <h2 className="majestic-section-title">THE FINAL HOUR</h2>
+          <p className="majestic-section-subtitle">COUNTDOWN TO TECHATHONX 2K26</p>
+        </div>
+
+        <div className="countdown-majestic-row">
+          <TimeBlock label="DAYS" value={time.d} />
+          <div className="time-sep-majestic">:</div>
+          <TimeBlock label="HOURS" value={time.h} />
+          <div className="time-sep-majestic">:</div>
+          <TimeBlock label="MINUTES" value={time.m} />
+          <div className="time-sep-majestic">:</div>
+          <TimeBlock label="SECONDS" value={time.s} />
+        </div>
+
       </div>
     </section>
   );
 }
 
-function TimeBox({ label, value }) {
+function TimeBlock({ label, value }) {
   return (
-    <div className="time-box">
-      <div className="time-value">{String(value).padStart(2, "0")}</div>
-      <div className="time-label">{label}</div>
+    <div className="time-unit-majestic">
+      <div className="time-val-majestic">{String(value).padStart(2, "0")}</div>
+      <div className="time-lab-majestic">{label}</div>
     </div>
   );
-}
-
-function Separator() {
-  return <div className="time-separator">:</div>;
 }

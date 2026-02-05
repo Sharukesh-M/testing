@@ -13,30 +13,29 @@
 
   border-radius: 30px;
   backdrop-filter: blur(24px);
-  background: rgba(28, 14, 52, 0.6);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 15, 30, 0.85));
 
-  border: 1px solid #a855f7;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #C0C0C0, #1a237e, #8B0000, #C0C0C0) 1;
   box-shadow:
-    0 0 30px rgba(168, 85, 247, 0.4),
-    inset 0 0 20px rgba(124, 58, 237, 0.2);
+    0 0 40px rgba(192, 192, 192, 0.15),
+    0 0 80px rgba(26, 35, 126, 0.1),
+    inset 0 0 30px rgba(192, 192, 192, 0.03);
 }
 
 @media (max-width: 768px) {
   .prize-glass {
     padding: 40px 15px;
-    /* Squeeze padding slightly */
     width: 95%;
   }
 
   .section-heading {
     font-size: 1.2rem;
-    /* Reduced further from 1.5rem for mobile */
     letter-spacing: 1.5px;
   }
 
   .amount {
     font-size: 2.2rem;
-    /* Reduced from 3rem */
   }
 
   .trophy {
@@ -49,8 +48,12 @@
   font-size: 2.8rem;
   font-weight: 800;
   letter-spacing: 4px;
-  color: #f0e9ff;
+  background: linear-gradient(135deg, #C0C0C0, #E8E8E8, #C0C0C0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   margin-bottom: 30px;
+  filter: drop-shadow(0 0 15px rgba(192, 192, 192, 0.3));
 }
 
 /* Prize amount */
@@ -65,17 +68,21 @@
 
 .trophy {
   font-size: 2.5rem;
-  filter: drop-shadow(0 0 12px rgba(255, 215, 0, 0.6));
+  filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.8)) drop-shadow(0 0 40px rgba(26, 35, 126, 0.4));
 }
 
 .amount {
   font-size: 3rem;
 
   font-weight: 900;
-  color: #cbb2ff;
-  text-shadow:
-    0 0 25px rgba(190, 150, 255, 0.9),
-    0 0 50px rgba(190, 150, 255, 0.6);
+  background: linear-gradient(135deg, #C0C0C0, #1a237e, #8B0000, #C0C0C0);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmerText 3s linear infinite;
+
+  filter: drop-shadow(0 0 20px rgba(192, 192, 192, 0.5));
 }
 
 /* Certificate line */
@@ -83,7 +90,7 @@
   font-size: 1.2rem;
   letter-spacing: 2px;
   margin-bottom: 40px;
-  color: #ddd3ff;
+  color: #F8F9FA;
 }
 
 /* Document buttons */
@@ -101,19 +108,20 @@
 
   font-weight: 600;
   letter-spacing: 2px;
-  color: #f4efff;
+  color: #000000;
 
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(180, 130, 255, 0.4);
+  background: linear-gradient(135deg, #E8E8E8, #C0C0C0, #A8A8A8);
+  border: none;
   backdrop-filter: blur(12px);
 
   transition: all 0.35s ease;
+  box-shadow: 0 0 20px rgba(192, 192, 192, 0.4);
 }
 
 .doc-btn:hover {
-  background: rgba(180, 130, 255, 0.18);
-  box-shadow:
-    0 0 16px rgba(180, 130, 255, 0.7),
-    inset 0 0 12px rgba(180, 130, 255, 0.4);
   transform: translateY(-3px);
+  background: linear-gradient(135deg, #C0C0C0, #A8A8A8, #8B0000);
+  color: #F8F9FA;
+  box-shadow:
+    0 0 40px rgba(139, 0, 0, 0.5);
 }

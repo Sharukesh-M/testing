@@ -11,12 +11,14 @@
 
   border-radius: 32px;
   backdrop-filter: blur(24px);
-  background: rgba(26, 14, 50, 0.6);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 15, 30, 0.85));
 
-  border: 1px solid rgba(180, 130, 255, 0.4);
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #C0C0C0, #1a237e, #8B0000, #C0C0C0) 1;
   box-shadow:
-    0 0 45px rgba(180, 130, 255, 0.35),
-    inset 0 0 45px rgba(180, 130, 255, 0.18);
+    0 0 50px rgba(192, 192, 192, 0.2),
+    0 0 100px rgba(26, 35, 126, 0.1),
+    inset 0 0 40px rgba(192, 192, 192, 0.03);
 }
 
 /* Heading centered */
@@ -25,7 +27,7 @@
   margin-bottom: 40px;
 }
 
-/* Content LEFT aligned (as you demanded) */
+/* Content LEFT aligned */
 .about-content {
   text-align: left;
 }
@@ -34,7 +36,7 @@
   font-size: 1.05rem;
   line-height: 1.8;
   letter-spacing: 1.2px;
-  color: #dcd2ff;
+  color: #F8F9FA;
   margin-bottom: 18px;
 }
 

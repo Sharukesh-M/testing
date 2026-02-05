@@ -1,0 +1,359 @@
+.video-loader-overlay {
+    position: fixed;
+    inset: 0;
+    background: #0d0d0d;
+    z-index: 99999;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* --- FULLSCREEN VIDEO --- */
+.video-container-fullscreen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 100;
+}
+
+.intro-video-content-fullscreen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* This makes it true fullscreen */
+}
+
+/* --- ENVELOPE SCENE --- */
+.envelope-scene {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    cursor: pointer;
+    perspective: 1000px;
+}
+
+.invitation-wrapper {
+    position: relative;
+    width: 300px;
+    height: 200px;
+    transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.envelope-scene:hover .invitation-wrapper {
+    transform: scale(1.05) rotateX(10deg);
+}
+
+.envelope {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: #e9dcc9;
+    /* Parchment color */
+    border-radius: 5px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    z-index: 2;
+}
+
+.envelope-top {
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-top: 100px solid #d3c4ad;
+    z-index: 3;
+    transform-origin: top;
+    transition: transform 0.8s ease;
+}
+
+.envelope-side {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-left: 150px solid #dbcbb3;
+    border-right: 150px solid #dbcbb3;
+    border-bottom: 100px solid transparent;
+    z-index: 2;
+}
+
+.envelope-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 150px solid transparent;
+    border-right: 150px solid transparent;
+    border-bottom: 120px solid #e2d2ba;
+    z-index: 2;
+}
+
+.wax-seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    background: #8b0000;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), inset -2px -2px 5px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+    transition: all 0.4s ease;
+}
+
+.seal-text {
+    font-family: 'Cinzel', serif;
+    color: #f1c40f;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* OPENING ANIMATION */
+.is-opening .envelope-top {
+    transform: rotateX(180deg);
+    z-index: 1;
+}
+
+.is-opening .wax-seal {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2);
+}
+
+.letter-preview {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: #fff;
+    padding: 20px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.8s ease;
+    z-index: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.is-opening .letter-preview {
+    transform: translateY(-50px);
+    opacity: 1;
+    z-index: 5;
+}
+
+.letter-header {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: #8b0000;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.letter-body {
+    font-family: 'Alice', serif;
+    font-size: 0.8rem;
+    color: #333;
+    line-height: 1.4;
+}
+
+.letter-footer {
+    font-family: 'Cinzel', serif;
+    font-size: 0.6rem;
+    color: #aaa;
+    letter-spacing: 2px;
+}
+
+.entry-prompt {
+    margin-top: 50px;
+    font-family: 'Cinzel', serif;
+    color: #f1c40f;
+    letter-spacing: 3px;
+    font-size: 0.9rem;
+    animation: pulseOpacity 2s infinite;
+}
+
+@keyframes pulseOpacity {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* --- PROGRESS BAR OVERLAY --- */
+.super-loading-container {
+    position: absolute;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.wand-line-container {
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    position: relative;
+}
+
+.wand-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: #f1c40f;
+    box-shadow: 0 0 15px #f1c40f;
+}
+
+.wand-spark {
+    position: absolute;
+    right: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #fff, 0 0 20px #f1c40f;
+}
+
+.progress-value-glass {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 2px 12px;
+    border-radius: 20px;
+}
+
+.digit {
+    font-family: 'Cinzel', serif;
+    font-size: 1.2rem;
+    color: #fff;
+}
+
+.percent {
+    font-size: 0.7rem;
+    color: #f1c40f;
+    margin-left: 2px;
+}
+
+.skip-intro-btn-minimal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.skip-intro-btn-minimal:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* PARTICLES */
+.magic-particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #f1c40f;
+    border-radius: 50%;
+    opacity: 0;
+    animation: floatParticle 10s infinite;
+}
+
+@keyframes floatParticle {
+    0% {
+        transform: translate(0, 0) scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.5;
+    }
+
+    100% {
+        transform: translate(var(--x, 100px), var(--y, -200px)) scale(1);
+        opacity: 0;
+    }
+}
+
+/* Randomized particles would need JS, but let's do a few simple ones */
+.particle:nth-child(1) {
+    top: 80%;
+    left: 20%;
+    --x: 40px;
+    --y: -300px;
+    animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+    top: 70%;
+    left: 80%;
+    --x: -60px;
+    --y: -250px;
+    animation-delay: 1s;
+}
+
+.particle:nth-child(3) {
+    top: 90%;
+    left: 50%;
+    --x: 20px;
+    --y: -400px;
+    animation-delay: 2s;
+}
+
+.particle:nth-child(4) {
+    top: 60%;
+    left: 30%;
+    --x: 50px;
+    --y: -200px;
+    animation-delay: 3s;
+}
+
+.particle:nth-child(5) {
+    top: 85%;
+    left: 70%;
+    --x: -30px;
+    --y: -350px;
+    animation-delay: 4.5s;
+}
+
+/* ... and so on */

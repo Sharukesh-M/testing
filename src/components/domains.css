@@ -12,12 +12,14 @@
 
   border-radius: 32px;
   backdrop-filter: blur(24px);
-  background: rgba(26, 14, 50, 0.6);
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 15, 30, 0.85));
 
-  border: 1px solid #a855f7;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #C0C0C0, #1a237e, #5D3A8D, #C0C0C0) 1;
   box-shadow:
-    0 0 30px rgba(168, 85, 247, 0.4),
-    inset 0 0 20px rgba(124, 58, 237, 0.2);
+    0 0 40px rgba(192, 192, 192, 0.15),
+    0 0 80px rgba(26, 35, 126, 0.1),
+    inset 0 0 30px rgba(192, 192, 192, 0.03);
 }
 
 /* Grid layout */
@@ -35,8 +37,8 @@
   cursor: pointer;
   text-align: center;
 
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(180, 130, 255, 0.35);
+  background: rgba(26, 35, 126, 0.1);
+  border: 1px solid rgba(192, 192, 192, 0.3);
   backdrop-filter: blur(14px);
 
   transition: all 0.35s ease;
@@ -44,9 +46,11 @@
 
 .domain-card:hover {
   transform: translateY(-6px);
+  background: linear-gradient(135deg, rgba(26, 35, 126, 0.2), rgba(139, 0, 0, 0.15));
+  border-color: #C0C0C0;
   box-shadow:
-    0 0 22px rgba(180, 130, 255, 0.6),
-    inset 0 0 18px rgba(180, 130, 255, 0.35);
+    0 0 30px rgba(192, 192, 192, 0.3),
+    inset 0 0 20px rgba(26, 35, 126, 0.1);
 }
 
 /* Domain image */
@@ -56,6 +60,12 @@
   object-fit: cover;
   border-radius: 18px;
   margin-bottom: 18px;
+  filter: grayscale(20%);
+  transition: all 0.3s ease;
+}
+
+.domain-card:hover img {
+  filter: grayscale(0%);
 }
 
 /* Domain title */
@@ -63,7 +73,8 @@
   font-size: 1.2rem;
   letter-spacing: 2px;
   font-weight: 700;
-  color: #f2ecff;
+  color: #C0C0C0;
+  text-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
 }
 
 /* Description */
@@ -71,7 +82,7 @@
   margin-top: 14px;
   font-size: 0.95rem;
   line-height: 1.6;
-  color: #d8ccff;
+  color: #F8F9FA;
   animation: fadeIn 0.4s ease;
 }
 
@@ -104,7 +115,6 @@
 
   .domains-grid {
     grid-template-columns: repeat(2, 1fr);
-    /* 2 columns on mobile */
     gap: 12px;
   }
 
@@ -115,19 +125,16 @@
 
   .domain-card img {
     height: 100px;
-    /* Smaller image */
     margin-bottom: 10px;
     border-radius: 12px;
   }
 
   .domain-card h3 {
     font-size: 0.85rem;
-    /* Smaller text */
     letter-spacing: 0.5px;
   }
 
   .domain-desc {
     display: none;
-    /* Hide description on mobile to save space */
   }
 }

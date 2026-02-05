@@ -1,22 +1,31 @@
-import { motion } from "framer-motion";
-import "../styles/global.css"; // Ensure global styles (if needed) or inline
+import React from "react";
+import "./top-marquee.css";
 
-export default function TopMarquee() {
+const TopMarquee = () => {
+  const announcements = [
+    "SPELLS AND CODE: TECHATHONX 2K26 REGISTRATION IS NOW LIVE!",
+    "SECURE YOUR SPOT IN THE GREAT HALL — REGISTRATION CLOSES SOON",
+    "THE TRIWIZARD TOURNAMENT OF TECH BEGINS ON MARCH 4TH, 2026",
+    "CHOOSE YOUR HOUSE AND START BUILDING YOUR MAGICAL INNOVATION",
+    "DEPARTMENT OF AI & DS PRESENTS: A JOURNEY INTO THE WIZARDING WORLD OF TECH"
+  ];
+
+  // We duplicate the content for seamless infinite scrolling
+  const fullContent = [...announcements, ...announcements];
+
   return (
-    <div className="sticky top-[72px] left-0 w-full bg-purple-900/40 backdrop-blur-md border-y border-purple-500/30 overflow-hidden z-40 h-10 flex items-center">
-      <div className="flex gap-8 whitespace-nowrap overflow-hidden min-w-full">
-        <motion.div
-          className="flex gap-8 min-w-full"
-          animate={{ x: "-100%" }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-        >
-          {Array(20).fill("🚀 REGISTRATION OPEN NOW — JOIN THE REVOLUTION").map((text, i) => (
-            <span key={i} className="text-sm font-bold tracking-widest text-purple-100 uppercase">
-              {text}
-            </span>
-          ))}
-        </motion.div>
+    <div className="top-marquee-container">
+      <div className="marquee-scroll">
+        {fullContent.map((text, index) => (
+          <div key={index} className="marquee-content">
+            <span className="magic-bullet">⚡</span>
+            {text}
+            <span className="magic-bullet">⚡</span>
+          </div>
+        ))}
       </div>
     </div>
   );
-}
+};
+
+export default TopMarquee;

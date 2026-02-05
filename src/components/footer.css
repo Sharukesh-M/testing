@@ -12,12 +12,14 @@
 
   border-radius: 28px;
   backdrop-filter: blur(22px);
-  background: rgba(26, 14, 50, 0.6);
+  background: rgba(0, 0, 0, 0.9);
 
-  border: 1px solid #a855f7;
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #C0C0C0, #1a237e, #8B0000, #C0C0C0) 1;
   box-shadow:
-    0 0 30px rgba(168, 85, 247, 0.4),
-    inset 0 0 20px rgba(124, 58, 237, 0.2);
+    0 0 40px rgba(192, 192, 192, 0.2),
+    0 0 80px rgba(93, 58, 141, 0.1),
+    inset 0 0 30px rgba(192, 192, 192, 0.03);
 }
 
 /* Title */
@@ -25,8 +27,9 @@
   font-size: 1.2rem;
   letter-spacing: 2px;
   font-weight: 600;
-  color: #f0e9ff;
+  color: #C0C0C0;
   margin-bottom: 28px;
+  text-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
 }
 
 /* Social icons */
@@ -49,19 +52,20 @@
   font-size: 1.5rem;
   text-decoration: none;
 
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(180, 130, 255, 0.4);
+  background: linear-gradient(135deg, rgba(26, 35, 126, 0.3), rgba(93, 58, 141, 0.2));
+  border: 2px solid rgba(192, 192, 192, 0.5);
   backdrop-filter: blur(12px);
 
-  color: #f6f1ff;
+  color: #C0C0C0;
   transition: all 0.35s ease;
 }
 
 .social-btn:hover {
-  background: rgba(180, 130, 255, 0.25);
+  background: linear-gradient(135deg, rgba(139, 0, 0, 0.3), rgba(26, 35, 126, 0.3));
+  border-color: #C0C0C0;
   box-shadow:
-    0 0 18px rgba(180, 130, 255, 0.7),
-    inset 0 0 14px rgba(180, 130, 255, 0.4);
+    0 0 30px rgba(192, 192, 192, 0.6),
+    inset 0 0 15px rgba(255, 255, 255, 0.1);
   transform: translateY(-4px);
 }
 
@@ -69,7 +73,7 @@
 .footer-copy {
   font-size: 0.9rem;
   letter-spacing: 1.5px;
-  color: #d8ccff;
+  color: #F8F9FA;
   line-height: 1.6;
 }
 

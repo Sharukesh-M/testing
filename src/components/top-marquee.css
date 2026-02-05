@@ -1,0 +1,53 @@
+.top-marquee-container {
+    width: 100%;
+    background: #f1c40f;
+    /* Magical Gold background like the Nidar lime bar but theme-consistent */
+    color: #000;
+    /* Black text for high contrast like the image */
+    height: 35px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 2px solid #d4a625;
+    z-index: 100;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.marquee-scroll {
+    display: flex;
+    white-space: nowrap;
+    gap: 60px;
+    animation: scrollMarquee 40s linear infinite;
+}
+
+.marquee-content {
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.magic-bullet {
+    color: #000;
+    font-size: 1.2rem;
+}
+
+@keyframes scrollMarquee {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Pause on hover to allow reading */
+.top-marquee-container:hover .marquee-scroll {
+    animation-play-state: paused;
+}
