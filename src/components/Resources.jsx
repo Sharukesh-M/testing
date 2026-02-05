@@ -2,38 +2,43 @@ import React from 'react';
 import { FileText, Map, Image as ImageIcon, Gavel, Download } from 'lucide-react';
 import './home-majestic.css';
 
+// Import Assets directly from docs using Vite's URL resolution
+import brochurePdf from '../assets/docs/brochure.pdf?url';
+import busPdf from '../assets/docs/bus.pdf?url';
+import rulesPdf from '../assets/docs/rules.pdf?url';
+import posterImg from '../assets/docs/POSTER.png?url';
+
 const Resources = () => {
   const documents = [
     {
       name: "Official Brochure",
       icon: <FileText size={40} />,
-      link: "/brochure.pdf",
+      link: brochurePdf,
       desc: "Event full details & overview"
     },
     {
       name: "Bus Routes",
       icon: <Map size={40} />,
-      link: "/bus.pdf",
+      link: busPdf,
       desc: "Transport service locations"
     },
     {
       name: "Event Poster",
       icon: <ImageIcon size={40} />,
-      link: "/POSTER.png",
-      desc: "Majestic visual summary",
-      target: "_blank"
+      link: posterImg,
+      desc: "Majestic visual summary"
     },
     {
       name: "Rules & Regulations",
       icon: <Gavel size={40} />,
-      link: "/rules.pdf",
+      link: rulesPdf,
       desc: "Guidelines for participation"
     }
   ];
 
   return (
-    <section className="home-section-container" id="artifacts">
-      <div className="majestic-card-glass" style={{ zIndex: 100 }}>
+    <section className="home-section-container" id="event-resources" style={{ position: 'relative', zIndex: 50 }}>
+      <div className="majestic-card-glass" style={{ position: 'relative', zIndex: 60 }}>
         <div className="majestic-heading-group">
           <h2 className="majestic-section-title">EVENT ARTIFACTS</h2>
           <p className="majestic-section-subtitle">ESSENTIAL DOCUMENTS & GUIDELINES</p>
@@ -44,11 +49,16 @@ const Resources = () => {
             <a
               key={idx}
               href={doc.link}
-              className="resource-item-glass cursor-pointer"
-              target={doc.target || "_self"}
+              target="_blank"
               rel="noopener noreferrer"
-              download={doc.target !== "_blank"}
-              style={{ textDecoration: 'none' }}
+              className="resource-item-glass"
+              style={{
+                display: 'flex',
+                cursor: 'pointer',
+                pointerEvents: 'auto',
+                zIndex: 70,
+                position: 'relative'
+              }}
             >
               <div className="resource-icon-aura">{doc.icon}</div>
               <h3>{doc.name}</h3>
@@ -56,8 +66,8 @@ const Resources = () => {
 
               <div className="download-label-ink-wrapper">
                 <span className="download-label-ink">
-                  <Download size={14} className="inline mr-2" />
-                  {doc.target === "_blank" ? "VIEW NOW" : "DOWNLOAD"}
+                  <Download size={14} style={{ display: 'inline-block', marginRight: '8px' }} />
+                  OPEN / VIEW
                 </span>
               </div>
             </a>
