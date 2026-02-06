@@ -4,47 +4,55 @@ import VideoBackground from '../components/VideoBackground';
 import '../components/events-premium.css';
 import { motion } from 'framer-motion';
 
+// Import Domain Images
+import arImg from '../assets/images/domains/ar.jpg';
+import aiImg from '../assets/images/domains/coremodernai.jpg';
+import fintechImg from '../assets/images/domains/cs.jpg';
+import healthImg from '../assets/images/domains/hc.jpeg';
+import openImg from '../assets/images/domains/oi.jpg';
+import susImg from '../assets/images/domains/sus.jpg';
+
 const domainData = [
     {
         id: "ar",
         title: "AR / VR",
         icon: "🔮",
-        img: "/src/assets/images/domains/ar.jpg",
+        img: arImg,
         desc: "Immersive augmented and virtual reality solutions. Enabling interactive digital experiences. Revolutionizing user engagement."
     },
     {
         id: "genai",
         title: "AI",
         icon: "⚡",
-        img: "/src/assets/images/domains/coremodernai.jpg",
+        img: aiImg,
         desc: "Advanced AI models and next-gen learning. Intelligent automation for complex solutioning. Predictive analytics shaping the future."
     },
     {
         id: "fintech",
         title: "FINTECH",
         icon: "🪙",
-        img: "/src/assets/images/domains/cs.jpg",
+        img: fintechImg,
         desc: "Secure blockchain and transaction systems. Automated trading and financial innovation. Fraud detection and digital banking."
     },
     {
         id: "health",
         title: "HEALTHCARE",
         icon: "⚕️",
-        img: "/src/assets/images/domains/hc.jpeg",
+        img: healthImg,
         desc: "AI-powered diagnostic and monitoring tools. Medical innovation for better patient care. Smart health tracking and analytics."
     },
     {
         id: "oil",
         title: "OPEN INNOVATION",
         icon: "💡",
-        img: "/src/assets/images/domains/oi.jpg",
+        img: openImg,
         desc: "Creative problem-solving for real challenges. Cross-disciplinary technical approaches. Collaborative breakthroughs for impact."
     },
     {
         id: "eco",
         title: "SUSTAINABILITY",
         icon: "🌿",
-        img: "/src/assets/images/domains/sus.jpg",
+        img: susImg,
         desc: "Green technology and eco-friendly systems. Sustainable resource management solutions. Environmental preservation through tech."
     }
 ];
