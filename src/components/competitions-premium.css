@@ -105,11 +105,79 @@
     letter-spacing: 5px;
 }
 
-.prize-cards-container {
+.prize-podium-container {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    align-items: flex-end;
+    gap: 20px;
     flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.podium-card {
+    min-width: 250px;
+    padding: 30px 20px;
+    transition: all 0.4s ease;
+}
+
+/* 1st Place - Lifted slightly */
+.main-winner {
+    transform: translateY(-20px) scale(1.1);
+    z-index: 10;
+    box-shadow: 0 0 50px rgba(241, 196, 15, 0.3);
+}
+
+.podium-number {
+    font-family: 'Cinzel', serif;
+    font-size: 5rem;
+    font-weight: 800;
+    margin: 0;
+    line-height: 1;
+    background: linear-gradient(to bottom, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.4));
+    margin-bottom: 10px;
+}
+
+.gold .podium-number {
+    background: linear-gradient(to bottom, #f1c40f, #b7950b);
+    -webkit-background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(241, 196, 15, 0.6));
+}
+
+.silver .podium-number {
+    background: linear-gradient(to bottom, #e0e0e0, #a0a0a0);
+    -webkit-background-clip: text;
+}
+
+.bronze .podium-number {
+    background: linear-gradient(to bottom, #cd7f32, #8b4513);
+    -webkit-background-clip: text;
+}
+
+.prize-footer-text {
+    font-family: 'HarryPotter', 'Cinzel', serif;
+    font-size: 1.8rem;
+    color: #f1c40f;
+    letter-spacing: 2px;
+    margin-top: 30px;
+    text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
+    animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        opacity: 0.8;
+        text-shadow: 0 0 25px rgba(241, 196, 15, 0.8);
+    }
+
+    50% {
+        opacity: 1;
+        text-shadow: 0 0 10px rgba(241, 196, 15, 0.4);
+    }
 }
 
 .prize-card-glass {
@@ -135,46 +203,25 @@
     border-color: #cd7f32;
 }
 
-.amount-text {
-    font-family: 'Cinzel', serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    display: block;
-    margin-bottom: 10px;
-}
-
-.gold .amount-text {
-    color: #f1c40f;
-    text-shadow: 0 0 20px rgba(241, 196, 15, 0.5);
-}
-
-.silver .amount-text {
-    color: #bdc3c7;
-}
-
-.bronze .amount-text {
-    color: #cd7f32;
-}
-
-/* --- RULES TABLET --- */
-.rules-tablet {
-    background: #1a1a1a;
-    border: 10px solid #2c3e50;
-    border-image: linear-gradient(#2c3e50, #000) 1;
+/* --- RULES GLASS CONTAINER --- */
+.rules-container-glass {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(241, 196, 15, 0.2);
+    border-radius: 30px;
     padding: 50px;
     font-family: 'Alice', serif;
     color: #ccc;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+    margin-bottom: 100px;
 }
 
 .tablet-header {
     font-family: 'Cinzel', serif;
     font-size: 2rem;
-    color: #fff;
+    color: #f1c40f;
     text-align: center;
     margin-bottom: 40px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    padding-bottom: 20px;
+    letter-spacing: 4px;
 }
 
 .rule-list {
@@ -201,4 +248,57 @@
 .rule-num {
     color: #2ecc71;
     font-weight: 700;
+}
+
+@media (max-width: 768px) {
+    .competitions-premium-container {
+        padding-top: 100px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .luxury-title {
+        font-size: 2.2rem;
+        letter-spacing: 4px;
+        line-height: 1.2;
+    }
+
+    .luxury-subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 2px;
+    }
+
+    .prize-title-gold {
+        font-size: 1.8rem;
+        letter-spacing: 2px;
+    }
+
+    .majestic-header {
+        margin-bottom: 40px;
+    }
+
+    .arena-grid-premium {
+        gap: 30px;
+    }
+
+    .prize-chamber {
+        padding: 30px 15px;
+    }
+
+    .prize-podium-container {
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .podium-card {
+        width: 100%;
+        min-width: unset;
+        margin-bottom: 20px;
+    }
+
+    .main-winner {
+        transform: scale(1.05);
+        order: -1;
+        margin-bottom: 30px;
+    }
 }

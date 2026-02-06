@@ -1,3 +1,8 @@
+@font-face {
+    font-family: 'HarryPotter';
+    src: url('https://cdn.jsdelivr.net/gh/misprintedtype/harry-p@master/HarryP.ttf') format('truetype');
+}
+
 .landing-hero-section {
     position: relative;
     width: 100%;
@@ -19,7 +24,7 @@
 }
 
 .landing-logo-container {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .landing-seal-img {
@@ -29,7 +34,7 @@
 }
 
 .landing-college-group {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 .landing-college-name {
@@ -37,7 +42,9 @@
     font-size: 1.4rem;
     letter-spacing: 8px;
     color: #fff;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    line-height: 1.2;
+    margin-top: 0;
 }
 
 .landing-college-sub {
@@ -46,17 +53,20 @@
     letter-spacing: 4px;
     color: #f1c40f;
     text-transform: uppercase;
+    margin: 2px 0;
 }
 
 .landing-techathon-container {
-    margin: 40px 0;
+    margin: 10px 0;
 }
 
 .landing-main-title {
-    font-family: 'Cinzel', serif;
-    font-size: 6rem;
-    font-weight: 700;
-    line-height: 1;
+    font-family: 'HarryPotter', 'Cinzel', serif;
+    font-size: 5.5rem;
+    /* Reduced from 8rem */
+    font-weight: 400;
+    /* Regular weight usually looks best for display fonts */
+    line-height: 0.9;
     color: #fff;
     text-shadow: 0 0 30px rgba(241, 196, 15, 0.4);
     letter-spacing: 2px;
@@ -115,5 +125,243 @@
     100% {
         transform: translateY(-10vh);
         opacity: 0;
+    }
+}
+
+/* --- LOGO TICKER --- */
+.logo-ticker-container {
+    width: 100%;
+    overflow: hidden;
+    margin-bottom: 10px;
+    padding: 5px 0;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.logo-ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    width: max-content;
+    animation: tickerScroll 25s linear infinite;
+}
+
+.ticker-logo {
+    height: 60px;
+    width: auto;
+    object-fit: contain;
+    /* Removed filter to show original colors */
+    background: rgba(255, 255, 255, 0.95);
+    padding: 5px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    opacity: 0.9;
+    transition: all 0.3s;
+}
+
+.ticker-logo:hover {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(241, 196, 15, 0.6);
+}
+
+@keyframes tickerScroll {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* --- TYPING ANIMATION --- */
+.typing-anim {
+    display: inline-block;
+    overflow: hidden;
+    /* Ensures the content is not revealed until the animation */
+    /* border-right: .15em solid #f1c40f; The orange cursor */
+    white-space: nowrap;
+    /* Keeps the content on a single line */
+    margin: 0 auto;
+    /* Gives that scrolling effect as the typing happens */
+    /* animation: 
+        typing 4s steps(40, end) infinite,
+        blink-caret .75s step-end infinite; */
+    animation: typingLoop 8s steps(30, end) infinite;
+    max-width: fit-content;
+    border-right: 4px solid #f1c40f;
+}
+
+@keyframes typingLoop {
+    0% {
+        width: 0;
+        border-color: #f1c40f;
+    }
+
+    40% {
+        width: 100%;
+        border-color: #f1c40f;
+    }
+
+    /* Finish typing */
+    50% {
+        width: 100%;
+        border-color: transparent;
+    }
+
+    /* Blink wait */
+    60% {
+        width: 100%;
+        border-color: #f1c40f;
+    }
+
+    70% {
+        width: 100%;
+        border-color: transparent;
+    }
+
+    90% {
+        width: 0;
+        border-color: transparent;
+    }
+
+    /* Delete */
+    100% {
+        width: 0;
+        border-color: #f1c40f;
+    }
+}
+
+/* --- RESPONSIVE QUERIES --- */
+@media (max-width: 1024px) {
+    .landing-main-title {
+        font-size: 6rem;
+    }
+
+    .logo-ticker-container {
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .landing-main-title {
+        font-size: 4rem;
+        letter-spacing: 1px;
+    }
+
+    .landing-presents-text,
+    .landing-tagline-text {
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+    }
+
+    .landing-seal-img {
+        width: 100px;
+    }
+
+    .landing-college-name {
+        font-size: 1rem;
+        letter-spacing: 2px;
+    }
+
+    .logo-ticker-container {
+        max-width: 90%;
+        margin-bottom: 20px;
+        /* Reduced from 30px */
+        padding: 5px 0;
+    }
+
+    .ticker-logo {
+        height: 40px;
+    }
+
+    .landing-date-badge {
+        margin-top: 20px;
+        padding: 8px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .landing-hero-section {
+        min-height: 100vh;
+        /* Revert to center for better visual balance, but adjust padding to shift "somewhat down" */
+        align-items: center;
+        padding-top: 0px;
+        /* Push it down a bit */
+        padding-bottom: 180px;
+        /* Remove bottom padding to reduce gap to video */
+    }
+
+    .landing-main-title {
+        font-family: 'HarryPotter', 'Cinzel', serif;
+        font-size: 8vw;
+        /* Responsive sizing to ensure fit */
+        white-space: nowrap;
+        overflow: hidden;
+        animation: typingLoop 8s steps(30, end) infinite;
+        border-right: 3px solid #f1c40f;
+        width: fit-content;
+        max-width: 100%;
+        letter-spacing: 1px;
+        line-height: 1.1;
+        margin: 0 auto;
+    }
+
+    .landing-content-wrapper {
+        padding: 0 15px;
+        position: relative;
+        top: 0;
+        width: 100%;
+        margin-bottom: 0;
+        /* Ensure no extra space at bottom */
+    }
+
+    .landing-college-sub {
+        font-size: 0.6rem;
+        letter-spacing: 1px;
+        line-height: 1.4;
+        display: block;
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .logo-ticker-container {
+        max-width: 90%;
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        margin-bottom: 10px;
+    }
+
+    .logo-ticker-track {
+        gap: 20px;
+    }
+
+    .ticker-logo {
+        height: 40px;
+        padding: 5px;
+    }
+
+    .landing-logo-container {
+        margin-bottom: 5px;
+    }
+
+    .landing-college-group {
+        margin-bottom: 5px;
+    }
+
+    .landing-techathon-container {
+        margin: 10px 0;
+    }
+
+    .landing-date-badge {
+        margin-top: 15px;
+        padding: 8px 20px;
+        font-size: 0.9rem;
     }
 }

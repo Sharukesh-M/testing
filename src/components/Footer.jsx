@@ -9,9 +9,9 @@ const Footer = () => {
       <h3 className="footer-majestic-title">TECHATHONX 2K26</h3>
 
       <div className="footer-social-row">
-        <a href="#" className="footer-social-link">INSTAGRAM</a>
-        <a href="#" className="footer-social-link">LINKEDIN</a>
-        <a href="#" className="footer-social-link">WHATSAPP</a>
+        <a href="https://www.instagram.com/techathonx_2k26?igsh=MjM2c29yN3RyenY0" target="_blank" rel="noopener noreferrer" className="footer-social-link">INSTAGRAM</a>
+        <a href="https://www.linkedin.com/in/techathonx2k26" target="_blank" rel="noopener noreferrer" className="footer-social-link">LINKEDIN</a>
+        <a href="https://chat.whatsapp.com/Di7I0bbjYG19VU3nfvQFNq" target="_blank" rel="noopener noreferrer" className="footer-social-link">WHATSAPP</a>
       </div>
 
       <div className="footer-copyright">

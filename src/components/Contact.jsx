@@ -3,7 +3,7 @@ import { useMagicSound } from "../hooks/useMagicSound";
 import "./contact.css";
 
 const staff = [
-  { name: "Dr. R. Kannamma", role: "HOD, AI & DS", phone: "XXX-XXX-XXXX", house: "ravenclaw" },
+  { name: "Ms. R. Kannamma", role: "HOD, AI & DS", phone: "XXX-XXX-XXXX", house: "ravenclaw" },
   { name: "Mrs. R. Anitha", role: "Faculty Coordinator", phone: "XXX-XXX-XXXX", house: "gryffindor" }
 ];
 

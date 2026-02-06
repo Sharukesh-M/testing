@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import "./domains.css";
+import SectionReveal from "./SectionReveal";
 
 const domainData = [
   {
@@ -43,37 +45,59 @@ const domainData = [
 export default function Domains() {
   const [active, setActive] = useState(null);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.2
+      }
+    }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } }
+  };
+
   return (
     <section className="domains-section" id="domains">
+      <SectionReveal>
+        <div className="domains-glass">
 
-      <div className="domains-glass">
+          <h2 className="section-heading">
+            DOMAINS
+          </h2>
 
-        <h2 className="section-heading">
-          DOMAINS
-        </h2>
+          <motion.div
+            className="domains-grid"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.1 }}
+          >
+            {domainData.map(domain => (
+              <motion.div
+                key={domain.id}
+                className="domain-card"
+                variants={cardVariants}
+                onClick={() =>
+                  setActive(active === domain.id ? null : domain.id)
+                }
+              >
+                <img src={domain.img} alt={domain.title} />
 
-        <div className="domains-grid">
-          {domainData.map(domain => (
-            <div
-              key={domain.id}
-              className="domain-card"
-              onClick={() =>
-                setActive(active === domain.id ? null : domain.id)
-              }
-            >
-              <img src={domain.img} alt={domain.title} />
+                <h3>{domain.title}</h3>
 
-              <h3>{domain.title}</h3>
+                {active === domain.id && (
+                  <p className="domain-desc">{domain.desc}</p>
+                )}
+              </motion.div>
+            ))}
+          </motion.div>
 
-              {active === domain.id && (
-                <p className="domain-desc">{domain.desc}</p>
-              )}
-            </div>
-          ))}
         </div>
-
-      </div>
-
+      </SectionReveal>
     </section>
   );
 }

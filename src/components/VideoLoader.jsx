@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useMagicSound } from "../hooks/useMagicSound";
 import "./VideoLoader.css";
-import introVideo from "../assets/videos/vid1.mp4";
 
 const VideoLoader = ({ onComplete }) => {
     const videoRef = useRef(null);
@@ -27,7 +26,7 @@ const VideoLoader = ({ onComplete }) => {
         // Transition to video after envelope animation
         setTimeout(() => {
             setStage("VIDEO");
-        }, 1200);
+        }, 8000);
     };
 
     useEffect(() => {
@@ -86,7 +85,7 @@ const VideoLoader = ({ onComplete }) => {
                         preload="auto"
                         playsInline
                     >
-                        <source src={introVideo} type="video/mp4" />
+                        <source src="/videos/vid1.mp4" type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
 

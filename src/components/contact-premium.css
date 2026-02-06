@@ -448,3 +448,64 @@
         transform: translateY(110vh) rotate(360deg);
     }
 }
+
+@media (max-width: 768px) {
+    .contact-premium-wrapper {
+        padding: 80px 15px 50px;
+    }
+
+    .majestic-contact-header h1 {
+        font-size: 1.8rem;
+        letter-spacing: 5px;
+        line-height: 1.2;
+    }
+
+    .majestic-contact-header p {
+        font-size: 0.9rem;
+        letter-spacing: 3px;
+    }
+
+    .contact-info-panel {
+        gap: 15px;
+    }
+
+    .info-card-glass {
+        padding: 20px;
+        flex-direction: column;
+        /* Stack icon and text */
+        align-items: center;
+        text-align: center;
+        gap: 15px;
+    }
+
+    .info-icon-glow {
+        font-size: 2rem;
+    }
+
+    .contact-form-panel {
+        padding: 30px 15px;
+        border-radius: 20px;
+    }
+
+    .form-title-majestic {
+        font-size: 1.5rem;
+    }
+
+    .coordinators-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        /* Reduced gap */
+    }
+
+    .coordinator-card-luxury {
+        padding: 15px 5px;
+    }
+
+    .coordinator-card-luxury h4 {
+        font-size: 1rem;
+    }
+
+    .coordinator-card-luxury .phone-text {
+        font-size: 0.8rem;
+    }
+}

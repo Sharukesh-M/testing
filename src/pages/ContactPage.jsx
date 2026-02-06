@@ -1,8 +1,8 @@
 import React from 'react';
 import VideoBackground from '../components/VideoBackground';
-import contactVideo from '../assets/videos/vid2.mp4';
 import { useMagicSound } from '../hooks/useMagicSound';
 import '../components/contact-premium.css';
+import SectionReveal from '../components/SectionReveal';
 
 // Import House Logos
 import slytherinLogo from '../assets/images/houses/slytherin.png';
@@ -14,8 +14,8 @@ const ContactPage = () => {
     const playSound = useMagicSound();
 
     const staffCouncil = [
-        { name: "Dr. R. Kannamma", role: "HOD, AI & DS", phone: "+91 9444806676", theme: "staff-silver" },
-        { name: "Mrs. R. Anitha", role: "Faculty Coordinator", phone: "+91 9486016019", theme: "staff-silver" }
+        { name: "Ms. R. Kannamma", role: "HOD, AI & DS", phone: "+91 9444806676", theme: "staff-silver" },
+        { name: "Ms. R. Anitha", role: "Faculty Coordinator", phone: "+91 9486016019", theme: "staff-silver" }
     ];
 
     const studentCouncil = [
@@ -27,7 +27,7 @@ const ContactPage = () => {
 
     return (
         <div className="contact-page-luxury relative min-h-screen">
-            <VideoBackground videoSrc={contactVideo} />
+            <VideoBackground videoSrc="/videos/vid2.mp4" />
 
             {/* SNOWFALL EFFECT */}
             <div className="snowfall-layer">
@@ -67,92 +67,107 @@ const ContactPage = () => {
             <div className="contact-premium-wrapper">
 
                 {/* MAJESTIC HEADER */}
-                <div className="majestic-contact-header">
-                    <h1>REACH THE CHAMBER</h1>
-                    <p>OFFICIAL COMMUNICATION CHANNEL · TECHATHONX 2K26</p>
-                </div>
+                <SectionReveal>
+                    <div className="majestic-contact-header">
+                        <h1>REACH THE CHAMBER</h1>
+                        <p>OFFICIAL COMMUNICATION CHANNEL · TECHATHONX 2K26</p>
+                    </div>
+                </SectionReveal>
 
                 {/* MAIN GRID */}
-                <div className="contact-grid-main">
+                <SectionReveal delay={0.2}>
+                    <div className="contact-grid-main">
 
-                    {/* LEFT: INFO CARDS */}
-                    <div className="contact-info-panel">
-                        <div className="info-card-glass" onMouseEnter={() => playSound('hover')}>
-                            <span className="info-icon-glow">📍</span>
-                            <div className="info-text">
-                                <h3>LOCATION</h3>
-                                <p>Prathyusha Engineering College<br />Poonamallee-Thiruvallur Road<br />Tamil Nadu 602025</p>
+                        {/* LEFT: INFO CARDS */}
+                        <div className="contact-info-panel">
+                            <div className="info-card-glass" onMouseEnter={() => playSound('hover')}>
+                                <span className="info-icon-glow">📍</span>
+                                <div className="info-text">
+                                    <h3>LOCATION</h3>
+                                    <p>Prathyusha Engineering College<br />Poonamallee-Thiruvallur Road<br />Tamil Nadu 602025</p>
+                                </div>
+                            </div>
+
+                            <div className="info-card-glass" onMouseEnter={() => playSound('hover')}>
+                                <span className="info-icon-glow">✉️</span>
+                                <div className="info-text">
+                                    <h3>ENQUIRIES</h3>
+                                    <p>techathonx2k26.pec@gmail.com</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="info-card-glass" onMouseEnter={() => playSound('hover')}>
-                            <span className="info-icon-glow">✉️</span>
-                            <div className="info-text">
-                                <h3>ENQUIRIES</h3>
-                                <p>techathon@prathyusha.edu.in<br />ads.pec@prathyusha.edu.in</p>
-                            </div>
+                        {/* RIGHT: FORM */}
+                        <div className="contact-form-panel">
+                            <h2 className="form-title-majestic">DIRECT COMMUNICATION</h2>
+                            <form
+                                className="majestic-form"
+                                action="https://formsubmit.co/techathonx2k26.pec@gmail.com"
+                                method="POST"
+                            >
+                                {/* Configuration for FormSubmit */}
+                                <input type="hidden" name="_subject" value="New TechathonX Enquiry!" />
+                                <input type="hidden" name="_captcha" value="false" />
+                                <input type="hidden" name="_template" value="table" />
+
+                                <div className="form-group-majestic">
+                                    <label>FULL NAME</label>
+                                    <input name="name" type="text" placeholder="Enter your name" required />
+                                </div>
+                                <div className="form-group-majestic">
+                                    <label>EMAIL ADDRESS</label>
+                                    <input name="email" type="email" placeholder="email@example.com" required />
+                                </div>
+                                <div className="form-group-majestic">
+                                    <label>MESSAGE</label>
+                                    <textarea name="message" rows="4" placeholder="How can we assist you today?" required></textarea>
+                                </div>
+                                <button type="submit" className="btn-send-majestic" onMouseEnter={() => playSound('hover')}>
+                                    SEND MESSAGE
+                                </button>
+                            </form>
                         </div>
-                    </div>
 
-                    {/* RIGHT: FORM */}
-                    <div className="contact-form-panel">
-                        <h2 className="form-title-majestic">DIRECT COMMUNICATION</h2>
-                        <form className="majestic-form" onSubmit={(e) => { e.preventDefault(); alert("Your message has been sent to the techathon council."); }}>
-                            <div className="form-group-majestic">
-                                <label>FULL NAME</label>
-                                <input type="text" placeholder="Enter your name" required />
-                            </div>
-                            <div className="form-group-majestic">
-                                <label>EMAIL ADDRESS</label>
-                                <input type="email" placeholder="email@example.com" required />
-                            </div>
-                            <div className="form-group-majestic">
-                                <label>MESSAGE</label>
-                                <textarea rows="4" placeholder="How can we assist you today?" required></textarea>
-                            </div>
-                            <button type="submit" className="btn-send-majestic" onMouseEnter={() => playSound('hover')}>
-                                SEND MESSAGE
-                            </button>
-                        </form>
                     </div>
-
-                </div>
+                </SectionReveal>
 
                 {/* THE COORDINATION COUNCIL */}
-                <div className="majestic-coordinators">
+                <SectionReveal delay={0.4}>
+                    <div className="majestic-coordinators">
 
-                    {/* STAFF COUNCIL */}
-                    <div className="section-label-contact">
-                        <span className="label-text-gold">THE STAFF COUNCIL</span>
-                    </div>
-                    <div className="coordinators-grid mb-20">
-                        {staffCouncil.map((person, i) => (
-                            <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
-                                <div className="house-logo-placeholder" style={{ fontSize: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎓</div>
-                                <h4>{person.name}</h4>
-                                <p className="role-text">{person.role}</p>
-                                <p className="phone-text">{person.phone}</p>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* STUDENT COUNCIL */}
-                    <div className="section-label-contact mt-20">
-                        <span className="label-text-gold">THE STUDENT COUNCIL</span>
-                    </div>
-                    <div className="coordinators-grid">
-                        {studentCouncil.map((person, i) => (
-                            <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
-                                <div className="house-logo-placeholder">
-                                    <img src={person.logo} alt="House Logo" className="house-logo-img" />
+                        {/* STAFF COUNCIL */}
+                        <div className="section-label-contact">
+                            <span className="label-text-gold">THE STAFF COUNCIL</span>
+                        </div>
+                        <div className="coordinators-grid mb-20">
+                            {staffCouncil.map((person, i) => (
+                                <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
+                                    <div className="house-logo-placeholder" style={{ fontSize: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎓</div>
+                                    <h4>{person.name}</h4>
+                                    <p className="role-text">{person.role}</p>
+                                    <p className="phone-text">{person.phone}</p>
                                 </div>
-                                <h4>{person.name}</h4>
-                                <p className="role-text">{person.role}</p>
-                                <p className="phone-text">{person.phone}</p>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+
+                        {/* STUDENT COUNCIL */}
+                        <div className="section-label-contact mt-20">
+                            <span className="label-text-gold">THE STUDENT COUNCIL</span>
+                        </div>
+                        <div className="coordinators-grid">
+                            {studentCouncil.map((person, i) => (
+                                <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
+                                    <div className="house-logo-placeholder">
+                                        <img src={person.logo} alt="House Logo" className="house-logo-img" />
+                                    </div>
+                                    <h4>{person.name}</h4>
+                                    <p className="role-text">{person.role}</p>
+                                    <p className="phone-text">{person.phone}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
+                </SectionReveal>
 
             </div>
         </div>

@@ -33,14 +33,14 @@ export default function Register() {
                 <div className="register-card">
                   <h3 className="register-title">INTERNAL PARTICIPATION</h3>
                   <p className="register-fee">₹ 300 per team</p>
-                  <a href="#" className="register-link">REGISTER HERE</a>
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSctYMzZwv1yuQcq4cSXgfCudY6rEBAjn-5kCsTz7uW8bvCAew/viewform" target="_blank" rel="noopener noreferrer" className="register-link">REGISTER HERE</a>
                 </div>
 
                 {/* EXTERNAL */}
                 <div className="register-card">
                   <h3 className="register-title">EXTERNAL PARTICIPATION</h3>
                   <p className="register-fee">₹ 400 per team</p>
-                  <a href="#" className="register-link">REGISTER HERE</a>
+                  <a href="https://docs.google.com/forms/d/e/1FAIpQLSctYMzZwv1yuQcq4cSXgfCudY6rEBAjn-5kCsTz7uW8bvCAew/viewform" target="_blank" rel="noopener noreferrer" className="register-link">REGISTER HERE</a>
                 </div>
               </div>
             </motion.div>

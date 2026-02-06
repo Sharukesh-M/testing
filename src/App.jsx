@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import VideoLoader from "./components/VideoLoader";
@@ -25,12 +25,15 @@ const ScrollToTop = () => {
 
 const AppContent = () => {
   const [showIntro, setShowIntro] = useState(true);
+  const navigate = useNavigate(); // Now valid because Router is upstream
 
   useEffect(() => {
-    const hasPlayed = sessionStorage.getItem("introPlayed");
-    if (hasPlayed) {
-      setShowIntro(false);
-    }
+    // Force reset to Home on refresh/mount
+    navigate("/");
+
+    // Optional: If you use sessionStorage to prevent intro on reload, clear it here 
+    // to strict comply with "always start from first" request.
+    sessionStorage.removeItem("introPlayed");
   }, []);
 
   const handleIntroComplete = () => {
@@ -43,24 +46,22 @@ const AppContent = () => {
       {showIntro ? (
         <VideoLoader onComplete={handleIntroComplete} />
       ) : (
-        <Router>
+        <div className="app-content relative z-10 w-full min-h-screen text-white overflow-x-hidden">
           <ScrollToTop />
-          <div className="app-content relative z-10 w-full min-h-screen text-white overflow-x-hidden">
-            <Navbar />
-            <TopMarquee />
+          <Navbar />
+          <TopMarquee />
 
-            <main>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/events" element={<Events />} />
-                <Route path="/competitions" element={<Competitions />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-              </Routes>
-            </main>
-            <Footer />
-          </div>
-        </Router>
+          <main>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/events" element={<Events />} />
+              <Route path="/competitions" element={<Competitions />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+            </Routes>
+          </main>
+          <Footer />
+        </div>
       )}
     </>
   );
@@ -69,7 +70,9 @@ const AppContent = () => {
 const App = () => {
   return (
     <SoundProvider>
-      <AppContent />
+      <Router>
+        <AppContent />
+      </Router>
     </SoundProvider>
   );
 };

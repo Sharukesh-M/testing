@@ -118,15 +118,34 @@ const RegisterPage = () => {
             <div className="register-premium-wrapper">
 
                 <div className="enrollment-header">
-                    <h1 className="mind-blowing-title">EVENT REGISTRATION</h1>
-                    <p className="luxury-subtitle">SECURE YOUR SPOT IN TECHATHONX 2K26</p>
+                    <motion.h1
+                        className="mind-blowing-title"
+                        initial={{ opacity: 0, y: -40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                    >
+                        EVENT REGISTRATION
+                    </motion.h1>
+                    <motion.p
+                        className="luxury-subtitle"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.3 }}
+                    >
+                        SECURE YOUR SPOT IN TECHATHONX 2K26
+                    </motion.p>
                 </div>
 
                 <div className="parchment-container">
 
                     {!regType ? (
                         <>
-                            <div className="assemble-wrapper text-center mb-10">
+                            <motion.div
+                                className="assemble-wrapper text-center mb-10"
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                transition={{ duration: 0.6, delay: 0.6 }}
+                            >
                                 <button
                                     className="assemble-btn-majestic"
                                     onClick={() => {
@@ -136,7 +155,7 @@ const RegisterPage = () => {
                                 >
                                     {showOptions ? "CLOSE ENROLLMENT" : "ASSEMBLE HERE"}
                                 </button>
-                            </div>
+                            </motion.div>
 
                             <AnimatePresence>
                                 {showOptions && (
@@ -152,15 +171,16 @@ const RegisterPage = () => {
                                                 <h3 className="card-ink-title">INTERNAL PARTICIPATION</h3>
                                                 <div className="ink-divider"></div>
                                                 <p className="fee-ink">₹ 300 PER TEAM</p>
-                                                <button
+                                                <a
+                                                    href="https://docs.google.com/forms/d/e/1FAIpQLSctYMzZwv1yuQcq4cSXgfCudY6rEBAjn-5kCsTz7uW8bvCAew/viewform"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     className="ink-register-btn"
-                                                    onClick={() => {
-                                                        setRegType('INTERNAL');
-                                                        playSound('click');
-                                                    }}
+                                                    onClick={() => playSound('click')}
+                                                    style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}
                                                 >
                                                     REGISTER HERE
-                                                </button>
+                                                </a>
                                             </div>
 
                                             {/* EXTERNAL */}
@@ -168,15 +188,16 @@ const RegisterPage = () => {
                                                 <h3 className="card-ink-title">EXTERNAL PARTICIPATION</h3>
                                                 <div className="ink-divider"></div>
                                                 <p className="fee-ink">₹ 400 PER TEAM</p>
-                                                <button
+                                                <a
+                                                    href="https://docs.google.com/forms/d/e/1FAIpQLSctYMzZwv1yuQcq4cSXgfCudY6rEBAjn-5kCsTz7uW8bvCAew/viewform"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
                                                     className="ink-register-btn"
-                                                    onClick={() => {
-                                                        setRegType('EXTERNAL');
-                                                        playSound('click');
-                                                    }}
+                                                    onClick={() => playSound('click')}
+                                                    style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}
                                                 >
                                                     REGISTER HERE
-                                                </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -185,8 +206,9 @@ const RegisterPage = () => {
                         </>
                     ) : (
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
                             className="ink-form-container"
                         >
                             <div className="form-header-row mb-6">
@@ -195,7 +217,14 @@ const RegisterPage = () => {
                             </div>
 
                             <form onSubmit={handleSubmit} className="ink-form">
-                                <div className="ink-section-header">TEAM LEAD DETAILS</div>
+                                <motion.div
+                                    className="ink-section-header"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.2 }}
+                                >
+                                    TEAM LEAD DETAILS
+                                </motion.div>
                                 <div className="ink-grid">
                                     <div className="ink-input-group">
                                         <label>FULL NAME</label>

@@ -1,5 +1,6 @@
 import React from 'react';
 import LandingHero from '../components/LandingHero';
+import ScrollVideo from '../components/ScrollVideo';
 import About from '../components/About';
 import Countdown from '../components/Countdown';
 import Resources from '../components/Resources';
@@ -15,6 +16,7 @@ const Home = () => {
 
             <div className="relative z-10">
                 <LandingHero />
+                <ScrollVideo />
                 <About />
                 <Countdown />
                 <Resources />

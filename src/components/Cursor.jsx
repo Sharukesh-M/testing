@@ -43,20 +43,30 @@ export default function Cursor() {
 
   return (
     <>
-      {/* Main Dot - Direct Follower */}
+      {/* Target Cursor Main */}
       <motion.div
-        className="fixed top-0 left-0 w-2.5 h-2.5 bg-[#a855f7] rounded-full pointer-events-none z-[9999] mix-blend-screen shadow-[0_0_15px_#a855f7]"
+        className="fixed top-0 left-0 pointer-events-none z-[9999]"
         style={{
           x: mouseX,
           y: mouseY,
           translateX: "-50%",
           translateY: "-50%",
         }}
-      />
+      >
+        {/* Crosshair SVG */}
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="20" cy="20" r="18" stroke="#f1c40f" strokeWidth="1.5" strokeOpacity="0.8" />
+          <line x1="20" y1="5" x2="20" y2="12" stroke="#f1c40f" strokeWidth="1.5" />
+          <line x1="20" y1="28" x2="20" y2="35" stroke="#f1c40f" strokeWidth="1.5" />
+          <line x1="5" y1="20" x2="12" y2="20" stroke="#f1c40f" strokeWidth="1.5" />
+          <line x1="28" y1="20" x2="35" y2="20" stroke="#f1c40f" strokeWidth="1.5" />
+          <circle cx="20" cy="20" r="2" fill="#f1c40f" />
+        </svg>
+      </motion.div>
 
-      {/* Trailing Ring - Physics Follower */}
+      {/* Trailing Stabilization Ring */}
       <motion.div
-        className="fixed top-0 left-0 border border-[rgba(168,85,247,0.5)] rounded-full pointer-events-none z-[9998]"
+        className="fixed top-0 left-0 border border-[#f1c40f] rounded-full pointer-events-none z-[9998] opacity-30"
         style={{
           x: cursorX,
           y: cursorY,
@@ -64,15 +74,15 @@ export default function Cursor() {
           translateY: "-50%",
         }}
         animate={{
-          width: hovered ? 60 : 32,
-          height: hovered ? 60 : 32,
-          borderColor: hovered ? "rgba(168, 85, 247, 0.9)" : "rgba(168, 85, 247, 0.5)",
-          backgroundColor: hovered ? "rgba(168, 85, 247, 0.15)" : "transparent",
+          width: hovered ? 60 : 45,
+          height: hovered ? 60 : 45,
+          scale: hovered ? 1.2 : 1,
+          borderColor: hovered ? "#f1c40f" : "rgba(241, 196, 15, 0.3)",
         }}
         transition={{
           type: "spring",
-          stiffness: 300,
-          damping: 20,
+          stiffness: 150,
+          damping: 15,
         }}
       />
     </>

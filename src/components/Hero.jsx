@@ -26,7 +26,7 @@ const Hero = () => {
           <h2 className="techathon-title">TECHATHONX 2K26</h2>
 
           <p className="event-tagline">NATIONAL LEVEL HACKATHON</p>
-          <p className="event-date">MARCH 4 & 5, 2026</p>
+          <p className="event-date">MARCH 4th & 5th, 2026</p>
         </div>
 
       </div>

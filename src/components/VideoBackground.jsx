@@ -1,16 +1,15 @@
 import React, { useEffect, useRef } from "react";
 import "./VideoBackground.css";
-import backgroundVideoDefault from "../assets/videos/Harry_Potter_Hall_Animation_Generated.mp4";
 
 const VideoBackground = ({ videoSrc }) => {
     const videoRef = useRef(null);
-    const selectedVideo = videoSrc || backgroundVideoDefault;
+    const selectedVideo = videoSrc || "/videos/Harry_Potter_Hall_Animation_Generated.mp4";
 
     useEffect(() => {
         if (videoRef.current) {
             videoRef.current.volume = 0.5;
         }
-    }, [videoSrc]);
+    }, [selectedVideo]);
 
     return (
         <div className="video-background-container">

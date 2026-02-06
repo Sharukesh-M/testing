@@ -15,7 +15,7 @@
   background: linear-gradient(145deg, rgba(0, 0, 0, 0.9), rgba(10, 15, 30, 0.85));
 
   border: 2px solid;
-  border-image: linear-gradient(135deg, #C0C0C0, #8B0000, #1a237e, #C0C0C0) 1;
+  border-image: linear-gradient(135deg, #C0C0C0, #1a237e, #8B0000, #C0C0C0) 1;
   box-shadow:
     0 0 40px rgba(192, 192, 192, 0.15),
     0 0 80px rgba(139, 0, 0, 0.1),

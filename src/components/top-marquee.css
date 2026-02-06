@@ -1,4 +1,5 @@
 .top-marquee-container {
+    margin-top: 80px;
     width: 100%;
     background: #f1c40f;
     /* Magical Gold background like the Nidar lime bar but theme-consistent */
@@ -50,4 +51,10 @@
 /* Pause on hover to allow reading */
 .top-marquee-container:hover .marquee-scroll {
     animation-play-state: paused;
+}
+
+@media (max-width: 768px) {
+    .top-marquee-container {
+        margin-top: 70px;
+    }
 }
