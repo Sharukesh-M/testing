@@ -60,19 +60,19 @@ const domainData = [
 const timelineData = {
     day1: [
         { time: "09:30 AM", event: "Grand Inauguration" },
-        { time: "11:30 AM", event: "Hackathon Commencement" },
+        { time: "11:30 AM", event: "24 Hrs Hackathon Begins" },
         { time: "01:30 PM", event: "Networking Lunch" },
-        { time: "02:30 PM", event: "Phase I: Development & Ideation" },
-        { time: "06:00 PM", event: "First Mentor Review" },
-        { time: "09:00 PM", event: "... Development Continues" }
+        { time: "04:30 PM", event: "Refreshment" },
+        { time: "07:30 PM", event: "Dinner" },
+        
     ],
     day2: [
-        { time: "09:00 AM", event: "Phase II: Polishing & Testing" },
-        { time: "11:30 AM", event: "Project Submission Deadline" },
-        { time: "01:00 PM", event: "Networking Lunch" },
-        { time: "02:00 PM", event: "Final Presentations & Demos" },
-        { time: "04:30 PM", event: "Evaluation & Judging" },
-        { time: "05:30 PM", event: "Awards & Valedictory Ceremony" }
+        { time: "12:00 AM", event: "Refreshment" },
+        { time: "04:30 AM", event: "Refreshment" },
+        { time: "08:30 PM", event: "Breakfast" },
+        { time: "11:30 PM", event: "Hackathon Ends" },
+        { time: "12:30 PM", event: "Result Annoucement" },
+        
     ]
 };
 

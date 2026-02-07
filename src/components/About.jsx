@@ -33,7 +33,7 @@ const About = () => {
             </p>
             <p>
               Prathyusha Engineering College invites all aspiring engineers and developers
-              to join us in this 32-hour journey. Secure your place in the chronicles
+              to join us in this 24-hour journey. Secure your place in the chronicles
               of TechathonX and demonstrate your potential to lead the next revolution in technology.
             </p>
           </div>
