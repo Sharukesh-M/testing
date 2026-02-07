@@ -5,7 +5,7 @@ import { useMagicSound } from '../hooks/useMagicSound';
 import './home-majestic.css';
 
 // Import Assets directly from docs using Vite's URL resolution
-import brochurePdf from '../assets/docs/brochure.pdf?url';
+import brochurePdf from '../assets/docs/tec.pptx?url';
 import busPdf from '../assets/docs/bus.pdf?url';
 import rulesPdf from '../assets/docs/rules.pdf?url';
 import posterImg from '../assets/docs/POSTER.png?url';
@@ -33,7 +33,7 @@ const Resources = () => {
       desc: "Transport service locations"
     },
     {
-      name: "Sponsorship Brochure",
+      name: "PPT Format",
       icon: <FileText size={40} />,
       link: brochurePdf,
       desc: "Event full details & overview"
