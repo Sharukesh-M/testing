@@ -37,6 +37,7 @@ const ScrollVideo = () => {
                     muted
                     playsInline
                     className="scroll-video-element"
+                    disablePictureInPicture
                 />
 
                 {/* Optional Overlay for "Majestic" feel */}

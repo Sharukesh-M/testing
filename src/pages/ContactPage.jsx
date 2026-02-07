@@ -9,6 +9,8 @@ import slytherinLogo from '../assets/images/houses/slytherin.png';
 import gryffindorLogo from '../assets/images/houses/gryffindor.png';
 import ravenclawLogo from '../assets/images/houses/ravenclaw.png';
 import hufflepuffLogo from '../assets/images/houses/hufflepuff.png';
+import ashenLogo from '../assets/images/houses/ashen.png';
+import violetLogo from '../assets/images/houses/violet.png';
 
 const ContactPage = () => {
     const playSound = useMagicSound();
@@ -18,14 +20,16 @@ const ContactPage = () => {
             name: "Ms. R. Kannamma",
             role: "HOD, AI & DS",
             phone: "+91 9444806676",
-            theme: "staff-silver",
+            theme: "house-ravenclaw",
+            logo: violetLogo,
             linkedin: "https://www.linkedin.com/in/kannamma-sridharan-999161130?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         },
         {
             name: "Ms. R. Anitha",
             role: "Faculty Coordinator",
             phone: "+91 9486016019",
-            theme: "staff-silver",
+            theme: "house-slytherin",
+            logo: ashenLogo,
             linkedin: "https://www.linkedin.com/in/anitha-senthilkumar-3b03a7259?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
         }
     ];
@@ -214,7 +218,9 @@ const ContactPage = () => {
                                     onClick={() => playSound('click')}
                                     style={{ textDecoration: 'none', cursor: 'pointer', display: 'block' }}
                                 >
-                                    <div className="house-logo-placeholder" style={{ fontSize: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎓</div>
+                                    <div className="house-logo-placeholder">
+                                        <img src={person.logo} alt="House Logo" className="house-logo-img" />
+                                    </div>
                                     <h4>{person.name}</h4>
                                     <p className="role-text">{person.role}</p>
                                     <p className="phone-text">{person.phone}</p>

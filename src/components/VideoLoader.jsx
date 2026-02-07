@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { useMagicSound } from "../hooks/useMagicSound";
+import Cursor from "./Cursor";
 import "./VideoLoader.css";
 
 const VideoLoader = ({ onComplete }) => {
@@ -43,6 +44,7 @@ const VideoLoader = ({ onComplete }) => {
 
     return (
         <div className="video-loader-overlay">
+            <Cursor />
             {stage !== "VIDEO" ? (
                 <div className={`envelope-scene ${stage === "OPENING" ? "is-opening" : ""}`} onClick={stage === "ENVELOPE" ? handleStartJourney : null}>
 

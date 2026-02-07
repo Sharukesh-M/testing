@@ -75,7 +75,7 @@ const Competitions = () => {
                             className="arena-card-luxury"
                             onMouseEnter={() => playSound('hover')}
                             onClick={() => item.link && window.open(item.link, "_blank")}
-                            style={{ cursor: item.link ? 'pointer' : 'default' }}
+                            style={{ cursor: 'none' }}
                             initial="hidden"
                             whileInView="show"
                             viewport={{ once: true, amount: 0.1 }}

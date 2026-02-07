@@ -57,6 +57,7 @@ body,
 
 /* Global Background - Static for non-home pages */
 body {
+  cursor: none !important;
   background-image:
     linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.85)),
     url('../assets/hp/great-hall.jpg');
@@ -64,6 +65,12 @@ body {
   background-position: center bottom;
   background-attachment: fixed;
   background-repeat: no-repeat;
+}
+
+a,
+button,
+[role="button"] {
+  cursor: none !important;
 }
 
 /* =========================================================

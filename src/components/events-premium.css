@@ -97,7 +97,7 @@
     height: 400px;
     border-radius: 12px;
     overflow: hidden;
-    cursor: pointer;
+    cursor: none;
     transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: #000;

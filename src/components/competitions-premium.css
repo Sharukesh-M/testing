@@ -48,6 +48,7 @@
     position: relative;
     overflow: hidden;
     transition: all 0.5s ease;
+    cursor: none;
 }
 
 .arena-card-luxury:hover {
@@ -182,25 +183,38 @@
 
 .prize-card-glass {
     width: 280px;
+    height: 350px;
+    /* Fixed height for uniformity */
     padding: 40px 20px;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     transition: all 0.4s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .prize-card-glass.gold {
     border-color: #f1c40f;
-    transform: scale(1.1);
+    transform: scale(1.15);
+    /* Slightly larger */
     z-index: 2;
+    height: 380px;
+    /* Taller for gold */
 }
 
 .prize-card-glass.silver {
     border-color: #bdc3c7;
+    transform: scale(1);
+    /* Ensure 3rd place matches this */
 }
 
 .prize-card-glass.bronze {
     border-color: #cd7f32;
+    transform: scale(1);
+    /* Explicitly match silver size */
 }
 
 /* --- RULES GLASS CONTAINER --- */
@@ -286,19 +300,34 @@
     }
 
     .prize-podium-container {
-        align-items: center;
-        flex-direction: column;
+        align-items: flex-end;
+        flex-direction: row;
+        /* Keep row to allow side-by-side */
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
     }
 
     .podium-card {
-        width: 100%;
+        width: 45%;
+        /* Reduce width to fit 2nd and 3rd side by side */
         min-width: unset;
         margin-bottom: 20px;
+        padding: 20px 10px;
+        /* Reduce padding */
+    }
+
+    .podium-card h1.podium-number {
+        font-size: 3rem;
+        /* Smaller numbers */
     }
 
     .main-winner {
-        transform: scale(1.05);
+        width: 100%;
+        /* Winner takes full width */
         order: -1;
-        margin-bottom: 30px;
+        /* Winner on top */
+        transform: scale(1);
+        margin-bottom: 20px;
     }
 }

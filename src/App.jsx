@@ -23,6 +23,8 @@ const ScrollToTop = () => {
   return null;
 };
 
+import Cursor from "./components/Cursor";
+
 const AppContent = () => {
   const [showIntro, setShowIntro] = useState(true);
   const navigate = useNavigate(); // Now valid because Router is upstream
@@ -43,6 +45,7 @@ const AppContent = () => {
 
   return (
     <>
+      <Cursor />
       {showIntro ? (
         <VideoLoader onComplete={handleIntroComplete} />
       ) : (

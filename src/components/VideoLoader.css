@@ -7,6 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: none !important;
 }
 
 /* --- FULLSCREEN VIDEO --- */
@@ -37,7 +38,7 @@
     align-items: center;
     justify-content: center;
     background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
-    cursor: pointer;
+    cursor: none;
     perspective: 1000px;
 }
 
@@ -284,13 +285,17 @@
     font-family: 'Cinzel', serif;
     font-size: 0.7rem;
     padding: 4px 10px;
-    cursor: pointer;
+    cursor: none;
     transition: all 0.3s ease;
     z-index: 1001;
 }
 
 .skip-intro-btn-minimal:hover {
     background: rgba(255, 255, 255, 0.1);
+    color: #f1c40f;
+    box-shadow: 0 0 10px rgba(241, 196, 15, 0.5);
+    text-shadow: 0 0 5px rgba(241, 196, 15, 0.8);
+    border-color: #f1c40f;
 }
 
 /* PARTICLES */

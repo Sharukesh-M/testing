@@ -1,30 +1,57 @@
-import { useEffect, useState } from "react";
-import { motion, useSpring, useMotionValue } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import stickImg from '../assets/images/stick.png';
+
+const SPARK_LIFETIME = 800; // ms
+const MAX_SPARKS = 30;
 
 export default function Cursor() {
   const [hovered, setHovered] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
+  const [sparks, setSparks] = useState([]);
+  const requestRef = useRef();
 
-  // Smooth physics for the trailing effect ("Antigravity")
-  const springConfig = { damping: 20, stiffness: 250, mass: 0.8 };
+  // Smooth stick movement
+  const springConfig = { damping: 25, stiffness: 400, mass: 0.5 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (isMobile) return;
+
     const moveMouse = (e) => {
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
+
+      // Generate sparks on move
+      if (Math.random() > 0.6) {
+        addSpark(e.clientX, e.clientY);
+      }
     };
 
     const checkHover = (e) => {
       const target = e.target;
+      // Enhanced hover detection for navigation and buttons
       if (
         target.tagName === "A" ||
         target.tagName === "BUTTON" ||
         target.closest("a") ||
         target.closest("button") ||
-        target.classList.contains("interactive")
+        target.classList.contains("interactive") ||
+        target.classList.contains("nav-link") ||
+        target.classList.contains("nav-item")
       ) {
         setHovered(true);
       } else {
@@ -32,59 +59,90 @@ export default function Cursor() {
       }
     };
 
+    const addSpark = (x, y) => {
+      const id = Date.now() + Math.random();
+      const newSpark = {
+        id,
+        x,
+        y,
+        size: Math.random() * 8 + 4, // Increased spark size
+        angle: Math.random() * 360,
+        speed: Math.random() * 2 + 1,
+        life: 1
+      };
+
+      setSparks(prev => [...prev.slice(-MAX_SPARKS), newSpark]);
+    };
+
+    // Animation Loop for Sparks
+    const animateSparks = () => {
+      setSparks(prevSparks =>
+        prevSparks
+          .map(spark => ({
+            ...spark,
+            x: spark.x + Math.cos(spark.angle) * spark.speed,
+            y: spark.y + Math.sin(spark.angle) * spark.speed,
+            life: spark.life - 0.02,
+            size: spark.size * 0.96
+          }))
+          .filter(spark => spark.life > 0)
+      );
+      requestRef.current = requestAnimationFrame(animateSparks);
+    };
+
     window.addEventListener("mousemove", moveMouse);
     window.addEventListener("mouseover", checkHover);
+    requestRef.current = requestAnimationFrame(animateSparks);
 
     return () => {
       window.removeEventListener("mousemove", moveMouse);
       window.removeEventListener("mouseover", checkHover);
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [mouseX, mouseY]);
+  }, [mouseX, mouseY, isMobile]);
+
+  if (isMobile) return null;
 
   return (
     <>
-      {/* Target Cursor Main */}
-      <motion.div
-        className="fixed top-0 left-0 pointer-events-none z-[9999]"
-        style={{
-          x: mouseX,
-          y: mouseY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-      >
-        {/* Crosshair SVG */}
-        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="20" cy="20" r="18" stroke="#f1c40f" strokeWidth="1.5" strokeOpacity="0.8" />
-          <line x1="20" y1="5" x2="20" y2="12" stroke="#f1c40f" strokeWidth="1.5" />
-          <line x1="20" y1="28" x2="20" y2="35" stroke="#f1c40f" strokeWidth="1.5" />
-          <line x1="5" y1="20" x2="12" y2="20" stroke="#f1c40f" strokeWidth="1.5" />
-          <line x1="28" y1="20" x2="35" y2="20" stroke="#f1c40f" strokeWidth="1.5" />
-          <circle cx="20" cy="20" r="2" fill="#f1c40f" />
-        </svg>
-      </motion.div>
+      {/* Golden Sparks Trail */}
+      {sparks.map(spark => (
+        <div
+          key={spark.id}
+          className="fixed pointer-events-none rounded-full z-[100000]"
+          style={{
+            left: spark.x,
+            top: spark.y,
+            width: spark.size,
+            height: spark.size,
+            background: `rgba(241, 196, 15, ${spark.life})`, // Gold color
+            boxShadow: `0 0 ${spark.size * 2}px rgba(241, 196, 15, 0.8)`,
+            transform: 'translate(-50%, -50%)',
+          }}
+        />
+      ))}
 
-      {/* Trailing Stabilization Ring */}
+      {/* Magic Stick Cursor */}
       <motion.div
-        className="fixed top-0 left-0 border border-[#f1c40f] rounded-full pointer-events-none z-[9998] opacity-30"
+        className="fixed top-0 left-0 pointer-events-none z-[100001]"
         style={{
           x: cursorX,
           y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
+          translateX: "-10%", // Adjust tip position
+          translateY: "-10%",
+          rotate: hovered ? 15 : 0, // Tilt effect on hover
         }}
-        animate={{
-          width: hovered ? 60 : 45,
-          height: hovered ? 60 : 45,
-          scale: hovered ? 1.2 : 1,
-          borderColor: hovered ? "#f1c40f" : "rgba(241, 196, 15, 0.3)",
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 150,
-          damping: 15,
-        }}
-      />
+      >
+        <img
+          src={stickImg}
+          alt="Magic Wand"
+          style={{
+            width: '60px', // Increased stick size
+            height: 'auto',
+            filter: 'drop-shadow(0 0 10px rgba(241, 196, 15, 0.6))'
+          }}
+        />
+      </motion.div>
     </>
   );
 }
