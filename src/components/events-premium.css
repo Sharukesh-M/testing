@@ -254,7 +254,7 @@
 .timeline-flow::before {
     content: '';
     position: absolute;
-    left: 31px;
+    left: 32px;
     top: 0;
     bottom: 0;
     width: 1px;
@@ -283,12 +283,14 @@
     transition: all 0.3s ease;
 }
 
+
 .time-text {
     font-family: 'Cinzel', serif;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: #f1c40f;
     text-align: center;
     line-height: 1.2;
+    white-space: pre-line;
 }
 
 .timeline-item-premium:hover .time-box {
@@ -348,4 +350,40 @@
     font-size: 0.8rem;
     text-transform: uppercase;
     font-weight: 700;
+}
+
+@media (max-width: 640px) {
+    .day-column {
+        padding: 20px;
+    }
+
+    .timeline-item-premium {
+        display: grid;
+        grid-template-columns: 50px 1fr;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .timeline-flow::before {
+        left: 24.5px;
+        /* (50px width / 2) - 0.5px */
+    }
+
+    .time-box {
+        width: 50px;
+        height: 50px;
+        font-size: 0.65rem;
+    }
+
+    .event-details {
+        display: flex;
+        align-items: center;
+        min-height: 50px;
+        padding: 10px 15px;
+    }
+
+    .event-desc-name {
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
 }

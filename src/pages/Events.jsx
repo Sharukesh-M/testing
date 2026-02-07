@@ -64,7 +64,7 @@ const timelineData = {
         { time: "01:30 PM", event: "Networking Lunch" },
         { time: "04:30 PM", event: "Refreshment" },
         { time: "07:30 PM", event: "Dinner" },
-        
+
     ],
     day2: [
         { time: "12:00 AM", event: "Refreshment" },
@@ -72,7 +72,7 @@ const timelineData = {
         { time: "08:30 PM", event: "Breakfast" },
         { time: "11:30 PM", event: "Hackathon Ends" },
         { time: "12:30 PM", event: "Result Annoucement" },
-        
+
     ]
 };
 
