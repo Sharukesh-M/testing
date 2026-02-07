@@ -14,16 +14,85 @@ const ContactPage = () => {
     const playSound = useMagicSound();
 
     const staffCouncil = [
-        { name: "Ms. R. Kannamma", role: "HOD, AI & DS", phone: "+91 9444806676", theme: "staff-silver" },
-        { name: "Ms. R. Anitha", role: "Faculty Coordinator", phone: "+91 9486016019", theme: "staff-silver" }
+        {
+            name: "Ms. R. Kannamma",
+            role: "HOD, AI & DS",
+            phone: "+91 9444806676",
+            theme: "staff-silver",
+            linkedin: "https://www.linkedin.com/in/kannamma-sridharan-999161130?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {
+            name: "Ms. R. Anitha",
+            role: "Faculty Coordinator",
+            phone: "+91 9486016019",
+            theme: "staff-silver",
+            linkedin: "https://www.linkedin.com/in/anitha-senthilkumar-3b03a7259?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        }
     ];
 
     const studentCouncil = [
-        { name: "Harish", role: "Student Executive", phone: "+91 9003009572", theme: "house-slytherin", logo: slytherinLogo },
-        { name: "Nirmal", role: "Student Executive", phone: "+91 9344398801", theme: "house-gryffindor", logo: gryffindorLogo },
-        { name: "Nithyasri S G", role: "Student Executive", phone: "+91 8610132228", theme: "house-ravenclaw", logo: ravenclawLogo },
-        { name: "Chandru B", role: "Student Executive", phone: "+91 6369959510", theme: "house-hufflepuff", logo: hufflepuffLogo }
+        {
+            name: "Harish",
+            role: "Student Executive",
+            phone: "+91 9003009572",
+            theme: "house-slytherin",
+            logo: slytherinLogo,
+            linkedin: "https://www.linkedin.com/in/harish-m-4b2870302?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+        },
+        {
+            name: "Nirmal",
+            role: "Student Executive",
+            phone: "+91 9344398801",
+            theme: "house-gryffindor",
+            logo: gryffindorLogo,
+            linkedin: "https://www.linkedin.com/in/nirmal-thulasingam?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        },
+        {
+            name: "Nithyasri S G",
+            role: "Student Executive",
+            phone: "+91 8610132228",
+            theme: "house-ravenclaw",
+            logo: ravenclawLogo,
+            linkedin: "https://www.linkedin.com/in/nithyasri-govindaraj-b85024388?utm_source=share_via&utm_content=profile&utm_medium=member_android"
+        },
+        {
+            name: "Chandru B",
+            role: "Student Executive",
+            phone: "+91 6369959510",
+            theme: "house-hufflepuff",
+            logo: hufflepuffLogo,
+            linkedin: "https://www.linkedin.com/in/chandru-carrierno1?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"
+        }
     ];
+
+    const handleContactSubmit = async (e) => {
+        e.preventDefault();
+        playSound('click');
+
+        const form = e.target;
+        const formData = new FormData(form);
+
+        // Add FormSubmit configuration
+        formData.append("_subject", "New TechathonX Enquiry!");
+        formData.append("_captcha", "false");
+        formData.append("_template", "table");
+
+        try {
+            const response = await fetch("https://formsubmit.co/ajax/techathonx2k26.pec@gmail.com", {
+                method: "POST",
+                body: formData
+            });
+
+            if (response.ok) {
+                alert("Message sent successfully! The council will summon you shortly.");
+                form.reset();
+            } else {
+                alert("The raven lost its way. Please try again.");
+            }
+        } catch (error) {
+            alert("Connection spell failed.");
+        }
+    };
 
     return (
         <div className="contact-page-luxury relative min-h-screen">
@@ -102,14 +171,8 @@ const ContactPage = () => {
                             <h2 className="form-title-majestic">DIRECT COMMUNICATION</h2>
                             <form
                                 className="majestic-form"
-                                action="https://formsubmit.co/techathonx2k26.pec@gmail.com"
-                                method="POST"
+                                onSubmit={handleContactSubmit}
                             >
-                                {/* Configuration for FormSubmit */}
-                                <input type="hidden" name="_subject" value="New TechathonX Enquiry!" />
-                                <input type="hidden" name="_captcha" value="false" />
-                                <input type="hidden" name="_template" value="table" />
-
                                 <div className="form-group-majestic">
                                     <label>FULL NAME</label>
                                     <input name="name" type="text" placeholder="Enter your name" required />
@@ -141,12 +204,21 @@ const ContactPage = () => {
                         </div>
                         <div className="coordinators-grid mb-20">
                             {staffCouncil.map((person, i) => (
-                                <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
+                                <a
+                                    key={i}
+                                    href={person.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`coordinator-card-luxury ${person.theme}`}
+                                    onMouseEnter={() => playSound('hover')}
+                                    onClick={() => playSound('click')}
+                                    style={{ textDecoration: 'none', cursor: 'pointer', display: 'block' }}
+                                >
                                     <div className="house-logo-placeholder" style={{ fontSize: '2.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎓</div>
                                     <h4>{person.name}</h4>
                                     <p className="role-text">{person.role}</p>
                                     <p className="phone-text">{person.phone}</p>
-                                </div>
+                                </a>
                             ))}
                         </div>
 
@@ -156,14 +228,23 @@ const ContactPage = () => {
                         </div>
                         <div className="coordinators-grid">
                             {studentCouncil.map((person, i) => (
-                                <div key={i} className={`coordinator-card-luxury ${person.theme}`} onMouseEnter={() => playSound('hover')}>
+                                <a
+                                    key={i}
+                                    href={person.linkedin}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={`coordinator-card-luxury ${person.theme}`}
+                                    onMouseEnter={() => playSound('hover')}
+                                    onClick={() => playSound('click')}
+                                    style={{ textDecoration: 'none', cursor: 'pointer', display: 'block' }}
+                                >
                                     <div className="house-logo-placeholder">
                                         <img src={person.logo} alt="House Logo" className="house-logo-img" />
                                     </div>
                                     <h4>{person.name}</h4>
                                     <p className="role-text">{person.role}</p>
                                     <p className="phone-text">{person.phone}</p>
-                                </div>
+                                </a>
                             ))}
                         </div>
                     </div>

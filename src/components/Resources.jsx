@@ -1,6 +1,7 @@
 import React from 'react';
 import { FileText, Map, Image as ImageIcon, Gavel, Download } from 'lucide-react';
 import SectionReveal from './SectionReveal';
+import { useMagicSound } from '../hooks/useMagicSound';
 import './home-majestic.css';
 
 // Import Assets directly from docs using Vite's URL resolution
@@ -10,6 +11,8 @@ import rulesPdf from '../assets/docs/rules.pdf?url';
 import posterImg from '../assets/docs/POSTER.png?url';
 
 const Resources = () => {
+  const playSound = useMagicSound();
+
   const documents = [
     {
       name: "Event Poster",
@@ -54,6 +57,8 @@ const Resources = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="resource-item-glass"
+                onMouseEnter={() => playSound('hover')}
+                onClick={() => playSound('click')}
                 style={{
                   display: 'flex',
                   cursor: 'pointer',
@@ -80,5 +85,6 @@ const Resources = () => {
     </section>
   );
 };
+
 
 export default Resources;

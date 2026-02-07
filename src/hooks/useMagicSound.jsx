@@ -10,7 +10,8 @@ export const SoundProvider = ({ children }) => {
         hover: 'https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3', // Soft pop/whoosh
         transition: 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3', // Deep magic whoosh
         paper: 'https://assets.mixkit.co/active_storage/sfx/1103/1103-preview.mp3', // Paper rustle
-        seal: 'https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3' // Wax seal break
+        seal: 'https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3', // Wax seal break
+        assemble: 'https://www.myinstants.com/media/sounds/avengers-assemble-mudith.mp3' // Avengers Assemble voice
     };
 
     const playSound = useCallback((type) => {

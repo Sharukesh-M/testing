@@ -14,12 +14,12 @@ const arenaData = [
     {
         title: "VENUE",
         icon: "🏛️",
-        desc: "Main Auditorium & Central Library. High-speed connectivity and ergonomic spaces for 32 hours of creation."
+        desc: "Main Auditorium & Central Library. High-speed connectivity and ergonomic spaces for 24 hours of creation."
     },
     {
         title: "EXPERIENCE",
         icon: "✨",
-        desc: "A collaborative 32-hour journey with industry mentors, technical workshops, and national-level competition."
+        desc: "A collaborative 24-hours journey with industry mentors, technical workshops, and national-level competition."
     }
 ];
 

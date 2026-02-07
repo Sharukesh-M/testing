@@ -26,7 +26,7 @@ const VideoLoader = ({ onComplete }) => {
         // Transition to video after envelope animation
         setTimeout(() => {
             setStage("VIDEO");
-        }, 8000);
+        }, 5000);
     };
 
     useEffect(() => {

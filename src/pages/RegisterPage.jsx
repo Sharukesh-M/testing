@@ -149,9 +149,14 @@ const RegisterPage = () => {
                                 <button
                                     className="assemble-btn-majestic"
                                     onClick={() => {
+                                        if (!showOptions) {
+                                            playSound('assemble');
+                                        } else {
+                                            playSound('click');
+                                        }
                                         setShowOptions(!showOptions);
-                                        playSound('hover');
                                     }}
+                                    onMouseEnter={() => playSound('hover')}
                                 >
                                     {showOptions ? "CLOSE ENROLLMENT" : "ASSEMBLE HERE"}
                                 </button>

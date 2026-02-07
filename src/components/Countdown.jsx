@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useMagicSound } from "../hooks/useMagicSound";
 import "./home-majestic.css";
 
 const EVENT_DATE = new Date("March 4, 2026 09:00:00").getTime();
 
 export default function Countdown() {
   const navigate = useNavigate();
+  const playSound = useMagicSound();
   const [time, setTime] = useState(getRemaining());
 
   function getRemaining() {
@@ -87,7 +89,10 @@ export default function Countdown() {
           variants={itemVariants}
         >
           <button
-            onClick={() => navigate('/register')}
+            onClick={() => {
+              playSound('click');
+              navigate('/register');
+            }}
             className="majestic-button"
             style={{
               fontFamily: "'Cinzel', serif",
@@ -104,6 +109,7 @@ export default function Countdown() {
               transition: 'all 0.3s ease'
             }}
             onMouseOver={(e) => {
+              playSound('hover');
               e.currentTarget.style.transform = 'scale(1.05)';
               e.currentTarget.style.boxShadow = '0 0 25px rgba(241, 196, 15, 0.6)';
             }}

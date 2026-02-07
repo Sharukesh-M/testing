@@ -30,62 +30,65 @@
 }
 
 @media (max-width: 640px) {
+    .events-hero {
+        margin-bottom: 30px;
+        padding: 0 10px;
+    }
+
+    .magic-title-glow {
+        font-size: 2rem;
+        /* Reduced from 3.5rem */
+        letter-spacing: 2px;
+        line-height: 1.2;
+    }
+
+    .events-subtitle {
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+    }
+
     .domains-container {
         grid-template-columns: 1fr;
-        /* Single column */
         gap: 20px;
-        padding: 15px;
+        padding: 10px;
     }
 
     .domain-card-premium {
-        height: 180px;
-        /* Reduced height significantly */
+        height: 250px;
+        /* Increased slightly for better visibility */
     }
 
     .domain-card-premium h3 {
-        font-size: 0.9rem;
-        /* Smaller title */
+        font-size: 1.2rem;
         white-space: normal;
-        overflow-wrap: anywhere;
+        margin-bottom: 5px;
     }
 
     .domain-icon {
-        font-size: 1.2rem;
+        font-size: 1.5rem;
     }
 
     .domain-info-overlay {
-        padding: 10px;
-        /* Minimal padding */
+        padding: 15px;
         justify-content: flex-end;
-        /* Ensure text is at bottom */
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 30%, transparent);
-        /* Stronger gradient for text contrast */
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 40%, transparent);
+        /* Stronger gradient */
     }
 
-    /* Ensure image fits fully */
-    .domain-img-wrapper img {
-        object-fit: cover;
-        /* Back to cover to fill card, but card is smaller */
-        /* If user wants 'align image fully', they might mean contain, but that leaves gaps. 
-           User said "align the image fully". Let's try to insure it's centered. 
-           Actually user said "text is going out of frame when hovering the hiden text should not come when clicking pop should come"
-        */
-    }
-
-    /* DISABLE HOVER ON MOBILE - Hide description always */
     .domain-desc-premium {
-        display: none !important;
+        display: block !important;
+        /* Show description on mobile */
+        max-height: none;
+        margin-top: 10px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.9);
+        overflow: visible;
+        opacity: 1;
     }
 
-    .domain-card-premium:hover .domain-desc-premium {
-        display: none !important;
-    }
-
-    /* Reset hover borders/shadows to be subtle */
-    .domain-card-premium:hover {
-        transform: none;
-        box-shadow: none;
-        border-color: rgba(255, 255, 255, 0.2);
+    .domain-img-wrapper img {
+        opacity: 0.5;
+        /* Darken image slightly for text readability */
     }
 }
 
