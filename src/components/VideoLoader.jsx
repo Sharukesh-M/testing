@@ -86,6 +86,7 @@ const VideoLoader = ({ onComplete }) => {
                         onTimeUpdate={handleTimeUpdate}
                         preload="auto"
                         playsInline
+                        disablePictureInPicture
                     >
                         <source src="/videos/vid1.mp4" type="video/mp4" />
                         Your browser does not support the video tag.
