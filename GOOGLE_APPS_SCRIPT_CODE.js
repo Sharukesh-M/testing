@@ -148,7 +148,7 @@ function sendConfirmationEmail(email, name, teamId, teamName, txnId) {
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(teamId)}`;
 
   // CHANGE THIS URL TO YOUR DEPLOYED WEBSITE URL (e.g., https://your-site.netlify.app)
-  const websiteUrl = "http://localhost:5173";
+  const websiteUrl = "https://techtesting2k26.netlify.app";
 
   const magicLink = `${websiteUrl}/register?email=${encodeURIComponent(email)}`;
 
