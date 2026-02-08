@@ -74,7 +74,17 @@ const IDCard = ({ data, teamId, onClose }) => {
                 </div>
 
                 <div style={{ marginTop: '20px' }}>
-                    <p style={{ color: '#fff', marginBottom: '10px' }}>Registration Successful! Please download your ID Card.</p>
+                    <h2 style={{
+                        color: '#D4AF37',
+                        margin: '20px 0 10px 0',
+                        fontSize: '1.8rem',
+                        textShadow: '0 0 10px rgba(212, 175, 55, 0.5)'
+                    }}>
+                        🎉 CONGRATULATIONS! 🎉
+                    </h2>
+                    <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '1rem' }}>
+                        Your registration is confirmed. Welcome to the Arena.
+                    </p>
                     <button onClick={handleDownload} className="download-btn">DOWNLOAD PASS</button>
                     <button onClick={onClose} style={{
                         background: 'transparent',
