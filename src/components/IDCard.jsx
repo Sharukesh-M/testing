@@ -52,7 +52,7 @@ const IDCard = ({ data, teamId, onClose }) => {
                             <span className="detail-value">{data.teamName}</span>
                         </div>
                         <div className="detail-row">
-                            <span className="detail-label">TEAM LEAD</span>
+                            <span className="detail-label">NAME</span>
                             <span className="detail-value">{data.name}</span>
                         </div>
                         <div className="detail-row">

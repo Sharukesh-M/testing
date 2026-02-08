@@ -50,20 +50,59 @@ function onFormSubmit(e) {
     // We re-fetch the row values to ensure we have everything aligned
     const rowValues = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    // Find Email Column dynamically
+    // Find Email Column (Default/Lead)
     const emailColIndex = findColumnIndex(headers, "Email Address", "Email", "e-mail");
     const nameColIndex = findColumnIndex(headers, "Team Lead Name", "Lead Name", "Name");
     const teamNameColIndex = findColumnIndex(headers, "Team Name", "Team");
 
-    // Safe extraction
-    const email = emailColIndex > -1 ? rowValues[emailColIndex] : "";
-    const name = nameColIndex > -1 ? rowValues[nameColIndex] : "Participant";
+    // Safe extraction of Lead Data
+    const leadEmail = emailColIndex > -1 ? rowValues[emailColIndex] : "";
+    const leadName = nameColIndex > -1 ? rowValues[nameColIndex] : "Participant";
     const teamName = teamNameColIndex > -1 ? rowValues[teamNameColIndex] : "Techathon Team";
-    const txnId = "N/A"; // Simplified for now
+    const txnId = "N/A";
 
-    // Send Confirmation Email
-    if (email) {
-      sendConfirmationEmail(email, name, teamId, teamName, txnId);
+    // Find ALL columns that might contain emails (to email everyone)
+    const allEmailIndices = headers.map((h, i) => {
+      const lowerH = h.toString().toLowerCase();
+      return (lowerH.includes("email") || lowerH.includes("e-mail")) ? i : -1;
+    }).filter(i => i !== -1);
+
+    // Logic to send emails to everyone found
+    if (allEmailIndices.length === 0 && leadEmail) {
+      // Fallback to just lead if no email columns identified via scan but leadEmail was found
+      sendConfirmationEmail(leadEmail, leadName, teamId, teamName, txnId);
+    } else {
+      const sentEmails = new Set();
+
+      for (const idx of allEmailIndices) {
+        const memberEmail = String(rowValues[idx] || "").trim();
+
+        if (memberEmail && memberEmail.includes("@") && !sentEmails.has(memberEmail)) {
+          let memberName = "Participant";
+
+          // Identify Name for this email
+          if (idx === emailColIndex) {
+            memberName = leadName;
+          } else {
+            // Heuristic: Look at adjacent columns for "Name"
+            if (idx > 0) {
+              const prevHeader = headers[idx - 1].toLowerCase();
+              if (prevHeader.includes("name") && !prevHeader.includes("app") && !prevHeader.includes("id")) {
+                memberName = rowValues[idx - 1] || memberName;
+              }
+            }
+            if (memberName === "Participant" && idx < headers.length - 1) {
+              const nextHeader = headers[idx + 1].toLowerCase();
+              if (nextHeader.includes("name")) {
+                memberName = rowValues[idx + 1] || memberName;
+              }
+            }
+          }
+
+          sendConfirmationEmail(memberEmail, memberName, teamId, teamName, txnId);
+          sentEmails.add(memberEmail);
+        }
+      }
     }
 
   } catch (error) {
@@ -73,6 +112,10 @@ function onFormSubmit(e) {
 
 // API for Website to Fetch ID Card Data
 function doGet(e) {
+  const lock = LockService.getScriptLock();
+  // Wait for up to 30 seconds for other processes to finish.
+  lock.tryLock(30000);
+
   try {
     // 1. Handle CORS Preflight (if any)
     // 2. Get Parameters
@@ -95,29 +138,55 @@ function doGet(e) {
     const headers = data[0];
 
     // ROBUST COLUMN FINDING
-    const emailColIndex = findColumnIndex(headers, "Email Address", "Email", "e-mail");
     const teamIdColIndex = findColumnIndex(headers, "Team ID", "TeamID", "ID");
 
-    // Debugging info if needed
-    if (emailColIndex === -1) {
+    // Find ALL columns that might contain emails
+    const allEmailIndices = headers.map((h, i) => {
+      const lowerH = h.toString().toLowerCase();
+      return (lowerH.includes("email") || lowerH.includes("e-mail")) ? i : -1;
+    }).filter(i => i !== -1);
+
+    if (allEmailIndices.length === 0) {
       return ContentService.createTextOutput(JSON.stringify({
         status: "error",
-        message: "Could not find Email column in sheet. Headers: " + JSON.stringify(headers)
+        message: "Could not find any Email column in sheet. Headers: " + JSON.stringify(headers)
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
     let foundRow = null;
+    let foundRowIndex = -1; // 0-based index in 'data' array
+    let specificName = null;
     const searchEmailClean = String(emailToSearch).toLowerCase().trim();
 
     // Loop through data (starting row 1 to skip headers)
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      const rowEmail = String(row[emailColIndex] || "").toLowerCase().trim();
 
-      if (rowEmail === searchEmailClean) {
-        foundRow = row;
-        break; // Stop at first match
+      // Check ALL email columns for this row
+      for (const idx of allEmailIndices) {
+        const cellValue = String(row[idx] || "").toLowerCase().trim();
+        if (cellValue === searchEmailClean) {
+          foundRow = row;
+          foundRowIndex = i;
+
+          // Attempt to find specific member name if this isn't the main email
+          // Heuristic: Look at adjacent columns for "Name"
+          if (idx > 0) {
+            const prevHeader = headers[idx - 1].toLowerCase();
+            if (prevHeader.includes("name") && !prevHeader.includes("app") && !prevHeader.includes("id")) {
+              specificName = row[idx - 1];
+            }
+          }
+          if (!specificName && idx < headers.length - 1) {
+            const nextHeader = headers[idx + 1].toLowerCase();
+            if (nextHeader.includes("name")) {
+              specificName = row[idx + 1];
+            }
+          }
+          break;
+        }
       }
+      if (foundRow) break;
     }
 
     if (foundRow) {
@@ -127,12 +196,36 @@ function doGet(e) {
         return idx > -1 ? foundRow[idx] : "";
       };
 
+      const teamLeadName = getVal(["Team Lead Name", "Lead Name", "Name"]);
+
+      // SELF-HEALING: If Team ID is missing, Generate it NOW.
+      let currentTeamId = (teamIdColIndex > -1 ? foundRow[teamIdColIndex] : "");
+
+      if (!currentTeamId || String(currentTeamId).trim() === "") {
+        // Create Headers if missing
+        if (teamIdColIndex === -1) {
+          // Cannot reliably add header here, fallback to pending text
+          currentTeamId = "PENDING-NO-COL";
+        } else {
+          // Generate ID
+          // Row Index in Sheet is foundRowIndex + 1
+          const sheetRow = foundRowIndex + 1;
+          const newId = "TX-26" + ("000" + sheetRow).slice(-3);
+
+          // Save to Sheet
+          // Check if header is actually "Team ID" to be safe or if it was found via fuzzy match
+          // We use teamIdColIndex + 1 for getRange (1-based)
+          sheet.getRange(sheetRow, teamIdColIndex + 1).setValue(newId);
+          currentTeamId = newId; // Update so user gets it immediately
+        }
+      }
+
       const responseData = {
         status: "success",
         data: {
-          teamId: (teamIdColIndex > -1 ? foundRow[teamIdColIndex] : "") || "PENDING",
+          teamId: currentTeamId,
           teamName: getVal(["Team Name", "Team"]),
-          name: getVal(["Team Lead Name", "Lead Name", "Name"]),
+          name: specificName || teamLeadName, // Use member name if found
           college: getVal(["College Name", "College"]),
           domain: getVal(["Domain", "Track"]),
           transactionId: getVal(["Transaction ID", "Transaction"])
@@ -152,46 +245,57 @@ function doGet(e) {
       status: "error",
       message: "Server Error: " + error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
   }
 }
 
 function sendConfirmationEmail(email, name, teamId, teamName, txnId) {
-  const subject = `Registration Confirmed - TechathonX'26 [${teamId}]`;
+  const subject = `Welcome to the Arena - TechathonX'26 [${teamId}]`;
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(teamId)}`;
 
-  // CHANGE THIS URL TO YOUR DEPLOYED WEBSITE URL (e.g., https://your-site.netlify.app)
+  // CHANGE THIS URL TO YOUR DEPLOYED WEBSITE URL
   const websiteUrl = "https://techtesting2k26.netlify.app";
 
   const magicLink = `${websiteUrl}/register?email=${encodeURIComponent(email)}`;
 
   const body = `
-      <div style="font-family: 'Courier New', monospace; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #000; background-color: #f4f4f4;">
-        <h2 style="color: #000; text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px;">OFFICIAL ENTRY PASS</h2>
+      <div style="font-family: 'Courier New', monospace; max-width: 600px; margin: 0 auto; padding: 20px; border: 2px solid #1A0B2E; background-color: #f4f4f4;">
+        
+        <!-- CONGRATULATIONS HEADER -->
+        <div style="background-color: #1A0B2E; color: #D4AF37; padding: 20px; text-align: center; margin-bottom: 25px; border-bottom: 3px solid #D4AF37;">
+            <h1 style="margin: 0; font-size: 28px; letter-spacing: 2px;">🎉 CONGRATULATIONS! 🎉</h1>
+            <p style="margin: 10px 0 0; font-size: 14px; letter-spacing: 1px; color: #fff;">YOUR REGISTRATION IS CONFIRMED</p>
+        </div>
+
+        <h2 style="color: #000; text-align: center; border-bottom: 1px solid #ccc; padding-bottom: 10px;">OFFICIAL ENTRY PASS</h2>
         <p>AGENT: <strong>${name}</strong></p>
         <p>OPERATION: <strong>TechathonX'26</strong></p>
         <p>SQUAD: <strong>"${teamName}"</strong></p>
         
-        <div style="background-color: #fff; padding: 15px; border: 1px dashed #000; margin: 20px 0; text-align: center;">
-          <h1 style="margin: 0; font-size: 32px; letter-spacing: 5px;">${teamId}</h1>
-          <p style="margin: 5px 0 0; font-size: 12px;">UNIQUE IDENTIFIER</p>
+        <div style="background-color: #fff; padding: 15px; border: 2px dashed #D4AF37; margin: 20px 0; text-align: center;">
+          <h1 style="margin: 0; font-size: 32px; letter-spacing: 5px; color: #1A0B2E;">${teamId}</h1>
+          <p style="margin: 5px 0 0; font-size: 12px; color: #666;">UNIQUE IDENTIFIER</p>
         </div>
 
         <div style="text-align: center; margin: 20px 0;">
-          <img src="${qrUrl}" alt="QR Code" style="border: 4px solid #000;" />
+          <img src="${qrUrl}" alt="QR Code" style="border: 4px solid #1A0B2E; padding: 5px; background: white;" />
           <p style="font-size: 10px; margin-top: 5px;">SCAN FOR ACCESS</p>
         </div>
 
         <div style="text-align: center; margin: 30px 0;">
-          <a href="${magicLink}" style="background-color: #000; color: #fff; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block;">
+          <a href="${magicLink}" style="background-color: #1A0B2E; color: #D4AF37; padding: 15px 30px; text-decoration: none; font-weight: bold; border-radius: 5px; display: inline-block; border: 1px solid #D4AF37;">
              ACCESS DIGITAL ID CARD ➔
           </a>
-          <p style="font-size: 10px; margin-top: 10px;">Click above to view and download your full pass.</p>
+          <p style="font-size: 11px; margin-top: 15px; color: #555;">Click above to view and download your full pass.</p>
         </div>
 
-        <p>This document serves as your official entry pass. Do not share this QR code with unauthorized personnel.</p>
-        <p><strong>VENUE:</strong> Prathyusha Engineering College</p>
-        <hr style="border: 0; border-top: 1px solid #000; margin: 20px 0;">
-        <p style="font-size: 10px; text-align: center;">GENERATED BY TECHATHONX SYSTEM</p>
+        <div style="background-color: #e0e0e0; padding: 15px; font-size: 11px; text-align: center; color: #333;">
+            <p><strong>VENUE:</strong> Prathyusha Engineering College</p>
+            <p>This document serves as your official entry pass. Do not share your unique ID with unauthorized personnel.</p>
+        </div>
+        
+        <p style="font-size: 10px; text-align: center; margin-top: 20px; color: #888;">GENERATED BY TECHATHONX SYSTEM</p>
       </div>
     `;
 

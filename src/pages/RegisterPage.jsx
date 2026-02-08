@@ -7,7 +7,7 @@ import '../components/register-premium.css';
 import IDCard from '../components/IDCard';
 
 // CONFIGURATION: PASTE YOUR GOOGLE WEB APP URL HERE
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycbxvDahkUhNwpD-oLyRPtJS6nxDgdYX9ZGeypCnMk26T_lMVXsiP5pYQarIEIGjijdYhFQ/exec";
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycbx1rNH-6zvf2Xswd9_mSbMX2WDk5IPA83Lzyn-JxC1kSRL9W7nnpcEijB8eZzDiFS8Hsg/exec";
 
 // GOOGLE FORM LINK (Provided by User) - Use proper viewform link
 const GFORM_LINK = "https://docs.google.com/forms/d/1IhmX0u-JzCqll6O3R42LgAeTVWWoJGNrDN7SAZJXGSQ/viewform";
