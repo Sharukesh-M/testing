@@ -1,0 +1,16 @@
+
+IMPORTANT: You MUST also set up a Trigger for the emails to work automatically!
+
+1. Go back to your Script Editor (where you pasted the code).
+2. Click the `Clock Icon` (Triggers) on the left sidebar.
+3. Click `+ Add Trigger` (bottom right blue button).
+4. Configure these settings:
+   - Choose which function to run: `onFormSubmit`
+   - Select event source: `From spreadsheet`
+   - Select event type: `On form submit`
+5. Click Save. It will ask for permissions again -> Allow it.
+
+NOW EVERYTHING IS READY.
+- Users fill the Google Form.
+- Script automatically runs -> Generated Team ID -> Sends Email.
+- Users come back to website -> Click "Get Entry Pass" -> Enter Email -> Get ID Card.
