@@ -12,63 +12,54 @@
 //    - Select event type: `On form submit`
 // 5. Save and Authorize.
 
+// Helper to find column index by name (case-insensitive, partial match)
+function findColumnIndex(headers, ...candidates) {
+  for (const candidate of candidates) {
+    const normalize = s => s.toString().toLowerCase().trim();
+    const index = headers.findIndex(h => normalize(h).includes(normalize(candidate)));
+    if (index !== -1) return index;
+  }
+  return -1;
+}
+
 function onFormSubmit(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     const range = e.range;
     const row = range.getRow();
 
-    // Get values directly from the sheet to ensure we have the latest data
-    // ASSUMPTION: Column 1 is Timestamp, then subsequent columns follow the Form order.
-    // YOU MUST ADJUST THESE INDEXES BASED ON YOUR FORM QUESTIONS
-    // Let's assume:
-    // Col 1: Timestamp
-    // Col 2: Email Address (if collected)
-    // Col 3: Team Name
-    // Col 4: Lead Name
-    // Col 5: Year
-    // Col 6: Department
-    // Col 7: College Name
-    // Col 8: Mobile
-    // Col 9: Transaction ID
-    // Col 10: Domain
-    // Col 11: Member Details (if any)
-
-    // IMPORTANT: It's better to use Named Values if possible, but row index is reliable for simple sheets.
-    // Let's generate a Team ID
-
+    // Generate Team ID
     const teamId = "TX-26" + ("000" + row).slice(-3); // e.g. TX-26002
 
-    // Write Team ID to the LAST column (or a specific column if you prefer)
-    // Let's verify if a Team ID column exists, otherwise append it.
-    // Assuming we want to write it to Column 15 (O) for example.
-    // BETTER: Find a header named "Team ID" or add it.
-
+    // Get Headers to find/create "Team ID" column
     const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-    let teamIdColIndex = headers.indexOf("Team ID") + 1;
+    let teamIdColIndex = findColumnIndex(headers, "Team ID", "TeamID", "ID");
 
-    if (teamIdColIndex === 0) {
+    if (teamIdColIndex === -1) {
       // Create header if not exists
       teamIdColIndex = sheet.getLastColumn() + 1;
       sheet.getRange(1, teamIdColIndex).setValue("Team ID");
+      // Adjust index to be 0-based for internal logic if needed, but setValue uses 1-based
+      teamIdColIndex = teamIdColIndex - 1;
     }
 
-    // Set Team ID in the row
-    sheet.getRange(row, teamIdColIndex).setValue(teamId);
+    // Set Team ID in the row (teamIdColIndex is 0-based from findColumnIndex, so +1 for getRange)
+    sheet.getRange(row, teamIdColIndex + 1).setValue(teamId);
 
-    // Extract Data for Email/ID Card
-    // Use e.namedValues for reliability if form setup changes
-    // e.namedValues keys match the Question Titles exactly
-    const responses = e.namedValues;
+    // Fetch values for email
+    // We re-fetch the row values to ensure we have everything aligned
+    const rowValues = sheet.getRange(row, 1, 1, sheet.getLastColumn()).getValues()[0];
 
-    // FALLBACK: If namedValues isn't working as expected, use default names
-    // Note: Adjust these keys to match your EXACT Google Form Question Titles
-    const email = responses['Email Address'] ? responses['Email Address'][0] : "";
-    const name = responses['Team Lead Name'] ? responses['Team Lead Name'][0] : (responses['Name'] ? responses['Name'][0] : "Participant");
-    const teamName = responses['Team Name'] ? responses['Team Name'][0] : "Techathon Team";
-    const txnId = responses['Transaction ID'] ? responses['Transaction ID'][0] : "N/A";
-    const college = responses['College Name'] ? responses['College Name'][0] : "KSRIET";
-    const domain = responses['Domain'] ? responses['Domain'][0] : "Open Innovation";
+    // Find Email Column dynamically
+    const emailColIndex = findColumnIndex(headers, "Email Address", "Email", "e-mail");
+    const nameColIndex = findColumnIndex(headers, "Team Lead Name", "Lead Name", "Name");
+    const teamNameColIndex = findColumnIndex(headers, "Team Name", "Team");
+
+    // Safe extraction
+    const email = emailColIndex > -1 ? rowValues[emailColIndex] : "";
+    const name = nameColIndex > -1 ? rowValues[nameColIndex] : "Participant";
+    const teamName = teamNameColIndex > -1 ? rowValues[teamNameColIndex] : "Techathon Team";
+    const txnId = "N/A"; // Simplified for now
 
     // Send Confirmation Email
     if (email) {
@@ -83,63 +74,84 @@ function onFormSubmit(e) {
 // API for Website to Fetch ID Card Data
 function doGet(e) {
   try {
+    // 1. Handle CORS Preflight (if any)
+    // 2. Get Parameters
     const emailToSearch = e.parameter.email;
-    const teamIdToSearch = e.parameter.teamId;
 
-    if (!emailToSearch && !teamIdToSearch) {
-      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "No email or ID provided" })).setMimeType(ContentService.MimeType.JSON);
+    if (!emailToSearch) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "No email provided"
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     const data = sheet.getDataRange().getValues();
+
+    if (data.length === 0) {
+      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Sheet is empty" })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     const headers = data[0];
 
-    // Find Columns
-    const emailColIndex = headers.indexOf("Email Address"); // Default GForm email header
-    const teamIdColIndex = headers.indexOf("Team ID");
+    // ROBUST COLUMN FINDING
+    const emailColIndex = findColumnIndex(headers, "Email Address", "Email", "e-mail");
+    const teamIdColIndex = findColumnIndex(headers, "Team ID", "TeamID", "ID");
 
-    // If exact header names differ, try to guess or use fixed indices
-    // You might need to update "Email Address" to whatever your form says, e.g. "Email"
+    // Debugging info if needed
+    if (emailColIndex === -1) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "Could not find Email column in sheet. Headers: " + JSON.stringify(headers)
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
 
     let foundRow = null;
+    const searchEmailClean = String(emailToSearch).toLowerCase().trim();
 
+    // Loop through data (starting row 1 to skip headers)
     for (let i = 1; i < data.length; i++) {
       const row = data[i];
-      // Check Email match (case insensitive)
-      if (emailToSearch && String(row[emailColIndex]).toLowerCase().trim() === emailToSearch.toLowerCase().trim()) {
+      const rowEmail = String(row[emailColIndex] || "").toLowerCase().trim();
+
+      if (rowEmail === searchEmailClean) {
         foundRow = row;
-        break;
+        break; // Stop at first match
       }
     }
 
     if (foundRow) {
-      // Map data back to JSON
-      // We need to hunt for specific columns again dynamically or hardcode indices
-      // Helper to safely get value by header name
-      const getVal = (headerName) => {
-        const idx = headers.indexOf(headerName);
+      // Helper to safely get value
+      const getVal = (candidates) => {
+        const idx = findColumnIndex(headers, ...candidates);
         return idx > -1 ? foundRow[idx] : "";
       };
 
       const responseData = {
         status: "success",
         data: {
-          teamId: getVal("Team ID") || "PENDING",
-          teamName: getVal("Team Name"),
-          name: getVal("Team Lead Name") || getVal("Name"),
-          college: getVal("College Name") || "KSRIET",
-          domain: getVal("Domain"),
-          transactionId: getVal("Transaction ID")
+          teamId: (teamIdColIndex > -1 ? foundRow[teamIdColIndex] : "") || "PENDING",
+          teamName: getVal(["Team Name", "Team"]),
+          name: getVal(["Team Lead Name", "Lead Name", "Name"]),
+          college: getVal(["College Name", "College"]),
+          domain: getVal(["Domain", "Track"]),
+          transactionId: getVal(["Transaction ID", "Transaction"])
         }
       };
 
       return ContentService.createTextOutput(JSON.stringify(responseData)).setMimeType(ContentService.MimeType.JSON);
     } else {
-      return ContentService.createTextOutput(JSON.stringify({ status: "error", message: "Not found" })).setMimeType(ContentService.MimeType.JSON);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: "error",
+        message: "No registration found for: " + emailToSearch
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
   } catch (error) {
-    return ContentService.createTextOutput(JSON.stringify({ status: "error", message: error.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: "error",
+      message: "Server Error: " + error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
 

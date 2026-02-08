@@ -7,7 +7,7 @@ import '../components/register-premium.css';
 import IDCard from '../components/IDCard';
 
 // CONFIGURATION: PASTE YOUR GOOGLE WEB APP URL HERE
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycbzuUz8_3URWRljn92Wj-dGRkF145YWkASbBwNCefFeVqYwpODws4UlGsPDZ8xQBdvYa5w/exec";
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycbxvDahkUhNwpD-oLyRPtJS6nxDgdYX9ZGeypCnMk26T_lMVXsiP5pYQarIEIGjijdYhFQ/exec";
 
 // GOOGLE FORM LINK (Provided by User) - Use proper viewform link
 const GFORM_LINK = "https://docs.google.com/forms/d/1IhmX0u-JzCqll6O3R42LgAeTVWWoJGNrDN7SAZJXGSQ/viewform";
@@ -43,17 +43,20 @@ const RegisterPage = () => {
             const response = await fetch(`${GSHEET_URL}?email=${encodeURIComponent(email)}`);
             const result = await response.json();
 
+            // Check for success status
             if (result.status === "success" && result.data) {
                 setRetrievedData(result.data);
                 setGeneratedTeamId(result.data.teamId);
                 playSound('assemble');
             } else {
-                alert("No registration found for this email. Please check the email or register first.");
-                console.log("No registration found for this email.");
+                // Show specific error from backend if available
+                const msg = result.message || "No registration found for this email. Please check the email or register first.";
+                alert(msg);
+                console.log("Search failed:", msg);
             }
         } catch (error) {
             console.error("Search Error:", error);
-            alert("An error occurred while searching. Please try again.");
+            alert("An error occurred while connecting to the server. Please try again.");
         } finally {
             setIsSearching(false);
         }
