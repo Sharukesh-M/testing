@@ -26,16 +26,17 @@ const ScrollToTop = () => {
 import Cursor from "./components/Cursor";
 
 const AppContent = () => {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    const params = new URLSearchParams(location.search);
+    return !(params.has('email') || params.get('mode') === 'download');
+  });
   const navigate = useNavigate(); // Now valid because Router is upstream
 
   useEffect(() => {
-    // Force reset to Home on refresh/mount
-    navigate("/");
-
-    // Optional: If you use sessionStorage to prevent intro on reload, clear it here 
-    // to strict comply with "always start from first" request.
-    sessionStorage.removeItem("introPlayed");
+    if (showIntro) {
+      navigate("/");
+      sessionStorage.removeItem("introPlayed");
+    }
   }, []);
 
   const handleIntroComplete = () => {

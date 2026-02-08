@@ -39,24 +39,21 @@ const RegisterPage = () => {
 
     const fetchTicketInternal = async (email) => {
         setIsSearching(true);
-        // Don't play sound on auto-load to avoid browser policy blocking
-        // playSound('click'); 
-
         try {
             const response = await fetch(`${GSHEET_URL}?email=${encodeURIComponent(email)}`);
             const result = await response.json();
 
-            if (result.status === "success") {
+            if (result.status === "success" && result.data) {
                 setRetrievedData(result.data);
                 setGeneratedTeamId(result.data.teamId);
                 playSound('assemble');
             } else {
-                // Only alert if it was a manual search, or show a polite message
-                // For now, we'll just log it to avoid annoying popups on load
+                alert("No registration found for this email. Please check the email or register first.");
                 console.log("No registration found for this email.");
             }
         } catch (error) {
             console.error("Search Error:", error);
+            alert("An error occurred while searching. Please try again.");
         } finally {
             setIsSearching(false);
         }
