@@ -7,7 +7,7 @@ import '../components/register-premium.css';
 import IDCard from '../components/IDCard';
 
 // CONFIGURATION: PASTE YOUR GOOGLE WEB APP URL HERE
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycbx1rNH-6zvf2Xswd9_mSbMX2WDk5IPA83Lzyn-JxC1kSRL9W7nnpcEijB8eZzDiFS8Hsg/exec";
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycby7XlJ0SI8Q3VxqV5_ppK1yeqdUV5halOfQZqREqKhAS8dxIOTOZn3Vf5FSAJGEYTVC/exec";
 
 // GOOGLE FORM LINK (Provided by User) - Use proper viewform link
 const GFORM_LINK = "https://docs.google.com/forms/d/1IhmX0u-JzCqll6O3R42LgAeTVWWoJGNrDN7SAZJXGSQ/viewform";
@@ -40,7 +40,7 @@ const RegisterPage = () => {
     const fetchTicketInternal = async (email) => {
         setIsSearching(true);
         try {
-            const response = await fetch(`${GSHEET_URL}?email=${encodeURIComponent(email)}`);
+            const response = await fetch(`${GSHEET_URL}?action=search_email&email=${encodeURIComponent(email)}`);
             const result = await response.json();
 
             // Check for success status

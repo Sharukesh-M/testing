@@ -51,7 +51,7 @@ function handleRequest(e) {
     if (attendanceColIdx === -1) {
       attendanceColIdx = headers.length; // New column index
       sheet.getRange(1, attendanceColIdx + 1).setValue("Attendance"); // Add header
-      // Re-fetch data to include new column
+      // Re-fetch data NOT needed for write, we know the index
     }
 
     if (teamIdColIdx === -1) return jsonResponse({ status: "error", message: "Team ID column missing" });
@@ -62,9 +62,6 @@ function handleRequest(e) {
         const rowIdx = i + 1;
         // Mark as PRESENT
         // Note: If column was just added, we need to be careful with index.
-        // Best to re-read headers/data or just trust valid index if existing
-        // Since we might have added a col, let's just use the calculated index.
-        // If it was -1, it's now 'headers.length'.
         const targetCol = (attendanceColIdx === -1) ? headers.length + 1 : attendanceColIdx + 1;
 
         sheet.getRange(rowIdx, targetCol).setValue("PRESENT");
@@ -82,7 +79,8 @@ function handleRequest(e) {
   // ----------------------------------------------------
   // ACTION: GET TEAM BY ID (For Admin Scan) or EMAIL
   // ----------------------------------------------------
-  if (action === 'get_team' || action === 'search_email') {
+  // Fallback: If no action provided but email exists, assume search (legacy support)
+  if (action === 'get_team' || action === 'search_email' || (!action && params.email)) {
     const data = sheet.getDataRange().getValues();
     const headers = data[0];
 
@@ -143,8 +141,8 @@ function formatTeamData(row, headers) {
 
   return {
     teamId: getVal("Team ID"),
-    teamName: getVal("Team Name"),
-    name: getVal("Team Leader Name"),
+    teamName: getVal("Team Name") || "Participating Team",
+    name: getVal("Team Leader Name") || "Participant",
     college: getVal("College Name"),
     domain: getVal("Selected Domain"),
     transactionId: getVal("Transaction ID"),
@@ -217,7 +215,7 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
         </div>
 
         <p style="text-align: center; margin-top: 30px;">
-           <a href="https://testing-mu-lac.vercel.app/register?mode=download&email=${encodeURIComponent(toEmail)}" 
+           <a href="https://testing-mu-lac.vercel.app/register?mode=download&email=${toEmail}" 
               style="background-color: #bc13fe; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px;">
               DOWNLOAD ID CARD
            </a>
@@ -246,7 +244,7 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
 
   try {
     const response = UrlFetchApp.fetch(url, options);
-    Logger.log("Email sent: " + response.getContentText());
+    Logger.log("Email sent to: " + toEmail);
   } catch (e) {
     Logger.log("Error sending email: " + e.toString());
   }
@@ -262,8 +260,8 @@ function processAllRows() {
 
   let teamIdCol = headers.indexOf("Team ID") + 1;
   const emailCol = headers.indexOf("Email Address");
-  const nameCol = headers.indexOf("Team Leader Name");
-  const teamNameCol = headers.indexOf("Team Name");
+  const nameCol = headers.indexOf("Team Leader Name"); // Will be -1 if not found
+  const teamNameCol = headers.indexOf("Team Name"); // Will be -1 if not found
 
   if (teamIdCol === 0) {
     teamIdCol = headers.length + 1;
@@ -279,6 +277,7 @@ function processAllRows() {
       sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
 
       const email = data[i][emailCol];
+      // Use defaults if column not found
       const name = nameCol !== -1 ? data[i][nameCol] : "Participant";
       const teamName = teamNameCol !== -1 ? data[i][teamNameCol] : "Your Team";
 
@@ -287,4 +286,17 @@ function processAllRows() {
       }
     }
   }
+}
+
+// ------------------------------------------
+// 5. TEST FUNCTION (Run this to test API)
+// ------------------------------------------
+function testBrevoConnection() {
+  // 1. OPEN SHEET
+  // 2. Select this function 'testBrevoConnection' from top dropdown
+  // 3. Click 'Run'
+  // 4. Check View -> Executions for logs
+  const testEmail = "techathonx26@gmail.com"; // Sends to yourself
+  Logger.log("Testing Brevo API...");
+  sendBrevoEmail(testEmail, "Test Admin", "TX-TEST-001", "Debug Team");
 }
