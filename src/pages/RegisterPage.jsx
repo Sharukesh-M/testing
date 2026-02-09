@@ -39,6 +39,10 @@ const RegisterPage = () => {
 
     const fetchTicketInternal = async (email) => {
         setIsSearching(true);
+
+        console.log("🔍 Attempting to fetch team data for:", email);
+        console.log("📡 API Endpoint:", 'https://client.linupadippurakkal.com/team');
+
         try {
             const response = await fetch('https://client.linupadippurakkal.com/team', {
                 method: 'POST',
@@ -47,6 +51,8 @@ const RegisterPage = () => {
                 },
                 body: JSON.stringify({ email: email })
             });
+
+            console.log("✅ Response received:", response.status, response.statusText);
 
             // Handle HTTP error responses
             if (!response.ok) {
@@ -64,6 +70,7 @@ const RegisterPage = () => {
             }
 
             const result = await response.json();
+            console.log("📦 Data received:", result);
 
             // The new API returns the team data directly
             if (result && result.team_id) {
@@ -92,8 +99,28 @@ const RegisterPage = () => {
                 console.log("Search failed: Invalid response format");
             }
         } catch (error) {
-            console.error("Search Error:", error);
-            alert("An error occurred while connecting to the server. Please try again.");
+            console.error("❌ Search Error:", error);
+            console.error("Error details:", {
+                name: error.name,
+                message: error.message,
+                stack: error.stack
+            });
+
+            // Provide more specific error messages
+            let errorMessage = "An error occurred while connecting to the server.";
+
+            if (error.message === "Failed to fetch") {
+                errorMessage = "⚠️ Cannot connect to the server. This could be due to:\n\n" +
+                    "1. CORS (Cross-Origin) restrictions\n" +
+                    "2. The API server is offline\n" +
+                    "3. Network connectivity issues\n" +
+                    "4. Firewall blocking the request\n\n" +
+                    "Please check the browser console for more details.";
+            } else if (error.name === "TypeError") {
+                errorMessage = "Network error: Unable to reach the API server. Please check your internet connection.";
+            }
+
+            alert(errorMessage);
         } finally {
             setIsSearching(false);
         }
