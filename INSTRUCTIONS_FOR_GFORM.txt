@@ -1,16 +1,25 @@
 
 IMPORTANT: You MUST also set up a Trigger for the emails to work automatically!
 
-1. Go back to your Script Editor (where you pasted the code).
-2. Click the `Clock Icon` (Triggers) on the left sidebar.
-3. Click `+ Add Trigger` (bottom right blue button).
-4. Configure these settings:
-   - Choose which function to run: `onFormSubmit`
+1. Go back to your Script Editor (https://script.google.com/).
+2. Paste the code from `GOOGLE_APPS_SCRIPT_CODE.js` into the editor.
+3. **CRITICAL**: 
+   - Get your Brevo API Key from https://app.brevo.com/settings/keys/api
+   - Replace `YOUR_BREVO_API_KEY_HERE` in the code with your actual key.
+   - Replace `techathonx@example.com` with your verified sender email in Brevo.
+
+4. Click the `Clock Icon` (Triggers) on the left sidebar.
+5. Click `+ Add Trigger` (bottom right blue button).
+6. Configure these settings:
+   - Choose which function to run: `onFormSubmit` (NOT `doGet`)
    - Select event source: `From spreadsheet`
    - Select event type: `On form submit`
-5. Click Save. It will ask for permissions again -> Allow it.
+7. Click Save. It will ask for permissions again -> Allow it.
 
-NOW EVERYTHING IS READY.
-- Users fill the Google Form.
-- Script automatically runs -> Generated Team ID -> Sends Email.
-- Users come back to website -> Click "Get Entry Pass" -> Enter Email -> Get ID Card.
+ADMIN QR SCAN:
+- The script now supports searching by Team ID.
+- Your admin app can fetch details using: `YOUR_SCRIPT_URL?action=get_team&id=TX-26001`
+- The QR code in the emails and ID cards contains the Team ID.
+
+CHECKING EMAILS:
+- If you have existing rows that didn't get emails, run the function `processAllRows` manually from the script editor to backfill IDs and send emails.

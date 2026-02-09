@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -6,13 +7,18 @@ import './IDCard.css';
 const IDCard = ({ data, teamId, onClose }) => {
     const cardRef = useRef(null);
 
+    // Path to the image the user will upload
+    // Instruct user to place "id_card_bg.png" in the "public" folder
+    const bgImage = "/id_card_bg.png";
+
     const handleDownload = async () => {
         if (cardRef.current) {
             try {
+                // Wait for images to load before capturing
                 const canvas = await html2canvas(cardRef.current, {
-                    scale: 2,
-                    backgroundColor: '#1A0B2E',
-                    useCORS: true
+                    scale: 3, // High resolution
+                    useCORS: true,
+                    backgroundColor: null, // Transparent background
                 });
 
                 const image = canvas.toDataURL("image/png");
@@ -31,61 +37,84 @@ const IDCard = ({ data, teamId, onClose }) => {
 
     return (
         <div className="id-card-modal-overlay">
-            <div className="id-card-wrapper-dl" style={{ textAlign: 'center' }}>
-                <div className="id-card-content" ref={cardRef}>
-                    <div className="id-card-header">
-                        <h2 className="id-card-title">TECHATHONX'26</h2>
-                        <p style={{ letterSpacing: '2px', color: '#D4AF37', fontSize: '0.8rem', marginTop: '5px' }}>OFFICIAL ENTRY PASS</p>
+            <div className="id-card-wrapper-dl">
+
+                {/* 
+                    This is the capture area. 
+                    It uses the background image if available.
+                */}
+                <div
+                    className="id-card-content"
+                    ref={cardRef}
+                    style={{
+                        backgroundImage: `url(${bgImage})`,
+                        // Fallback gradient if image not found or loading
+                        backgroundColor: '#1a0b2e'
+                    }}
+                >
+                    {/* 
+                        ADJUST THESE CLASS NAMES IN CSS TO MATCH YOUR IMAGE LAYOUT 
+                        You might need to change 'top', 'left', etc. in CSS 
+                        based on where the empty slots are in your design.
+                    */}
+
+                    {/* QR Code Position */}
+                    <div className="qr-section" style={{
+                        marginTop: '160px', // Adjust this to move QR down/up
+                        background: 'white',
+                        padding: '5px',
+                        borderRadius: '8px'
+                    }}>
+                        <QRCodeCanvas
+                            value={teamId}
+                            size={100}
+                            fgColor="#000000"
+                            bgColor="#ffffff"
+                            level="H"
+                        />
                     </div>
 
-                    <div className="qr-section">
-                        <QRCodeCanvas value={teamId} size={120} fgColor="#1A0B2E" />
-                    </div>
-
-                    <div className="id-card-details">
+                    {/* Text Details Position */}
+                    <div className="id-card-details" style={{
+                        marginTop: '20px', // Adjust spacing from QR
+                        width: '80%',
+                    }}>
                         <div className="detail-row">
-                            <span className="detail-label">TEAM ID</span>
+                            <span className="detail-label">ID</span>
                             <span className="detail-value" style={{ color: '#00ffea' }}>{teamId}</span>
                         </div>
                         <div className="detail-row">
-                            <span className="detail-label">TEAM NAME</span>
+                            <span className="detail-label">TEAM</span>
                             <span className="detail-value">{data.teamName}</span>
                         </div>
+
                         <div className="detail-row">
-                            <span className="detail-label">NAME</span>
+                            <span className="detail-label">LEADER</span>
                             <span className="detail-value">{data.name}</span>
                         </div>
-                        <div className="detail-row">
-                            <span className="detail-label">COLLEGE</span>
-                            <span className="detail-value" style={{ fontSize: '0.8rem', maxWidth: '200px', textAlign: 'right' }}>
-                                {data.college || "KSRIET"}
-                            </span>
-                        </div>
-                        <div className="detail-row">
-                            <span className="detail-label">DOMAIN</span>
-                            <span className="detail-value">{data.domain || "OPEN INNOVATION"}</span>
-                        </div>
-                    </div>
 
-                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: '20px' }}>
-                        Authorized by TechathonX Committee<br />
-                        Verification ID: {data.transactionId?.slice(-6)}
-                    </p>
+                        {/* Optional: Add College/Domain if your design has space */}
+                        {/* 
+                         <div className="detail-row">
+                            <span className="detail-label">COLLEGE</span>
+                            <span className="detail-value">{data.college}</span>
+                         </div> 
+                         */}
+                    </div>
                 </div>
 
-                <div style={{ marginTop: '20px' }}>
-                    <h2 style={{
-                        color: '#D4AF37',
-                        margin: '20px 0 10px 0',
-                        fontSize: '1.8rem',
-                        textShadow: '0 0 10px rgba(212, 175, 55, 0.5)'
-                    }}>
-                        🎉 CONGRATULATIONS! 🎉
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <h2 style={{ color: '#D4AF37', fontSize: '1.5rem', marginBottom: '10px' }}>
+                        YOUR OFFICIAL ID CARD
                     </h2>
-                    <p style={{ color: '#e0e0e0', marginBottom: '20px', fontSize: '1rem' }}>
-                        Your registration is confirmed. Welcome to the Arena.
+                    <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '20px' }}>
+                        If the background image is missing, place <b>id_card_bg.png</b> in the <b>public</b> folder.
                     </p>
-                    <button onClick={handleDownload} className="download-btn">DOWNLOAD PASS</button>
+
+                    <button onClick={handleDownload} className="download-btn">
+                        DOWNLOAD ID
+                    </button>
+
                     <button onClick={onClose} style={{
                         background: 'transparent',
                         color: 'rgba(255,255,255,0.5)',
@@ -94,7 +123,9 @@ const IDCard = ({ data, teamId, onClose }) => {
                         borderRadius: '50px',
                         marginLeft: '15px',
                         cursor: 'pointer'
-                    }}>CLOSE</button>
+                    }}>
+                        CLOSE
+                    </button>
                 </div>
             </div>
         </div>

@@ -12,6 +12,7 @@ import Events from "./pages/Events";
 import Competitions from "./pages/Competitions";
 import RegisterPage from "./pages/RegisterPage";
 import ContactPage from "./pages/ContactPage";
+import AdminPage from "./pages/AdminPage";
 
 import "./styles/global.css";
 
@@ -27,7 +28,9 @@ import Cursor from "./components/Cursor";
 
 const AppContent = () => {
   const [showIntro, setShowIntro] = useState(() => {
-    const params = new URLSearchParams(location.search);
+    const params = new URLSearchParams(window.location.search);
+    const path = window.location.pathname;
+    if (path.includes("admin-scan")) return false;
     return !(params.has('email') || params.get('mode') === 'download');
   });
   const navigate = useNavigate(); // Now valid because Router is upstream
@@ -62,6 +65,7 @@ const AppContent = () => {
               <Route path="/competitions" element={<Competitions />} />
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/contact" element={<ContactPage />} />
+              <Route path="/admin-scan" element={<AdminPage />} />
             </Routes>
           </main>
           <Footer />
