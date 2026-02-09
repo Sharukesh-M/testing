@@ -1,5 +1,6 @@
 // ==========================================
 // GOOGLE APPS SCRIPT CODE FOR TECHATHON X
+// SENDS EMAILS TO ALL TEAM MEMBERS
 // ==========================================
 
 // ------------------------------------------
@@ -86,7 +87,7 @@ function handleRequest(e) {
       const headers = data[0];
 
       const teamIdColIdx = headers.indexOf("Team ID");
-      const emailColIdx = headers.indexOf("Email address"); // Note: lowercase 'address'
+      const emailColIdx = headers.indexOf("Email address");
       const attendanceColIdx = headers.indexOf("Attendance");
 
       let foundRow = null;
@@ -103,8 +104,18 @@ function handleRequest(e) {
       } else {
         const email = params.email;
         if (emailColIdx === -1) return jsonResponse({ status: "error", message: "Email address column not found." });
+
+        // Search in ALL email columns (leader + team members)
         for (let i = 1; i < data.length; i++) {
-          if (String(data[i][emailColIdx]).toLowerCase().trim() === String(email).toLowerCase().trim()) {
+          const rowEmails = [
+            data[i][emailColIdx], // Main email
+            data[i][headers.indexOf("EMAIL ID")], // Lead email
+            data[i][headers.indexOf("EMAIL ID") + 6], // Member 1 email (offset by 6 columns)
+            data[i][headers.indexOf("EMAIL ID") + 12], // Member 2 email
+            data[i][headers.indexOf("EMAIL ID") + 18]  // Member 3 email
+          ].filter(e => e); // Remove empty values
+
+          if (rowEmails.some(e => String(e).toLowerCase().trim() === String(email).toLowerCase().trim())) {
             foundRow = data[i];
             break;
           }
@@ -139,7 +150,7 @@ function jsonResponse(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// Helper to format row data based on YOUR column names
+// Helper to format row data
 function formatTeamData(row, headers) {
   const getVal = (name) => {
     const idx = headers.indexOf(name);
@@ -176,7 +187,7 @@ function onFormSubmit(e) {
       sheet.getRange(1, teamIdCol).setValue("Team ID");
     }
 
-    // Check if Team ID already exists for this row
+    // Check if Team ID already exists
     let currentId = sheet.getRange(rowIdx, teamIdCol).getValue();
     let memberId = currentId;
 
@@ -195,24 +206,75 @@ function onFormSubmit(e) {
         }
       }
 
-      // Generate new ID as next number
+      // Generate new ID
       memberId = "TX-" + (maxNumber + 1);
       sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
     }
 
-    // 2. Get data from row - using YOUR column names
-    const emailCol = headers.indexOf("Email address");
-    const leadNameCol = headers.indexOf("LEAD NAME");
+    // 2. Get team data
     const teamNameCol = headers.indexOf("TEAM NAME");
-
     const rowValues = sheet.getRange(rowIdx, 1, 1, sheet.getLastColumn()).getValues()[0];
-    const email = rowValues[emailCol];
-    const leadName = leadNameCol !== -1 ? rowValues[leadNameCol] : "Participant";
     const teamName = teamNameCol !== -1 ? rowValues[teamNameCol] : "Your Team";
 
-    if (email) {
-      sendBrevoEmail(email, leadName, memberId, teamName);
+    // 3. Collect ALL team member emails
+    const emailsToSend = [];
+
+    // Lead email (from "Email address" column at start)
+    const mainEmailCol = headers.indexOf("Email address");
+    if (mainEmailCol !== -1 && rowValues[mainEmailCol]) {
+      emailsToSend.push({
+        email: rowValues[mainEmailCol],
+        name: rowValues[headers.indexOf("LEAD NAME")] || "Team Leader"
+      });
     }
+
+    // Team Member 1
+    const member1EmailCol = headers.indexOf("EMAIL ID");
+    if (member1EmailCol !== -1 && rowValues[member1EmailCol]) {
+      emailsToSend.push({
+        email: rowValues[member1EmailCol],
+        name: rowValues[headers.indexOf("LEAD NAME")] || "Team Member"
+      });
+    }
+
+    // Team Member 2 (EMAIL ID appears multiple times, need to find the right one)
+    // Based on your columns: TEAM MEMBER 1 section ends, then TEAM MEMBER 2 starts
+    let currentCol = member1EmailCol;
+    for (let offset = 1; offset <= 20; offset++) {
+      if (headers[member1EmailCol + offset] === "EMAIL ID" && rowValues[member1EmailCol + offset]) {
+        emailsToSend.push({
+          email: rowValues[member1EmailCol + offset],
+          name: rowValues[headers.indexOf("TEAM MEMBER 2 - NAME")] || "Team Member 2"
+        });
+        currentCol = member1EmailCol + offset;
+        break;
+      }
+    }
+
+    // Team Member 3
+    for (let offset = 1; offset <= 20; offset++) {
+      if (headers[currentCol + offset] === "EMAIL ID" && rowValues[currentCol + offset]) {
+        emailsToSend.push({
+          email: rowValues[currentCol + offset],
+          name: rowValues[headers.indexOf("TEAM MEMBER 3 - NAME")] || "Team Member 3"
+        });
+        break;
+      }
+    }
+
+    // 4. Send emails to all team members
+    const uniqueEmails = [...new Set(emailsToSend.map(e => e.email.toLowerCase()))];
+
+    emailsToSend.forEach((recipient, index) => {
+      if (uniqueEmails.includes(recipient.email.toLowerCase())) {
+        sendBrevoEmail(recipient.email, recipient.name, memberId, teamName);
+        Utilities.sleep(500); // Small delay between emails
+        uniqueEmails.splice(uniqueEmails.indexOf(recipient.email.toLowerCase()), 1); // Prevent duplicates
+      }
+    });
+
+    Logger.log(`✅ Sent ${emailsToSend.length} emails for Team ${memberId}`);
+
   } catch (error) {
     Logger.log("onFormSubmit Error: " + error.toString());
   }
@@ -230,7 +292,7 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
       <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 0 20px rgba(138, 43, 226, 0.2);">
         <h1 style="color: #bc13fe; text-align: center; margin-bottom: 30px; letter-spacing: 2px;">TECHATHON X 2K26</h1>
         <p>Dear <strong>${name}</strong>,</p>
-        <p>Your registration for <span style="color: #00ffbf;">TechathonX 2K26</span> is CONFIRMED.</p>
+        <p>Your team's registration for <span style="color: #00ffbf;">TechathonX 2K26</span> is CONFIRMED.</p>
         
         <div style="background: linear-gradient(45deg, #2a0a38, #1a1a1a); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0; border: 1px solid #bc13fe;">
           <h2 style="margin: 10px 0; font-size: 32px; color: #ffffff;">${teamId}</h2>
@@ -275,53 +337,37 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
   try {
     const response = UrlFetchApp.fetch(url, options);
     const responseCode = response.getResponseCode();
-    const responseText = response.getContentText();
 
     if (responseCode === 201) {
-      Logger.log("✅ Email sent successfully to: " + toEmail);
+      Logger.log("✅ Email sent to: " + toEmail);
     } else {
-      Logger.log("⚠️ Email failed. Code: " + responseCode + ", Response: " + responseText);
+      Logger.log("⚠️ Email failed for: " + toEmail + " | Code: " + responseCode);
     }
   } catch (e) {
-    Logger.log("❌ Email error: " + e.toString());
+    Logger.log("❌ Email error for " + toEmail + ": " + e.toString());
   }
 }
 
 // ------------------------------------------
-// 4. MANUAL TRIGGER - Send emails to all rows
+// 4. MANUAL TRIGGER
 // ------------------------------------------
 function processAllRows() {
+  Logger.log("🔄 Processing all rows...");
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
   const data = sheet.getDataRange().getValues();
   const headers = data[0];
 
-  let teamIdCol = headers.indexOf("Team ID") + 1;
-  const emailCol = headers.indexOf("Email address");
-  const leadNameCol = headers.indexOf("LEAD NAME");
-  const teamNameCol = headers.indexOf("TEAM NAME");
-
-  if (teamIdCol === 0) {
-    teamIdCol = headers.length + 1;
-    sheet.getRange(1, teamIdCol).setValue("Team ID");
-  }
-
   for (let i = 1; i < data.length; i++) {
     const rowIdx = i + 1;
-    const currentId = sheet.getRange(rowIdx, teamIdCol).getValue();
+    Logger.log(`Processing row ${rowIdx}...`);
 
-    if (!currentId || currentId === "") {
-      const memberId = "TX-" + (26000 + (rowIdx - 1));
-      sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
+    // Simulate form submit event for this row
+    const fakeEvent = {
+      range: sheet.getRange(rowIdx, 1)
+    };
 
-      const email = data[i][emailCol];
-      const leadName = leadNameCol !== -1 ? data[i][leadNameCol] : "Participant";
-      const teamName = teamNameCol !== -1 ? data[i][teamNameCol] : "Your Team";
-
-      if (email) {
-        sendBrevoEmail(email, leadName, memberId, teamName);
-        Utilities.sleep(1000); // Wait 1 second between emails
-      }
-    }
+    onFormSubmit(fakeEvent);
+    Utilities.sleep(2000); // Wait 2 seconds between rows
   }
 
   Logger.log("✅ Finished processing all rows.");
@@ -332,7 +378,6 @@ function processAllRows() {
 // ------------------------------------------
 function testBrevoConnection() {
   Logger.log("🔍 Testing Brevo API...");
-  const testEmail = SENDER_EMAIL; // Send test to yourself
-  sendBrevoEmail(testEmail, "Test Admin", "TX-TEST-001", "Debug Team");
-  Logger.log("✅ Test complete. Check your inbox: " + testEmail);
+  sendBrevoEmail(SENDER_EMAIL, "Test Admin", "TX-TEST-001", "Debug Team");
+  Logger.log("✅ Test complete. Check inbox: " + SENDER_EMAIL);
 }

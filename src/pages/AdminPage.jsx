@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import "./admin-scanner.css";
 
 // Updated Script URL
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycbx7APY_BCnBiYarTIbCCoL2nOByUsJSak3HAU7froV6UZLCJyT41qaPXH5eBMURwsGt/exec";
+const GSHEET_URL = "https://script.google.com/macros/s/AKfycby9V3j0NK20A6oWAabArQKDLqPVkFu41aTOoyhxCbfiScNG91VHpw3hH7tfIwhB4Aue/exec";
 
 const AdminPage = () => {
     const [scanResult, setScanResult] = useState(null);

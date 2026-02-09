@@ -10,7 +10,7 @@ import IDCard from '../components/IDCard';
 const GSHEET_URL = "https://script.google.com/macros/s/AKfycby9V3j0NK20A6oWAabArQKDLqPVkFu41aTOoyhxCbfiScNG91VHpw3hH7tfIwhB4Aue/exec";
 
 // GOOGLE FORM LINK (Provided by User) - Use proper viewform link
-const GFORM_LINK = "https://docs.google.com/forms/d/1IhmX0u-JzCqll6O3R42LgAeTVWWoJGNrDN7SAZJXGSQ/viewform";
+const GFORM_LINK = "https://docs.google.com/forms/d/e/1FAIpQLSctYMzZwv1yuQcq4cSXgfCudY6rEBAjn-5kCsTz7uW8bvCAew/viewform";
 
 const RegisterPage = () => {
     const playSound = useMagicSound();
