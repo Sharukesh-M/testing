@@ -5,6 +5,7 @@ import './IDCard.css';
 
 const IDCard = ({ data, teamId, onClose }) => {
     const cardRef = useRef(null);
+    const bgImage = "/entry.png"; // User's custom background
 
     const handleDownload = async () => {
         if (cardRef.current) {
@@ -33,7 +34,15 @@ const IDCard = ({ data, teamId, onClose }) => {
         <div className="id-card-modal-overlay">
             <div className="id-card-wrapper-dl">
 
-                <div className="id-card-content" ref={cardRef}>
+                <div
+                    className="id-card-content"
+                    ref={cardRef}
+                    style={{
+                        backgroundImage: `url(${bgImage})`,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center'
+                    }}
+                >
                     {/* HEADER */}
                     <div className="id-header">
                         <h1 className="id-event-title">TECHATHON X 2K26</h1>
@@ -62,17 +71,22 @@ const IDCard = ({ data, teamId, onClose }) => {
 
                         <div className="id-detail-row">
                             <span className="id-label">TEAM NAME</span>
-                            <span className="id-value">{data.teamName}</span>
+                            <span className="id-value id-team-name">{data.teamName || "N/A"}</span>
                         </div>
 
                         <div className="id-detail-row">
                             <span className="id-label">TEAM LEADER</span>
-                            <span className="id-value">{data.name}</span>
+                            <span className="id-value id-leader-name">{data.name || "N/A"}</span>
+                        </div>
+
+                        <div className="id-detail-row">
+                            <span className="id-label">TEAM SIZE</span>
+                            <span className="id-value">{data.teamSize || "4"} Members</span>
                         </div>
 
                         <div className="id-detail-row">
                             <span className="id-label">DOMAIN</span>
-                            <span className="id-value id-domain">{data.domain}</span>
+                            <span className="id-value id-domain">{data.domain || "N/A"}</span>
                         </div>
                     </div>
 
@@ -91,7 +105,14 @@ const IDCard = ({ data, teamId, onClose }) => {
                 {/* DOWNLOAD BUTTON */}
                 <div className="id-actions">
                     <h2 className="download-title">YOUR OFFICIAL ENTRY PASS</h2>
-                    <p className="download-subtitle">Save this pass and present it at the venue</p>
+                    <p className="download-subtitle">
+                        {!bgImage.includes('entry.png') && (
+                            <span style={{ color: '#ff6b6b' }}>
+                                ⚠️ Convert entry.pdf to entry.png and place in public folder for custom background
+                            </span>
+                        )}
+                        {bgImage.includes('entry.png') && "Save this pass and present it at the venue"}
+                    </p>
 
                     <button onClick={handleDownload} className="download-btn-gold">
                         📥 DOWNLOAD ENTRY PASS

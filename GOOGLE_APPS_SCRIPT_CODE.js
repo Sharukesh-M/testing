@@ -144,6 +144,7 @@ function formatTeamData(row, headers) {
     name: getVal("LEAD NAME"),
     college: getVal("COLLEGE NAME"),
     domain: getVal("DOMAINS"),
+    teamSize: getVal("NO OF TEAM MEMBERS"),
     transactionId: getVal("Transaction ID (UTR/UPI)"),
     email: getVal("Email address"),
     phone: getVal("PHONE NO.")

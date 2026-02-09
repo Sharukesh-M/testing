@@ -133,7 +133,7 @@
 .id-value {
   font-size: 16px;
   color: #D4AF37;
-  font-weight: 700;
+  font-weight: 900;
   text-align: right;
   max-width: 60%;
   word-break: break-word;
@@ -141,13 +141,24 @@
 }
 
 .id-team-id {
-  font-size: 20px;
+  font-size: 22px;
   letter-spacing: 2px;
+  font-weight: 900;
+}
+
+.id-team-name {
+  font-weight: 900;
+  font-size: 17px;
+}
+
+.id-leader-name {
+  font-weight: 900;
 }
 
 .id-domain {
   color: #00ffbf;
   text-shadow: 0 0 10px rgba(0, 255, 191, 0.3);
+  font-weight: 900;
 }
 
 /* VENUE */
