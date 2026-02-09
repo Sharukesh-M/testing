@@ -1,4 +1,3 @@
-
 // ==========================================
 // GOOGLE APPS SCRIPT CODE FOR TECHATHON X
 // ==========================================
@@ -8,7 +7,7 @@
 // ------------------------------------------
 const SHEET_NAME = "Form Responses 1";
 const BREVO_API_KEY = "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";
-const SENDER_EMAIL = "techathonx26@gmail.com";
+const SENDER_EMAIL = "techathonx2k26.pec@gmail.com";
 const SENDER_NAME = "TechathonX Team";
 
 // ------------------------------------------
@@ -23,108 +22,116 @@ function doPost(e) {
 }
 
 function handleRequest(e) {
-  const output = ContentService.createTextOutput();
-
-  if (!e || !e.parameter) {
-    output.setContent(JSON.stringify({ status: "error", message: "No parameters" }));
-    output.setMimeType(ContentService.MimeType.JSON);
-    return output;
-  }
-
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-  const params = e.parameter;
-  const action = params.action;
-
-  // ----------------------------------------------------
-  // ACTION: MARK ATTENDANCE (For Admin)
-  // ----------------------------------------------------
-  if (action === 'mark_attendance') {
-    const idToMark = params.id;
-    if (!idToMark) return jsonResponse({ status: "error", message: "No ID provided" });
-
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0];
-    const teamIdColIdx = headers.indexOf("Team ID");
-
-    // Find or Create Attendance Column
-    let attendanceColIdx = headers.indexOf("Attendance");
-    if (attendanceColIdx === -1) {
-      attendanceColIdx = headers.length; // New column index
-      sheet.getRange(1, attendanceColIdx + 1).setValue("Attendance"); // Add header
-      // Re-fetch data NOT needed for write, we know the index
+  try {
+    if (!e || !e.parameter) {
+      return jsonResponse({ status: "error", message: "No parameters provided." });
     }
 
-    if (teamIdColIdx === -1) return jsonResponse({ status: "error", message: "Team ID column missing" });
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
 
-    // Find row
-    for (let i = 1; i < data.length; i++) {
-      if (String(data[i][teamIdColIdx]).trim() === String(idToMark).trim()) {
-        const rowIdx = i + 1;
-        // Mark as PRESENT
-        // Note: If column was just added, we need to be careful with index.
-        const targetCol = (attendanceColIdx === -1) ? headers.length + 1 : attendanceColIdx + 1;
+    if (!sheet) {
+      return jsonResponse({
+        status: "error",
+        message: `Sheet "${SHEET_NAME}" not found. Please check sheet name.`
+      });
+    }
 
-        sheet.getRange(rowIdx, targetCol).setValue("PRESENT");
+    const params = e.parameter;
+    const action = params.action;
 
-        return jsonResponse({
-          status: "success",
-          message: `Team ${idToMark} marked PRESENT!`,
-          data: { attendance: "PRESENT" }
-        });
+    // ----------------------------------------------------
+    // ACTION: MARK ATTENDANCE
+    // ----------------------------------------------------
+    if (action === 'mark_attendance') {
+      const idToMark = params.id;
+      if (!idToMark) return jsonResponse({ status: "error", message: "No ID provided" });
+
+      const data = sheet.getDataRange().getValues();
+      if (data.length === 0) return jsonResponse({ status: "error", message: "Sheet is empty." });
+
+      const headers = data[0];
+      const teamIdColIdx = headers.indexOf("Team ID");
+
+      let attendanceColIdx = headers.indexOf("Attendance");
+      if (attendanceColIdx === -1) {
+        attendanceColIdx = headers.length;
+        sheet.getRange(1, attendanceColIdx + 1).setValue("Attendance");
       }
-    }
-    return jsonResponse({ status: "error", message: "Team ID not found" });
-  }
 
-  // ----------------------------------------------------
-  // ACTION: GET TEAM BY ID (For Admin Scan) or EMAIL
-  // ----------------------------------------------------
-  // Fallback: If no action provided but email exists, assume search (legacy support)
-  if (action === 'get_team' || action === 'search_email' || (!action && params.email)) {
-    const data = sheet.getDataRange().getValues();
-    const headers = data[0];
+      if (teamIdColIdx === -1) return jsonResponse({ status: "error", message: "Team ID column not found." });
 
-    // Key Column Indices
-    const teamIdColIdx = headers.indexOf("Team ID");
-    const emailColIdx = headers.indexOf("Email Address");
-    const attendanceColIdx = headers.indexOf("Attendance");
-
-    let foundRow = null;
-
-    if (action === 'get_team') {
-      const id = params.id;
-      if (teamIdColIdx === -1) return jsonResponse({ status: "error", message: "Team ID col not found" });
       for (let i = 1; i < data.length; i++) {
-        if (String(data[i][teamIdColIdx]).trim() === String(id).trim()) {
-          foundRow = data[i];
-          break;
+        if (String(data[i][teamIdColIdx]).trim() === String(idToMark).trim()) {
+          const rowIdx = i + 1;
+          const targetCol = attendanceColIdx + 1;
+          sheet.getRange(rowIdx, targetCol).setValue("PRESENT");
+
+          return jsonResponse({
+            status: "success",
+            message: `Team ${idToMark} marked PRESENT!`,
+            data: { attendance: "PRESENT" }
+          });
         }
       }
-    } else {
-      const email = params.email;
-      if (emailColIdx === -1) return jsonResponse({ status: "error", message: "Email col not found" });
-      for (let i = 1; i < data.length; i++) {
-        if (String(data[i][emailColIdx]).toLowerCase().trim() === String(email).toLowerCase().trim()) {
-          foundRow = data[i];
-          break;
-        }
-      }
+      return jsonResponse({ status: "error", message: "Team ID not found" });
     }
 
-    if (foundRow) {
-      const formatted = formatTeamData(foundRow, headers);
-      if (attendanceColIdx !== -1) {
-        formatted.attendance = foundRow[attendanceColIdx] || "ABSENT";
+    // ----------------------------------------------------
+    // ACTION: GET TEAM BY ID or SEARCH BY EMAIL
+    // ----------------------------------------------------
+    if (action === 'get_team' || action === 'search_email' || (!action && params.email)) {
+      const data = sheet.getDataRange().getValues();
+      if (data.length === 0) return jsonResponse({ status: "error", message: "Sheet is empty." });
+
+      const headers = data[0];
+
+      const teamIdColIdx = headers.indexOf("Team ID");
+      const emailColIdx = headers.indexOf("Email address"); // Note: lowercase 'address'
+      const attendanceColIdx = headers.indexOf("Attendance");
+
+      let foundRow = null;
+
+      if (action === 'get_team') {
+        const id = params.id;
+        if (teamIdColIdx === -1) return jsonResponse({ status: "error", message: "Team ID column not found." });
+        for (let i = 1; i < data.length; i++) {
+          if (String(data[i][teamIdColIdx]).trim() === String(id).trim()) {
+            foundRow = data[i];
+            break;
+          }
+        }
       } else {
-        formatted.attendance = "ABSENT";
+        const email = params.email;
+        if (emailColIdx === -1) return jsonResponse({ status: "error", message: "Email address column not found." });
+        for (let i = 1; i < data.length; i++) {
+          if (String(data[i][emailColIdx]).toLowerCase().trim() === String(email).toLowerCase().trim()) {
+            foundRow = data[i];
+            break;
+          }
+        }
       }
-      return jsonResponse({ status: "success", data: formatted });
+
+      if (foundRow) {
+        const formatted = formatTeamData(foundRow, headers);
+        if (attendanceColIdx !== -1) {
+          formatted.attendance = foundRow[attendanceColIdx] || "ABSENT";
+        } else {
+          formatted.attendance = "ABSENT";
+        }
+        return jsonResponse({ status: "success", data: formatted });
+      }
+
+      return jsonResponse({ status: "error", message: "Registration not found for this email." });
     }
 
-    return jsonResponse({ status: "error", message: "Not found" });
-  }
+    return jsonResponse({ status: "error", message: "Invalid action: " + (action || "none") });
 
-  return jsonResponse({ status: "error", message: "Invalid action" });
+  } catch (error) {
+    return jsonResponse({
+      status: "error",
+      message: "Script error: " + error.toString()
+    });
+  }
 }
 
 function jsonResponse(obj) {
@@ -132,22 +139,22 @@ function jsonResponse(obj) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// Helper to format row data
+// Helper to format row data based on YOUR column names
 function formatTeamData(row, headers) {
   const getVal = (name) => {
     const idx = headers.indexOf(name);
-    return idx !== -1 ? row[idx] : "";
+    return idx !== -1 ? (row[idx] || "") : "";
   };
 
   return {
     teamId: getVal("Team ID"),
-    teamName: getVal("Team Name") || "Participating Team",
-    name: getVal("Team Leader Name") || "Participant",
-    college: getVal("College Name"),
-    domain: getVal("Selected Domain"),
-    transactionId: getVal("Transaction ID"),
-    email: getVal("Email Address"),
-    phone: getVal("Phone Number")
+    teamName: getVal("TEAM NAME"),
+    name: getVal("LEAD NAME"),
+    college: getVal("COLLEGE NAME"),
+    domain: getVal("DOMAINS"),
+    transactionId: getVal("Transaction ID (UTR/UPI)"),
+    email: getVal("Email address"),
+    phone: getVal("PHONE NO.")
   };
 }
 
@@ -155,39 +162,43 @@ function formatTeamData(row, headers) {
 // 2. TRIGGER: ON FORM SUBMIT
 // ------------------------------------------
 function onFormSubmit(e) {
-  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-  const range = e.range;
-  const rowIdx = range.getRow();
+  try {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    const range = e.range;
+    const rowIdx = range.getRow();
 
-  // 1. Generate Team ID if missing
-  const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
-  let teamIdCol = headers.indexOf("Team ID") + 1;
+    // 1. Generate Team ID if missing
+    const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+    let teamIdCol = headers.indexOf("Team ID") + 1;
 
-  if (teamIdCol === 0) {
-    teamIdCol = headers.length + 1;
-    sheet.getRange(1, teamIdCol).setValue("Team ID");
-  }
+    if (teamIdCol === 0) {
+      teamIdCol = headers.length + 1;
+      sheet.getRange(1, teamIdCol).setValue("Team ID");
+    }
 
-  let currentId = sheet.getRange(rowIdx, teamIdCol).getValue();
-  let memberId = currentId;
+    let currentId = sheet.getRange(rowIdx, teamIdCol).getValue();
+    let memberId = currentId;
 
-  if (!memberId) {
-    memberId = "TX-" + (26000 + (rowIdx - 1));
-    sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
-  }
+    if (!memberId) {
+      memberId = "TX-" + (26000 + (rowIdx - 1));
+      sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
+    }
 
-  // 2. Send Email
-  const emailCol = headers.indexOf("Email Address");
-  const nameCol = headers.indexOf("Team Leader Name");
-  const teamNameCol = headers.indexOf("Team Name");
+    // 2. Get data from row - using YOUR column names
+    const emailCol = headers.indexOf("Email address");
+    const leadNameCol = headers.indexOf("LEAD NAME");
+    const teamNameCol = headers.indexOf("TEAM NAME");
 
-  const rowValues = sheet.getRange(rowIdx, 1, 1, sheet.getLastColumn()).getValues()[0];
-  const email = rowValues[emailCol];
-  const name = nameCol !== -1 ? rowValues[nameCol] : "Participant";
-  const teamName = teamNameCol !== -1 ? rowValues[teamNameCol] : "Your Team";
+    const rowValues = sheet.getRange(rowIdx, 1, 1, sheet.getLastColumn()).getValues()[0];
+    const email = rowValues[emailCol];
+    const leadName = leadNameCol !== -1 ? rowValues[leadNameCol] : "Participant";
+    const teamName = teamNameCol !== -1 ? rowValues[teamNameCol] : "Your Team";
 
-  if (email) {
-    sendBrevoEmail(email, name, memberId, teamName);
+    if (email) {
+      sendBrevoEmail(email, leadName, memberId, teamName);
+    }
+  } catch (error) {
+    Logger.log("onFormSubmit Error: " + error.toString());
   }
 }
 
@@ -201,9 +212,9 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
   const htmlBody = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #0d0d0d; color: #ffffff; padding: 40px 20px;">
       <div style="max-width: 600px; margin: 0 auto; background-color: #1a1a1a; padding: 30px; border-radius: 15px; border: 1px solid #333; box-shadow: 0 0 20px rgba(138, 43, 226, 0.2);">
-        <h1 style="color: #bc13fe; text-align: center; margin-bottom: 30px; letter-spacing: 2px;">TECHATHON X</h1>
+        <h1 style="color: #bc13fe; text-align: center; margin-bottom: 30px; letter-spacing: 2px;">TECHATHON X 2K26</h1>
         <p>Dear <strong>${name}</strong>,</p>
-        <p>Your registration for <span style="color: #00ffbf;">TechathonX 2026</span> is CONFIRMED.</p>
+        <p>Your registration for <span style="color: #00ffbf;">TechathonX 2K26</span> is CONFIRMED.</p>
         
         <div style="background: linear-gradient(45deg, #2a0a38, #1a1a1a); padding: 20px; border-radius: 10px; text-align: center; margin: 30px 0; border: 1px solid #bc13fe;">
           <h2 style="margin: 10px 0; font-size: 32px; color: #ffffff;">${teamId}</h2>
@@ -215,11 +226,14 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
         </div>
 
         <p style="text-align: center; margin-top: 30px;">
-           <a href="https://testing-mu-lac.vercel.app/register?mode=download&email=${toEmail}" 
-              style="background-color: #bc13fe; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px;">
+           <a href="https://testing-mu-lac.vercel.app/register?mode=download&email=${encodeURIComponent(toEmail)}" 
+              style="background-color: #bc13fe; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: bold;">
               DOWNLOAD ID CARD
            </a>
         </p>
+        
+        <hr style="border-color: #333; margin: 30px 0;">
+        <p style="text-align: center; color: #666; font-size: 12px;">TechathonX Organizing Committee</p>
       </div>
     </div>
   `;
@@ -227,7 +241,7 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
   const payload = {
     "sender": { "name": SENDER_NAME, "email": SENDER_EMAIL },
     "to": [{ "email": toEmail, "name": name }],
-    "subject": `[CONFIRMED] Team ${teamName} - TechathonX Registration`,
+    "subject": `[CONFIRMED] Team ${teamName} - TechathonX 2K26 Registration`,
     "htmlContent": htmlBody
   };
 
@@ -244,14 +258,21 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
 
   try {
     const response = UrlFetchApp.fetch(url, options);
-    Logger.log("Email sent to: " + toEmail);
+    const responseCode = response.getResponseCode();
+    const responseText = response.getContentText();
+
+    if (responseCode === 201) {
+      Logger.log("✅ Email sent successfully to: " + toEmail);
+    } else {
+      Logger.log("⚠️ Email failed. Code: " + responseCode + ", Response: " + responseText);
+    }
   } catch (e) {
-    Logger.log("Error sending email: " + e.toString());
+    Logger.log("❌ Email error: " + e.toString());
   }
 }
 
 // ------------------------------------------
-// 4. MANUAL TRIGGER (Run manually if needed)
+// 4. MANUAL TRIGGER - Send emails to all rows
 // ------------------------------------------
 function processAllRows() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
@@ -259,9 +280,9 @@ function processAllRows() {
   const headers = data[0];
 
   let teamIdCol = headers.indexOf("Team ID") + 1;
-  const emailCol = headers.indexOf("Email Address");
-  const nameCol = headers.indexOf("Team Leader Name"); // Will be -1 if not found
-  const teamNameCol = headers.indexOf("Team Name"); // Will be -1 if not found
+  const emailCol = headers.indexOf("Email address");
+  const leadNameCol = headers.indexOf("LEAD NAME");
+  const teamNameCol = headers.indexOf("TEAM NAME");
 
   if (teamIdCol === 0) {
     teamIdCol = headers.length + 1;
@@ -277,26 +298,25 @@ function processAllRows() {
       sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
 
       const email = data[i][emailCol];
-      // Use defaults if column not found
-      const name = nameCol !== -1 ? data[i][nameCol] : "Participant";
+      const leadName = leadNameCol !== -1 ? data[i][leadNameCol] : "Participant";
       const teamName = teamNameCol !== -1 ? data[i][teamNameCol] : "Your Team";
 
       if (email) {
-        sendBrevoEmail(email, name, memberId, teamName);
+        sendBrevoEmail(email, leadName, memberId, teamName);
+        Utilities.sleep(1000); // Wait 1 second between emails
       }
     }
   }
+
+  Logger.log("✅ Finished processing all rows.");
 }
 
 // ------------------------------------------
-// 5. TEST FUNCTION (Run this to test API)
+// 5. TEST FUNCTION
 // ------------------------------------------
 function testBrevoConnection() {
-  // 1. OPEN SHEET
-  // 2. Select this function 'testBrevoConnection' from top dropdown
-  // 3. Click 'Run'
-  // 4. Check View -> Executions for logs
-  const testEmail = "techathonx26@gmail.com"; // Sends to yourself
-  Logger.log("Testing Brevo API...");
+  Logger.log("🔍 Testing Brevo API...");
+  const testEmail = SENDER_EMAIL; // Send test to yourself
   sendBrevoEmail(testEmail, "Test Admin", "TX-TEST-001", "Debug Team");
+  Logger.log("✅ Test complete. Check your inbox: " + testEmail);
 }
