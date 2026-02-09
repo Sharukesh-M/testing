@@ -8,8 +8,8 @@ const IDCard = ({ data, teamId, onClose }) => {
     const cardRef = useRef(null);
 
     // Path to the image the user will upload
-    // Instruct user to place "id_card_bg.png" in the "public" folder
-    const bgImage = "/id_card_bg.png";
+    // Instruct user to place "entry.png" in the "public" folder (converted from pdf)
+    const bgImage = "/entry.png";
 
     const handleDownload = async () => {
         if (cardRef.current) {
@@ -107,8 +107,8 @@ const IDCard = ({ data, teamId, onClose }) => {
                     <h2 style={{ color: '#D4AF37', fontSize: '1.5rem', marginBottom: '10px' }}>
                         YOUR OFFICIAL ID CARD
                     </h2>
-                    <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '20px' }}>
-                        If the background image is missing, place <b>id_card_bg.png</b> in the <b>public</b> folder.
+                    <p style={{ color: '#aaa', fontSize: '0.9rem', marginBottom: '20px', maxWidth: '400px' }}>
+                        <b>Note:</b> If the card is blank, please convert your <b>entry.pdf</b> to <b>entry.png</b> and upload it to the public folder. Browsers cannot use PDFs as ID card backgrounds.
                     </p>
 
                     <button onClick={handleDownload} className="download-btn">

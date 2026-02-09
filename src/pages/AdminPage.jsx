@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Html5QrcodeScanner } from 'html5-qrcode';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import "./admin-scanner.css";
 
 // Updated Script URL
@@ -13,45 +13,52 @@ const AdminPage = () => {
     const [loading, setLoading] = useState(false);
     const [marking, setMarking] = useState(false);
     const [error, setError] = useState(null);
-    const [scannerInstance, setScannerInstance] = useState(null);
+    const [isScanning, setIsScanning] = useState(false);
+    const [manualId, setManualId] = useState("");
 
     useEffect(() => {
-        // Initialize scanner only if not already scanning a result
-        if (!scanResult) {
-            const scanner = new Html5QrcodeScanner(
+        let scanner = null;
+
+        if (isScanning && !scanResult) {
+            scanner = new Html5QrcodeScanner(
                 "reader",
                 {
                     fps: 10,
                     qrbox: { width: 250, height: 250 },
-                    aspectRatio: 1.0
+                    aspectRatio: 1.0,
+                    rememberLastUsedCamera: true
                 },
                 /* verbose= */ false
             );
 
             scanner.render(onScanSuccess, onScanFailure);
-            setScannerInstance(scanner);
 
             function onScanSuccess(decodedText) {
                 if (decodedText.startsWith("TX-")) {
                     setScanResult(decodedText);
+                    setIsScanning(false); // Stop scanning UI
                     fetchTeamData(decodedText);
-                    scanner.clear(); // pause scanning
+                    scanner.clear().catch(console.error);
                 }
             }
 
             function onScanFailure(err) {
                 // ignore
             }
-
-            return () => {
-                scanner.clear().catch(err => console.error(err));
-            };
         }
-    }, [scanResult]); // Re-run if scanResult is cleared (to restart scanner)
+
+        return () => {
+            if (scanner) {
+                scanner.clear().catch(console.error);
+            }
+        };
+    }, [isScanning, scanResult]);
 
     const fetchTeamData = async (teamId) => {
         setLoading(true);
         setError(null);
+        setTeamData(null);
+
         try {
             const response = await fetch(`${GSHEET_URL}?action=get_team&id=${encodeURIComponent(teamId)}`);
             const result = await response.json();
@@ -68,6 +75,13 @@ const AdminPage = () => {
         }
     };
 
+    const handleManualSearch = (e) => {
+        e.preventDefault();
+        if (!manualId.trim()) return;
+        setScanResult(manualId);
+        fetchTeamData(manualId);
+    };
+
     const markAttendance = async () => {
         setMarking(true);
         try {
@@ -75,110 +89,158 @@ const AdminPage = () => {
             const result = await response.json();
 
             if (result.status === "success") {
-                // Update local state to reflect change
                 setTeamData(prev => ({ ...prev, attendance: "PRESENT" }));
                 alert("SUCCESS: Team marked present!");
             } else {
                 alert("ERROR: " + result.message);
             }
         } catch (err) {
-            alert("Failed to mark attendance. Check connection.");
+            alert("Failed to mark attendance.");
         } finally {
             setMarking(false);
         }
     };
 
-    const handleNextScan = () => {
+    const handleReset = () => {
         setScanResult(null);
         setTeamData(null);
         setError(null);
-        // Effect will re-trigger and restart scanner
+        setIsScanning(false);
+        setManualId("");
     };
 
     return (
         <div className="admin-page-container">
             <h1 className="admin-title">ADMIN CONTROL</h1>
 
-            {!scanResult ? (
-                <div className="scanner-wrapper">
-                    <div id="reader"></div>
-                    <p className="scanner-instruction">Point camera at Team QR Code</p>
-                </div>
-            ) : (
-                <div className="scan-result-container">
-                    <button onClick={handleNextScan} className="scan-again-btn">
-                        SCAN NEXT TEAM
+            {/* INITIAL STATE: START BUTTON OR MANUAL SEARCH */}
+            {!isScanning && !scanResult && (
+                <div className="start-screen">
+                    <button
+                        className="start-scan-btn"
+                        onClick={() => setIsScanning(true)}
+                    >
+                        📸 START QR SCAN
                     </button>
 
-                    {loading && <div className="loader">Fetching Data...</div>}
+                    <div className="or-divider">OR</div>
 
-                    {error && <div className="error-box">{error}</div>}
-
-                    {teamData && (
-                        <motion.div
-                            className="team-details-card"
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                        >
-                            {/* HEADER */}
-                            <div className="card-header">
-                                <h2 className="team-id">{teamData.teamId}</h2>
-                                <span className={`status-badge ${teamData.attendance === "PRESENT" ? "present" : "absent"}`}>
-                                    {teamData.attendance === "PRESENT" ? "ALREADY PRESENT" : "NOT YET HERE"}
-                                </span>
-                            </div>
-
-                            {/* DETAILS */}
-                            <div className="details-grid">
-                                <div className="detail-item">
-                                    <label>TEAM NAME</label>
-                                    <span>{teamData.teamName}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <label>LEADER</label>
-                                    <span>{teamData.name}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <label>COLLEGE</label>
-                                    <span>{teamData.college}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <label>DOMAIN</label>
-                                    <span>{teamData.domain}</span>
-                                </div>
-                                <div className="detail-item">
-                                    <label>EMAIL</label>
-                                    <span>{teamData.email}</span>
-                                </div>
-                            </div>
-
-                            {/* PAYMENTS */}
-                            <div className={`payment-status ${teamData.transactionId ? "paid" : "unpaid"}`}>
-                                <span>PAYMENT STATUS: </span>
-                                <strong>{teamData.transactionId ? "PAID" : "PENDING/FAILED"}</strong>
-                                {teamData.transactionId && <div className="trans-id">Ref: {teamData.transactionId}</div>}
-                            </div>
-
-                            {/* ACTIONS */}
-                            <div className="action-buttons">
-                                {teamData.attendance !== "PRESENT" ? (
-                                    <button
-                                        className="mark-present-btn"
-                                        onClick={markAttendance}
-                                        disabled={marking}
-                                    >
-                                        {marking ? "MARKING..." : "MARK AS PRESENT ✅"}
-                                    </button>
-                                ) : (
-                                    <div className="timestamp-info">
-                                        Team checked in.
-                                    </div>
-                                )}
-                            </div>
-
-                        </motion.div>
-                    )}
+                    <form onSubmit={handleManualSearch} className="manual-search-form">
+                        <input
+                            type="text"
+                            placeholder="Enter Team ID (e.g. TX-26001)"
+                            value={manualId}
+                            onChange={(e) => setManualId(e.target.value)}
+                            className="manual-input"
+                        />
+                        <button type="submit" className="manual-btn">SEARCH</button>
+                    </form>
                 </div>
+            )}
+
+            {/* SCANNING STATE */}
+            {isScanning && !scanResult && (
+                <div className="scanner-wrapper">
+                    <div id="reader"></div>
+                    <button
+                        className="cancel-btn"
+                        onClick={() => setIsScanning(false)}
+                    >
+                        CANCEL SCAN
+                    </button>
+                </div>
+            )}
+
+            {/* LOADING STATE */}
+            {loading && <div className="loader">FETCHING DATA...</div>}
+
+            {/* ERROR STATE */}
+            {error && (
+                <div className="error-box">
+                    <p>{error}</p>
+                    <button onClick={handleReset} className="retry-btn">TRY AGAIN</button>
+                </div>
+            )}
+
+            {/* RESULT STATE */}
+            {teamData && (
+                <motion.div
+                    className="scan-result-container"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                >
+                    <motion.div
+                        className="team-details-card"
+                    >
+                        {/* HEADER */}
+                        <div className="card-header">
+                            <div>
+                                <h2 className="team-id">{teamData.teamId}</h2>
+                                <span className="team-name-header">{teamData.teamName}</span>
+                            </div>
+                            <span className={`status-badge ${teamData.attendance === "PRESENT" ? "present" : "absent"}`}>
+                                {teamData.attendance === "PRESENT" ? "PRESENT" : "ABSENT"}
+                            </span>
+                        </div>
+
+                        {/* DETAILS */}
+                        <div className="details-grid">
+                            <div className="detail-item">
+                                <label>Team Name</label>
+                                <span>{teamData.teamName}</span>
+                            </div>
+                            <div className="detail-item">
+                                <label>Leader</label>
+                                <span>{teamData.name}</span>
+                            </div>
+                            <div className="detail-item">
+                                <label>College</label>
+                                <span>{teamData.college}</span>
+                            </div>
+                            <div className="detail-item">
+                                <label>Domain</label>
+                                <span>{teamData.domain}</span>
+                            </div>
+                            <div className="detail-item full-width">
+                                <label>Email</label>
+                                <span>{teamData.email}</span>
+                            </div>
+                            <div className="detail-item full-width">
+                                <label>Phone</label>
+                                <span>{teamData.phone || "N/A"}</span>
+                            </div>
+                        </div>
+
+                        {/* PAYMENTS */}
+                        <div className={`payment-status ${teamData.transactionId ? "paid" : "unpaid"}`}>
+                            <span>PAYMENT STATUS</span>
+                            <strong>{teamData.transactionId ? "VERIFIED PAID" : "PENDING"}</strong>
+                            {teamData.transactionId && <div className="trans-id">Ref: {teamData.transactionId}</div>}
+                        </div>
+
+                        {/* ACTIONS */}
+                        <div className="action-buttons">
+                            {teamData.attendance !== "PRESENT" ? (
+                                <button
+                                    className="mark-present-btn"
+                                    onClick={markAttendance}
+                                    disabled={marking}
+                                >
+                                    {marking ? "UPDATING..." : "MARK AS PRESENT ✅"}
+                                </button>
+                            ) : (
+                                <div className="timestamp-info">
+                                    ALREADY CHECKED IN
+                                </div>
+                            )}
+
+                            <button onClick={handleReset} className="scan-again-btn">
+                                SCAN NEXT TEAM
+                            </button>
+                        </div>
+
+                    </motion.div>
+                </motion.div>
             )}
         </div>
     );

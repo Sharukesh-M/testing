@@ -1,271 +1,233 @@
 .admin-page-container {
-    min-height: 100vh;
-    background: #050505;
-    color: white;
+    padding: 2.5rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.start-screen {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 10px;
-    /* Reduced padding for mobile */
-    font-family: 'Inter', sans-serif;
-    padding-bottom: 50px;
-}
-
-.admin-title {
-    font-size: 1.5rem;
-    /* Smaller title on mobile */
-    margin-bottom: 1.5rem;
-    color: #bc13fe;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    text-align: center;
-    text-shadow: 0 0 10px rgba(188, 19, 254, 0.4);
-}
-
-/* SCANNER SECTION */
-.scanner-wrapper {
     width: 100%;
-    max-width: 400px;
-    background: #1a1a1a;
-    padding: 10px;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    margin-bottom: 20px;
+    margin-top: 50px;
+    gap: 20px;
+}
+
+.start-scan-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, #FF6B6B, #FF9F9F);
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.start-scan-btn:active {
+    transform: scale(0.95);
+    box-shadow: none;
+}
+
+.or-divider {
+    color: #888;
+    font-size: 0.9rem;
+    margin: 10px 0;
+}
+
+.manual-search-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.manual-input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 1rem;
+    color: #333;
+}
+
+.manual-btn {
+    padding: 15px;
+    background: #444;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.scanner-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
 }
 
 #reader {
     width: 100%;
-    border-radius: 10px;
-    overflow: hidden;
-    background: black;
+    height: 100%;
 }
 
-#reader video {
-    object-fit: cover;
-    border-radius: 10px;
-}
-
-.scanner-instruction {
-    margin-top: 15px;
-    color: #888;
-    font-size: 0.9rem;
-}
-
-/* RESULTS SECTION */
-.scan-result-container {
-    width: 100%;
-    max-width: 500px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.scan-again-btn {
-    background: #333;
+.cancel-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 0, 0, 0.8);
     color: white;
-    border: 1px solid #444;
-    padding: 15px;
-    /* Larger touch target */
-    border-radius: 10px;
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
     cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background 0.2s;
-    width: 100%;
+    z-index: 100;
 }
 
-.scan-again-btn:hover {
-    background: #444;
+.loader {
+    text-align: center;
+    margin-top: 50px;
+    font-weight: bold;
+    color: #bc13fe;
 }
 
-/* TEAM CARD */
+.error-box {
+    text-align: center;
+    color: red;
+    margin-top: 20px;
+}
+
 .team-details-card {
-    background: #121212;
-    border: 1px solid #333;
-    border-radius: 15px;
+    background: white;
+    border-radius: 20px;
     padding: 20px;
-    position: relative;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    animation: slideUp 0.3s ease-out;
-}
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    width: 100%;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
 .card-header {
     display: flex;
-    flex-direction: column;
-    /* Stack on mobile usually better if name is long */
-    align-items: flex-start;
-    gap: 10px;
-    border-bottom: 1px solid #333;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #eee;
     padding-bottom: 15px;
-    margin-bottom: 15px;
-}
-
-@media (min-width: 480px) {
-    .card-header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
+    margin-bottom: 20px;
 }
 
 .team-id {
-    font-size: 1.8rem;
-    color: #fff;
-    margin: 0;
+    font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1;
+    color: #333;
+    margin: 0;
+}
+
+.team-name-header {
+    display: block;
+    color: #666;
+    font-size: 1rem;
+    margin-top: 5px;
 }
 
 .status-badge {
-    padding: 6px 12px;
+    padding: 5px 12px;
     border-radius: 20px;
-    font-size: 0.75rem;
     font-weight: bold;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    white-space: nowrap;
 }
 
 .status-badge.present {
-    background: #00ffbf;
-    color: #000;
-    box-shadow: 0 0 10px rgba(0, 255, 191, 0.3);
+    background: #d4edda;
+    color: #155724;
 }
 
 .status-badge.absent {
-    background: #333;
-    color: #888;
+    background: #f8d7da;
+    color: #721c24;
 }
 
-/* DETAILS GRID */
 .details-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
 }
 
 .detail-item {
     display: flex;
     flex-direction: column;
+    gap: 4px;
+}
+
+.detail-item.full-width {
+    grid-column: span 2;
 }
 
 .detail-item label {
+    color: #888;
     font-size: 0.75rem;
-    color: #666;
     text-transform: uppercase;
-    margin-bottom: 4px;
     font-weight: 600;
 }
 
 .detail-item span {
-    font-size: 1.1rem;
-    color: #e0e0e0;
-    word-break: break-word;
-    /* Prevent long emails from breaking layout */
+    color: #333;
+    font-weight: 500;
+    font-size: 1rem;
+    word-break: break-all;
 }
 
-/* PAYMENT STATUS */
 .payment-status {
-    margin-top: 20px;
+    margin-top: 25px;
+    background: #f8f9fa;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     text-align: center;
-    border: 1px dashed #444;
+    border: 1px dashed #ced4da;
 }
 
-.payment-status.paid {
-    border-color: #00ffbf;
-    color: #00ffbf;
-    background: rgba(0, 255, 191, 0.05);
+.payment-status.paid span {
+    color: #28a745;
+    font-weight: bold;
 }
 
-.payment-status.unpaid {
-    border-color: #ff4444;
-    color: #ff4444;
+.payment-status.unpaid span {
+    color: #dc3545;
+    font-weight: bold;
 }
 
-.payment-status strong {
-    font-size: 1.3rem;
-    display: block;
-    margin-top: 5px;
-}
-
-.trans-id {
-    font-size: 0.8rem;
-    color: #888;
-    margin-top: 5px;
-    font-family: monospace;
-}
-
-/* ACTIONS */
 .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
     margin-top: 25px;
 }
 
 .mark-present-btn {
-    width: 100%;
+    padding: 18px;
     background: #bc13fe;
     color: white;
+    font-weight: bold;
     border: none;
-    padding: 18px;
-    /* Bigger touch target */
     border-radius: 12px;
     font-size: 1.1rem;
-    font-weight: bold;
     cursor: pointer;
     box-shadow: 0 4px 15px rgba(188, 19, 254, 0.3);
-    transition: transform 0.1s, background 0.2s;
 }
 
-.mark-present-btn:active {
-    transform: scale(0.96);
-}
-
-.mark-present-btn:disabled {
-    opacity: 0.7;
-    cursor: wait;
-    background: #555;
-    box-shadow: none;
-}
-
-.timestamp-info {
-    text-align: center;
-    color: #00ffbf;
-    font-size: 1rem;
-    padding: 10px;
-    font-weight: 500;
-    background: rgba(0, 255, 191, 0.1);
-    border-radius: 8px;
-}
-
-/* HTML5 QR Code Specific Overrides */
-#html5-qrcode-button-camera-permission {
-    padding: 10px 20px;
-    background: #bc13fe;
-    color: white;
-    border: none;
-    border-radius: 5px;
+.scan-again-btn {
+    padding: 15px;
+    background: transparent;
+    border: 2px solid #ddd;
+    color: #666;
     font-weight: bold;
-    margin-top: 10px;
-}
-
-#html5-qrcode-select-camera {
-    padding: 8px;
-    background: #333;
-    color: white;
-    border: 1px solid #555;
-    border-radius: 5px;
-    margin-bottom: 10px;
+    border-radius: 12px;
+    cursor: pointer;
 }
