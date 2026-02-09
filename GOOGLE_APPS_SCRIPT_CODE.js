@@ -176,11 +176,27 @@ function onFormSubmit(e) {
       sheet.getRange(1, teamIdCol).setValue("Team ID");
     }
 
+    // Check if Team ID already exists for this row
     let currentId = sheet.getRange(rowIdx, teamIdCol).getValue();
     let memberId = currentId;
 
-    if (!memberId) {
-      memberId = "TX-" + (26000 + (rowIdx - 1));
+    if (!memberId || memberId === "") {
+      // Find the highest existing Team ID number
+      const allData = sheet.getDataRange().getValues();
+      let maxNumber = 26002; // Start from 26002, so next will be 26003
+
+      for (let i = 1; i < allData.length; i++) {
+        const existingId = allData[i][teamIdCol - 1];
+        if (existingId && String(existingId).startsWith("TX-")) {
+          const numPart = parseInt(String(existingId).replace("TX-", ""));
+          if (!isNaN(numPart) && numPart > maxNumber) {
+            maxNumber = numPart;
+          }
+        }
+      }
+
+      // Generate new ID as next number
+      memberId = "TX-" + (maxNumber + 1);
       sheet.getRange(rowIdx, teamIdCol).setValue(memberId);
     }
 
@@ -226,7 +242,7 @@ function sendBrevoEmail(toEmail, name, teamId, teamName) {
         </div>
 
         <p style="text-align: center; margin-top: 30px;">
-           <a href="https://testing-mu-lac.vercel.app/register?mode=download&email=${encodeURIComponent(toEmail)}" 
+           <a href="https://techathonx2k26-pec.vercel.app/register?mode=download&email=${encodeURIComponent(toEmail)}" 
               style="background-color: #bc13fe; color: white; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: bold;">
               DOWNLOAD ID CARD
            </a>
