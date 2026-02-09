@@ -1,19 +1,58 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
 import './IDCard.css';
 
 const IDCard = ({ data, teamId, onClose }) => {
     const cardRef = useRef(null);
+    const [bgImageData, setBgImageData] = useState(null);
     const bgImage = "/entry.png"; // User's custom background
+
+    // Preload and convert background image to base64
+    useEffect(() => {
+        const loadImage = async () => {
+            try {
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.src = bgImage;
+
+                await new Promise((resolve, reject) => {
+                    img.onload = resolve;
+                    img.onerror = reject;
+                });
+
+                // Convert to base64
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const dataUrl = canvas.toDataURL('image/png');
+                setBgImageData(dataUrl);
+            } catch (error) {
+                console.error("Failed to load background image:", error);
+                // Fallback to original image path
+                setBgImageData(bgImage);
+            }
+        };
+
+        loadImage();
+    }, [bgImage]);
 
     const handleDownload = async () => {
         if (cardRef.current) {
             try {
+                // Wait a moment to ensure all images are fully loaded
+                await new Promise(resolve => setTimeout(resolve, 500));
+
                 const canvas = await html2canvas(cardRef.current, {
                     scale: 3,
                     useCORS: true,
+                    allowTaint: true,
                     backgroundColor: null,
+                    logging: false,
+                    imageTimeout: 0,
+                    removeContainer: true,
                 });
 
                 const image = canvas.toDataURL("image/png");
@@ -38,11 +77,28 @@ const IDCard = ({ data, teamId, onClose }) => {
                     className="id-card-content"
                     ref={cardRef}
                     style={{
-                        backgroundImage: `url(${bgImage})`,
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
+                        position: 'relative'
                     }}
                 >
+                    {/* Background Image with Opacity */}
+                    {bgImageData && (
+                        <img
+                            src={bgImageData}
+                            alt="Background"
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                width: '100%',
+                                height: '100%',
+                                objectFit: 'cover',
+                                opacity: 0.3,
+                                zIndex: 0,
+                                pointerEvents: 'none'
+                            }}
+                        />
+                    )}
+
                     {/* HEADER */}
                     <div className="id-header">
                         <h1 className="id-event-title">TECHATHON X 2K26</h1>
@@ -114,8 +170,12 @@ const IDCard = ({ data, teamId, onClose }) => {
                         {bgImage.includes('entry.png') && "Save this pass and present it at the venue"}
                     </p>
 
-                    <button onClick={handleDownload} className="download-btn-gold">
-                        📥 DOWNLOAD ENTRY PASS
+                    <button
+                        onClick={handleDownload}
+                        className="download-btn-gold"
+                        disabled={!bgImageData}
+                    >
+                        {bgImageData ? '📥 DOWNLOAD ENTRY PASS' : '⏳ Loading...'}
                     </button>
 
                     <button onClick={onClose} className="close-btn-transparent">

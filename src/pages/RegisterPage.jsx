@@ -40,19 +40,56 @@ const RegisterPage = () => {
     const fetchTicketInternal = async (email) => {
         setIsSearching(true);
         try {
-            const response = await fetch(`${GSHEET_URL}?action=search_email&email=${encodeURIComponent(email)}`);
+            const response = await fetch('https://client.linupadippurakkal.com/team', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: email })
+            });
+
+            // Handle HTTP error responses
+            if (!response.ok) {
+                if (response.status === 404) {
+                    const errorData = await response.json();
+                    alert(errorData.detail || "No team found with this email.");
+                    return;
+                } else if (response.status === 400) {
+                    const errorData = await response.json();
+                    alert(errorData.detail || "Invalid request. Please provide a valid email.");
+                    return;
+                } else {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+            }
+
             const result = await response.json();
 
-            // Check for success status
-            if (result.status === "success" && result.data) {
-                setRetrievedData(result.data);
-                setGeneratedTeamId(result.data.teamId);
+            // The new API returns the team data directly
+            if (result && result.team_id) {
+                // Transform the API response to match the expected data structure
+                const transformedData = {
+                    teamId: result.team_id,
+                    teamName: result.teamName,
+                    name: result.name,
+                    domain: result.domain,
+                    timestamp: result.timestamp,
+                    team_size: result.team_size,
+                    college: result.college,
+                    lead_gender: result.lead_gender,
+                    lead_department: result.lead_department,
+                    lead_year: result.lead_year,
+                    lead_email: result.lead_email,
+                    lead_phone: result.lead_phone,
+                    team_members: result.team_members || []
+                };
+
+                setRetrievedData(transformedData);
+                setGeneratedTeamId(result.team_id);
                 playSound('assemble');
             } else {
-                // Show specific error from backend if available
-                const msg = result.message || "No registration found for this email. Please check the email or register first.";
-                alert(msg);
-                console.log("Search failed:", msg);
+                alert("No registration found for this email. Please check the email or register first.");
+                console.log("Search failed: Invalid response format");
             }
         } catch (error) {
             console.error("Search Error:", error);

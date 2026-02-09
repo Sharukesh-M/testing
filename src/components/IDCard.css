@@ -124,7 +124,7 @@
 
 .id-label {
   font-size: 11px;
-  color: #888;
+  color: #ffffff;
   text-transform: uppercase;
   letter-spacing: 1.5px;
   font-weight: 600;
@@ -156,7 +156,7 @@
 }
 
 .id-domain {
-  color: #00ffbf;
+  color: #ffe600;
   text-shadow: 0 0 10px rgba(0, 255, 191, 0.3);
   font-weight: 900;
 }
@@ -175,7 +175,7 @@
 
 .venue-label {
   font-size: 10px;
-  color: #888;
+  color: #ffffff;
   margin: 0 0 5px 0;
   letter-spacing: 2px;
   text-transform: uppercase;
