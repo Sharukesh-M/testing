@@ -6,14 +6,17 @@ import './IDCard.css';
 const IDCard = ({ data, teamId, onClose }) => {
     const cardRef = useRef(null);
     const [bgImageData, setBgImageData] = useState(null);
-    const bgImage = "/entry.png"; // User's custom background
+    const [imageLoadError, setImageLoadError] = useState(false);
+
+    // Use absolute path with origin for better compatibility
+    const bgImage = `${window.location.origin}/entry.png`;
 
     // Preload and convert background image to base64
     useEffect(() => {
         const loadImage = async () => {
             try {
                 const img = new Image();
-                img.crossOrigin = "anonymous";
+                // Don't set crossOrigin for same-origin images
                 img.src = bgImage;
 
                 await new Promise((resolve, reject) => {
@@ -29,9 +32,11 @@ const IDCard = ({ data, teamId, onClose }) => {
                 ctx.drawImage(img, 0, 0);
                 const dataUrl = canvas.toDataURL('image/png');
                 setBgImageData(dataUrl);
+                setImageLoadError(false);
             } catch (error) {
                 console.error("Failed to load background image:", error);
-                // Fallback to original image path
+                setImageLoadError(true);
+                // Fallback: try direct path without conversion
                 setBgImageData(bgImage);
             }
         };
@@ -81,10 +86,15 @@ const IDCard = ({ data, teamId, onClose }) => {
                     }}
                 >
                     {/* Background Image with Opacity */}
-                    {bgImageData && (
+                    {bgImageData ? (
                         <img
                             src={bgImageData}
                             alt="Background"
+                            onError={(e) => {
+                                console.error("Image render error:", e);
+                                console.log("Attempted to load:", bgImageData);
+                            }}
+                            onLoad={() => console.log("Background image loaded successfully")}
                             style={{
                                 position: 'absolute',
                                 top: 0,
@@ -95,8 +105,19 @@ const IDCard = ({ data, teamId, onClose }) => {
                                 opacity: 0.3,
                                 zIndex: 0,
                                 pointerEvents: 'none'
+                                
                             }}
                         />
+                    ) : (
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            background: 'linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(220, 20, 60, 0.1))',
+                            zIndex: 0
+                        }} />
                     )}
 
                     {/* HEADER */}
@@ -162,20 +183,19 @@ const IDCard = ({ data, teamId, onClose }) => {
                 <div className="id-actions">
                     <h2 className="download-title">YOUR OFFICIAL ENTRY PASS</h2>
                     <p className="download-subtitle">
-                        {!bgImage.includes('entry.png') && (
-                            <span style={{ color: '#ff6b6b' }}>
-                                ⚠️ Convert entry.pdf to entry.png and place in public folder for custom background
+                        {imageLoadError && (
+                            <span style={{ color: '#ff6b6b', display: 'block', marginBottom: '8px' }}>
+                                ⚠️ Background image failed to load. Card will use fallback design.
                             </span>
                         )}
-                        {bgImage.includes('entry.png') && "Save this pass and present it at the venue"}
+                        Save this pass and present it at the venue
                     </p>
 
                     <button
                         onClick={handleDownload}
                         className="download-btn-gold"
-                        disabled={!bgImageData}
                     >
-                        {bgImageData ? '📥 DOWNLOAD ENTRY PASS' : '⏳ Loading...'}
+                        📥 DOWNLOAD ENTRY PASS
                     </button>
 
                     <button onClick={onClose} className="close-btn-transparent">
