@@ -81,7 +81,7 @@ const RegisterPage = () => {
                     name: result.name,
                     domain: result.domain,
                     timestamp: result.timestamp,
-                    team_size: result.team_size,
+                    teamSize: result.teamSize || result.team_size || result['NO OF TEAM MEMBERS'] || result['NO OF TEAM MEMBERS(COLUMN)'] || result['No of Team Members'] || "4",
                     college: result.college,
                     lead_gender: result.lead_gender,
                     lead_department: result.lead_department,

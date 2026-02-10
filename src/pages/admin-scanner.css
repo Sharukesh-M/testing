@@ -226,6 +226,39 @@
     font-size: 0.95rem;
 }
 
+/* TEAM MEMBERS QUERY */
+.members-section {
+    grid-column: 1 / -1;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #333;
+}
+
+.members-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0 0 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.member-chip {
+    background: #333;
+    color: #fff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid #555;
+}
+
+.member-chip:first-child {
+    background: #D4AF37;
+    color: #000;
+    font-weight: bold;
+    border-color: #D4AF37;
+}
+
 /* PAYMENT SECTION */
 .payment-section {
     background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(188, 19, 254, 0.1));
@@ -428,6 +461,15 @@
 
     .team-info-grid {
         grid-template-columns: 1fr;
+    }
+
+    #reader {
+        width: 100% !important;
+    }
+
+    .start-scan-btn {
+        padding: 15px;
+        font-size: 1rem;
     }
 
     .team-header {

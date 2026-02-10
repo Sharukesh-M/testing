@@ -18,11 +18,14 @@ const AdminPage = () => {
         let scanner = null;
 
         if (isScanning && !scanResult) {
+            // Dynamic QR Box Size for Mobile
+            const qrBoxSize = window.innerWidth < 600 ? 250 : 300;
+
             scanner = new Html5QrcodeScanner(
                 "reader",
                 {
                     fps: 10,
-                    qrbox: { width: 250, height: 250 },
+                    qrbox: { width: qrBoxSize, height: qrBoxSize },
                     aspectRatio: 1.0,
                     rememberLastUsedCamera: true
                 },
@@ -32,7 +35,9 @@ const AdminPage = () => {
             scanner.render(onScanSuccess, onScanFailure);
 
             function onScanSuccess(decodedText) {
-                if (decodedText.startsWith("TX-")) {
+                // Determine if it's a valid ID format (TX-XXXXX)
+                // Relaxed checking to allow for different ID formats if needed
+                if (decodedText.length > 5) {
                     setScanResult(decodedText);
                     setIsScanning(false);
                     fetchTeamData(decodedText);
@@ -56,8 +61,10 @@ const AdminPage = () => {
         setLoading(true);
         setError(null);
         try {
+            console.log("Fetching team data for:", teamId);
             const response = await fetch(`${GSHEET_URL}?action=get_team&id=${teamId}`);
             const result = await response.json();
+            console.log("Team data result:", result);
 
             if (result.status === "success") {
                 setTeamData(result.data);
@@ -65,6 +72,7 @@ const AdminPage = () => {
                 setError(result.message || "Team not found");
             }
         } catch (err) {
+            console.error(err);
             setError("Failed to fetch team data. Check your connection.");
         } finally {
             setLoading(false);
@@ -72,15 +80,16 @@ const AdminPage = () => {
     };
 
     const markAttendance = async () => {
-        if (!teamData || !teamData.teamId) return;
+        const tId = getVal(teamData, ['teamId', 'Team ID', 'id']);
+        if (!teamData || !tId) return;
 
         try {
-            const response = await fetch(`${GSHEET_URL}?action=mark_attendance&id=${teamData.teamId}`);
+            const response = await fetch(`${GSHEET_URL}?action=mark_attendance&id=${tId}`);
             const result = await response.json();
 
             if (result.status === "success") {
                 setTeamData({ ...teamData, attendance: "PRESENT" });
-                alert(`✅ ${teamData.teamId} marked PRESENT!`);
+                alert(`✅ ${tId} marked PRESENT!`);
             } else {
                 alert("❌ Failed to mark attendance: " + result.message);
             }
@@ -113,6 +122,55 @@ const AdminPage = () => {
         setTeamData(null);
         setError(null);
         setIsScanning(true);
+    };
+
+    // Helper to extract values checking multiple possible keys
+    const getVal = (obj, keys, defaultVal = "N/A") => {
+        if (!obj) return defaultVal;
+        for (const key of keys) {
+            if (obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+                return obj[key];
+            }
+        }
+        return defaultVal;
+    };
+
+    // Helper to get members list
+    const getMembers = (obj) => {
+        if (!obj) return [];
+
+        let membersList = [];
+
+        // 1. Try explicit list field first
+        const rawMembers = getVal(obj, ['team_members', 'Team Members', 'members', 'Team Member Details'], null);
+
+        if (rawMembers) {
+            if (Array.isArray(rawMembers)) {
+                membersList = rawMembers;
+            } else if (typeof rawMembers === 'string' && rawMembers !== "N/A") {
+                membersList = rawMembers.split(',').map(m => m.trim()).filter(m => m);
+            }
+        }
+
+        // 2. If no list found, scan for individual fields (e.g., "Member 1 Name", "Team Member 2")
+        if (membersList.length === 0) {
+            const memberKeys = Object.keys(obj).filter(key =>
+                /member.*name|name.*member|student.*name|participant/i.test(key) &&
+                !/leader|team name|size|email|phone/i.test(key) // Exclude leader/meta info
+            );
+
+            // Sort keys to maintain order (Member 1, Member 2...)
+            memberKeys.sort();
+
+            memberKeys.forEach(key => {
+                const val = obj[key];
+                if (val && typeof val === 'string' && val.trim() !== "" && val !== "N/A") {
+                    membersList.push(val.trim());
+                }
+            });
+        }
+
+        return membersList;
     };
 
     return (
@@ -173,76 +231,127 @@ const AdminPage = () => {
                 {teamData && !loading && (
                     <div className="team-data-card">
                         <div className="team-header">
-                            <h2>{teamData.teamId}</h2>
-                            <span className={`attendance-badge ${teamData.attendance === 'PRESENT' ? 'present' : 'absent'}`}>
-                                {teamData.attendance || "ABSENT"}
+                            <h2>{getVal(teamData, ['teamId', 'Team ID', 'id'])}</h2>
+                            <span className={`attendance-badge ${getVal(teamData, ['attendance', 'Attendance']) === 'PRESENT' ? 'present' : 'absent'}`}>
+                                {getVal(teamData, ['attendance', 'Attendance']) || "ABSENT"}
                             </span>
                         </div>
 
                         <div className="team-info-grid">
                             <div className="info-item">
                                 <span className="info-label">TEAM NAME</span>
-                                <span className="info-value">{teamData.teamName || "N/A"}</span>
+                                <span className="info-value">{getVal(teamData, ['teamName', 'Team Name', 'team_name', 'Team_Name', 'Project Title', 'Title'])}</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">TEAM LEADER</span>
-                                <span className="info-value">{teamData.name || "N/A"}</span>
+                                <span className="info-value">{getVal(teamData, ['name', 'Name', 'Team Leader Name', 'leader_name', 'Leader Name', 'Full Name'])}</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">TEAM SIZE</span>
-                                <span className="info-value">{teamData.teamSize || "4"} Members</span>
+                                <span className="info-value">{getVal(teamData, ['teamSize', 'Team Size', 'team_size', 'Number of Members', 'NO OF TEAM MEMBERS', 'NO OF TEAM MEMBERS(COLUMN)'], "4")} Members</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">COLLEGE</span>
-                                <span className="info-value">{teamData.college || "N/A"}</span>
+                                <span className="info-value">{getVal(teamData, ['college', 'College', 'Institute', 'Institution', 'University', 'College Name', 'College/Institute'])}</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">DOMAIN</span>
-                                <span className="info-value domain-highlight">{teamData.domain || "N/A"}</span>
+                                <span className="info-value domain-highlight">{getVal(teamData, ['domain', 'Domain', 'Track', 'Theme', 'Selected Domain'])}</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">EMAIL</span>
-                                <span className="info-value">{teamData.email || "N/A"}</span>
+                                <span className="info-value">{getVal(teamData, ['email', 'Email', 'Email Address', 'lead_email', 'Email ID'])}</span>
                             </div>
 
                             <div className="info-item">
                                 <span className="info-label">PHONE</span>
-                                <span className="info-value">{teamData.phone || "N/A"}</span>
+                                <span className="info-value">{getVal(teamData, ['phone', 'Phone', 'Phone Number', 'lead_phone', 'Mobile', 'Contact Number'])}</span>
                             </div>
 
                             <div className="info-item full-width">
                                 <span className="info-label">TRANSACTION ID</span>
-                                <span className="info-value transaction-id">{teamData.transactionId || "NOT PROVIDED"}</span>
+                                <span className="info-value transaction-id">{getVal(teamData, ['transactionId', 'Transaction ID', 'payment_id', 'Transaction Reference ID'])}</span>
                             </div>
+
+                            {/* Members Section */}
+                            <div className="info-item full-width members-section">
+                                <span className="info-label">TEAM MEMBERS</span>
+                                <ul className="members-list">
+                                    {getMembers(teamData).length > 0 ? (
+                                        getMembers(teamData).map((member, idx) => (
+                                            <li key={idx} className="member-chip">
+                                                {typeof member === 'object' ? (member.name || JSON.stringify(member)) : member}
+                                            </li>
+                                        ))
+                                    ) : (
+                                        <li className="member-chip">No additional members found</li>
+                                    )}
+                                </ul>
+                            </div>
+                        </div>
+
+                        {/* DEBUG: RAW DATA TOGGLE */}
+                        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                            <button
+                                onClick={() => console.log(teamData) || alert(JSON.stringify(teamData, null, 2))}
+                                style={{
+                                    background: 'transparent',
+                                    border: '1px solid #555',
+                                    color: '#888',
+                                    padding: '5px 10px',
+                                    borderRadius: '5px',
+                                    fontSize: '0.8rem',
+                                    cursor: 'pointer'
+                                }}
+                            >
+                                🐞 DEBUG: SHOW RAW DATA
+                            </button>
                         </div>
 
                         {/* PAYMENT VERIFICATION SECTION */}
                         <div className="payment-section">
                             <h3 className="payment-title">💳 PAYMENT VERIFICATION</h3>
 
-                            <div className="payment-status">
-                                <span className="payment-label">Payment Status:</span>
-                                <span className={`payment-badge ${teamData.transactionId ? 'paid' : 'unpaid'}`}>
-                                    {teamData.transactionId ? "✅ PAID" : "❌ NOT PAID"}
-                                </span>
-                            </div>
+                            {(() => {
+                                const txnId = getVal(teamData, ['transactionId', 'Transaction ID', 'payment_id'], "");
+                                return (
+                                    <>
+                                        <div className="payment-status">
+                                            <span className="payment-label">Payment Status:</span>
+                                            <span className={`payment-badge ${txnId && txnId !== "N/A" ? 'paid' : 'unpaid'}`}>
+                                                {txnId && txnId !== "N/A" ? "✅ PAID" : "❌ NOT PAID"}
+                                            </span>
+                                        </div>
 
-                            {teamData.transactionId && (
-                                <div className="transaction-details">
-                                    <p><strong>Transaction ID:</strong> {teamData.transactionId}</p>
-                                    <button
-                                        onClick={() => setShowPaymentProof(!showPaymentProof)}
-                                        className="view-proof-btn"
-                                    >
-                                        {showPaymentProof ? "HIDE" : "VIEW"} PAYMENT SCREENSHOT
-                                    </button>
-                                </div>
-                            )}
+                                        {txnId && txnId !== "N/A" && (
+                                            <div className="transaction-details">
+                                                <p><strong>Transaction ID:</strong> {txnId}</p>
+                                                <button
+                                                    onClick={() => setShowPaymentProof(!showPaymentProof)}
+                                                    className="view-proof-btn"
+                                                >
+                                                    {showPaymentProof ? "HIDE" : "VIEW"} PAYMENT SCREENSHOT
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {!txnId || txnId === "N/A" && (
+                                            <div className="manual-payment-box">
+                                                <p className="warning-text">⚠️ No transaction ID found. If payment was made manually at venue:</p>
+                                                <button className="manual-verify-btn">
+                                                    MARK AS PAID (Manual Verification)
+                                                </button>
+                                                <p className="note-text">Note: This will update the Google Sheet</p>
+                                            </div>
+                                        )}
+                                    </>
+                                );
+                            })()}
 
                             {showPaymentProof && (
                                 <div className="payment-proof-box">
@@ -261,26 +370,17 @@ const AdminPage = () => {
                                 </div>
                             )}
 
-                            {!teamData.transactionId && (
-                                <div className="manual-payment-box">
-                                    <p className="warning-text">⚠️ No transaction ID found. If payment was made manually at venue:</p>
-                                    <button className="manual-verify-btn">
-                                        MARK AS PAID (Manual Verification)
-                                    </button>
-                                    <p className="note-text">Note: This will update the Google Sheet</p>
-                                </div>
-                            )}
                         </div>
 
                         {/* ACTION BUTTONS */}
                         <div className="action-buttons">
-                            {teamData.attendance !== "PRESENT" && (
+                            {getVal(teamData, ['attendance', 'Attendance']) !== "PRESENT" && (
                                 <button onClick={markAttendance} className="mark-present-btn">
                                     ✅ MARK ATTENDANCE
                                 </button>
                             )}
 
-                            {teamData.attendance === "PRESENT" && (
+                            {getVal(teamData, ['attendance', 'Attendance']) === "PRESENT" && (
                                 <div className="already-present">
                                     <p>✅ Already marked PRESENT</p>
                                 </div>

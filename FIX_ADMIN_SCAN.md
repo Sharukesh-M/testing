@@ -4,6 +4,21 @@
 If your Admin Scan is not working (e.g., getting errors or nothing happens),
 it is almost certainly because the Google Script is not deployed correctly.
 
+## RECENT UPDATES (Admin Page Fixes)
+- **Mobile Scanning**: The scanner now adapts to mobile screen sizes automatically.
+- **Team Members**: The Admin Page now intelligently scans for member names across all data columns (e.g., "Member 1", "Participant Name").
+- **Team Size**: Fixed an issue where team size showed as "4" (default). We now look for "NO OF TEAM MEMBERS".
+- **Data Display**: Added support for varied column names (e.g., "Project Title" for Team Name).
+- **DEBUG MODE**: Added a "🐞 DEBUG: SHOW RAW DATA" button at the bottom of the scanned result.
+
+## 🛠 TROUBLESHOOTING: STILL SEEING "N/A"?
+1. Scan a QR Code.
+2. Scroll to the bottom and click **🐞 DEBUG: SHOW RAW DATA**.
+3. An alert will pop up showing the *exact* data coming from Google Sheets.
+4. Look at the key names (e.g., `Input_1`, `Column_A`).
+   - If they look like `Input_1` instead of `Team Name`, your Google Sheet headers are missing or not in the first row.
+   - Using this raw data, you can tell me the correct key names to add.
+
 ## STEP 1: UPDATE YOUR GOOGLE SCRIPT
 1. Go to your Google Spreadsheet -> Extensions -> Apps Script.
 2. DELETE all the old code.
