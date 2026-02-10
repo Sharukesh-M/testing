@@ -6,6 +6,12 @@ import "./admin-scanner.css";
 const GSHEET_URL = "https://script.google.com/macros/s/AKfycby9V3j0NK20A6oWAabArQKDLqPVkFu41aTOoyhxCbfiScNG91VHpw3hH7tfIwhB4Aue/exec";
 
 const AdminPage = () => {
+    // Auth State
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [loginError, setLoginError] = useState("");
+
     const [scanResult, setScanResult] = useState(null);
     const [teamData, setTeamData] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -17,7 +23,7 @@ const AdminPage = () => {
     useEffect(() => {
         let scanner = null;
 
-        if (isScanning && !scanResult) {
+        if (isAuthenticated && isScanning && !scanResult) {
             // Dynamic QR Box Size for Mobile
             const qrBoxSize = window.innerWidth < 600 ? 250 : 300;
 
@@ -55,7 +61,17 @@ const AdminPage = () => {
                 scanner.clear().catch(console.error);
             }
         };
-    }, [isScanning, scanResult]);
+    }, [isAuthenticated, isScanning, scanResult]);
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+        if (username === "techathonx2k26" && password === "techathonx2026") {
+            setIsAuthenticated(true);
+            setLoginError("");
+        } else {
+            setLoginError("Invalid Username or Password");
+        }
+    };
 
     const fetchTeamData = async (teamId) => {
         setLoading(true);
@@ -194,6 +210,36 @@ const AdminPage = () => {
 
         return membersList;
     };
+
+    if (!isAuthenticated) {
+        return (
+            <div className="admin-scanner-page">
+                <div className="login-container">
+                    <h1 className="login-title">🔐 ADMIN ACCESS</h1>
+                    <form onSubmit={handleLogin}>
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            className="login-input"
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="login-input"
+                        />
+                        {loginError && <p className="login-error">{loginError}</p>}
+                        <button type="submit" className="login-btn">
+                            LOGIN
+                        </button>
+                    </form>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="admin-scanner-page">

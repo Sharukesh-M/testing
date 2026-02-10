@@ -25,6 +25,67 @@
     font-size: 1rem;
 }
 
+/* LOGIN FORM */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 40px;
+    background: #1a1a1a;
+    border: 2px solid #D4AF37;
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgba(212, 175, 55, 0.2);
+    text-align: center;
+}
+
+.login-title {
+    color: #D4AF37;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    font-weight: 900;
+}
+
+.login-input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: #0a0a0a;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.login-input:focus {
+    outline: none;
+    border-color: #D4AF37;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, #D4AF37, #f1c40f);
+    color: #000;
+    border: none;
+    border-radius: 10px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: transform 0.2s;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+}
+
+.login-error {
+    color: #ff4444;
+    margin-bottom: 20px;
+    background: rgba(255, 68, 68, 0.1);
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /* MANUAL SEARCH */
 .manual-search-section {
     display: flex;
