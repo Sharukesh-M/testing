@@ -124,14 +124,36 @@ const AdminPage = () => {
         setIsScanning(true);
     };
 
-    // Helper to extract values checking multiple possible keys
+    // Helper to extract values checking multiple possible keys with FUZZY MATCHING (Improved)
     const getVal = (obj, keys, defaultVal = "N/A") => {
         if (!obj) return defaultVal;
+
+        // 1. Direct match first (Fastest)
         for (const key of keys) {
             if (obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
                 return obj[key];
             }
         }
+
+        // 2. Fuzzy match: Search all object keys for partial matches
+        const objKeys = Object.keys(obj);
+        for (const searchKey of keys) {
+            // Clean search key: "Team Name" -> "teamname"
+            const cleanSearch = searchKey.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+            for (const actualKey of objKeys) {
+                const cleanActual = actualKey.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+                // If the actual key *contains* the search term (e.g. "Enter your Team Name" contains "teamname")
+                // OR if search term contains actual key (e.g. "name" matches "Full Name")
+                if (cleanActual.includes(cleanSearch) || (cleanSearch.length > 3 && cleanSearch.includes(cleanActual))) {
+                    if (obj[actualKey] !== undefined && obj[actualKey] !== null && obj[actualKey] !== "") {
+                        return obj[actualKey];
+                    }
+                }
+            }
+        }
+
         return defaultVal;
     };
 
