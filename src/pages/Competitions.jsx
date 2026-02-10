@@ -31,7 +31,7 @@ const ruleData = [
     { num: "V.", text: "Judicial decisions of the expert panel are final and binding." },
     { num: "VI.", text: "Participants must maintain campus discipline and decorum." },
     { num: "VII.", text: "Open to multidiciplinary,inter-collegiate teams of all year levels." },
-    { num: "VIII.", text: "Teams must maintain at least one representative at thieir alloted place at all times." }
+    { num: "VIII.", text: "Teams must maintain at least one representative at their alloted place at all times." }
 ];
 
 const Competitions = () => {

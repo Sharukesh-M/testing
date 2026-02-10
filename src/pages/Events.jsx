@@ -69,8 +69,8 @@ const timelineData = {
     day2: [
         { time: "12:00 AM", event: "Refreshment" },
         { time: "04:30 AM", event: "Refreshment" },
-        { time: "08:30 PM", event: "Breakfast" },
-        { time: "11:30 PM", event: "Hackathon Ends" },
+        { time: "08:30 AM", event: "Breakfast" },
+        { time: "11:30 AM", event: "Hackathon Ends" },
         { time: "12:30 PM", event: "Result Annoucement" },
 
     ]
