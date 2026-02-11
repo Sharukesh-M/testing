@@ -6,7 +6,7 @@ import "./admin-scanner.css";
 // API Base URL - Update this if your backend is hosted elsewhere
 // Assuming the backend runs on port 8000 locally or a deployed URL
 // For Vercel deployment, this might needs to be the backend URL
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = "https://client.linupadippurakkal.com";
 // Note: If testing locally, ensure backend is running. 
 // If deployed, replace with https://your-backend-app.vercel.app
 
