@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useRef } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import "./admin-scanner.css";
 
-// Updated Script URL
-const GSHEET_URL = "https://script.google.com/macros/s/AKfycby9V3j0NK20A6oWAabArQKDLqPVkFu41aTOoyhxCbfiScNG91VHpw3hH7tfIwhB4Aue/exec";
+// API Base URL - Update this if your backend is hosted elsewhere
+// Assuming the backend runs on port 8000 locally or a deployed URL
+// For Vercel deployment, this might needs to be the backend URL
+const API_BASE_URL = "http://localhost:8000";
+// Note: If testing locally, ensure backend is running. 
+// If deployed, replace with https://your-backend-app.vercel.app
 
 const AdminPage = () => {
     // Auth State
@@ -12,56 +17,129 @@ const AdminPage = () => {
     const [password, setPassword] = useState("");
     const [loginError, setLoginError] = useState("");
 
-    const [scanResult, setScanResult] = useState(null);
-    const [teamData, setTeamData] = useState(null);
+    const scannerRef = useRef(null);
+
+    // App State
+    const [currentView, setCurrentView] = useState("dashboard"); // dashboard, edit-payment, view-sheet, total-team, total-present, total-paid
+    const [teams, setTeams] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [visitorCount, setVisitorCount] = useState(0);
+
+    // Scanner/Selection State
+    const [scannedTeam, setScannedTeam] = useState(null);
+    const [scanTime, setScanTime] = useState(null);
     const [isScanning, setIsScanning] = useState(false);
     const [manualSearch, setManualSearch] = useState("");
-    const [showPaymentProof, setShowPaymentProof] = useState(false);
+    const [selectedMember, setSelectedMember] = useState(null);
+
+    // Initial Fetch on Login
+    const hasRecordedVisitRef = useRef(false);
 
     useEffect(() => {
-        let scanner = null;
+        if (isAuthenticated) {
+            fetchAllTeams();
 
-        if (isAuthenticated && isScanning && !scanResult) {
-            // Dynamic QR Box Size for Mobile
-            const qrBoxSize = window.innerWidth < 600 ? 250 : 300;
+            // Visitor Count Logic - Real Backend Integration
+            const initVisitorCount = async () => {
+                if (hasRecordedVisitRef.current) return;
+                hasRecordedVisitRef.current = true;
 
-            scanner = new Html5QrcodeScanner(
-                "reader",
-                {
-                    fps: 10,
-                    qrbox: { width: qrBoxSize, height: qrBoxSize },
-                    aspectRatio: 1.0,
-                    rememberLastUsedCamera: true
-                },
-                false
-            );
-
-            scanner.render(onScanSuccess, onScanFailure);
-
-            function onScanSuccess(decodedText) {
-                // Determine if it's a valid ID format (TX-XXXXX)
-                // Relaxed checking to allow for different ID formats if needed
-                if (decodedText.length > 5) {
-                    setScanResult(decodedText);
-                    setIsScanning(false);
-                    fetchTeamData(decodedText);
-                    scanner.clear().catch(console.error);
+                try {
+                    console.log("Recording visit...");
+                    const res = await fetch(`${API_BASE_URL}/visit`, { method: "POST" });
+                    if (res.ok) {
+                        const data = await res.json();
+                        setVisitorCount(data.count || data.visitor_count || 0);
+                    }
+                } catch (e) {
+                    console.error("Failed to record visit:", e);
                 }
-            }
+            };
 
-            function onScanFailure(err) {
-                // ignore
+            initVisitorCount();
+        }
+    }, [isAuthenticated]);
+
+    const handleRefresh = async () => {
+        await fetchAllTeams();
+        try {
+            const res = await fetch(`${API_BASE_URL}/visitor_count`);
+            if (res.ok) {
+                const data = await res.json();
+                setVisitorCount(data.count || data.visitor_count || visitorCount);
             }
+        } catch (e) {
+            console.error("Failed to refresh visitor count:", e);
+        }
+    };
+
+    // Cleanup scanner when view changes or component unmounts
+    useEffect(() => {
+        return () => {
+            if (scannerRef.current) {
+                scannerRef.current.clear().catch(console.error);
+                scannerRef.current = null;
+            }
+        };
+    }, [currentView]);
+
+    // Scanner Effect
+    useEffect(() => {
+        let timer = null;
+
+        const onScanSuccess = (decodedText) => {
+            if (decodedText && decodedText.length > 2) {
+                handleSearch(decodedText);
+                setIsScanning(false);
+                // Cleanup handles the rest
+            }
+        };
+
+        if (isAuthenticated && isScanning && !scannedTeam) {
+            // Delay initialization to ensure DOM is ready
+            timer = setTimeout(() => {
+                const element = document.getElementById("reader");
+                if (!element) {
+                    console.error("Scanner reader element not found");
+                    return;
+                }
+
+                // Double check cleanup
+                if (scannerRef.current) {
+                    try { scannerRef.current.clear(); } catch (e) { /* ignore */ }
+                    scannerRef.current = null;
+                }
+
+                const qrBoxSize = window.innerWidth < 600 ? 250 : 300;
+                const scanner = new Html5QrcodeScanner(
+                    "reader",
+                    {
+                        fps: 10,
+                        qrbox: { width: qrBoxSize, height: qrBoxSize },
+                        aspectRatio: 1.0,
+                        rememberLastUsedCamera: true
+                    },
+                    false
+                );
+
+                scannerRef.current = scanner;
+
+                scanner.render(onScanSuccess, (err) => {
+                    // ignore errors
+                });
+
+            }, 150);
         }
 
         return () => {
-            if (scanner) {
-                scanner.clear().catch(console.error);
+            if (timer) clearTimeout(timer);
+            if (scannerRef.current) {
+                scannerRef.current.clear().catch(e => console.warn("Failed to clear scanner", e));
+                scannerRef.current = null;
             }
         };
-    }, [isAuthenticated, isScanning, scanResult]);
+    }, [isAuthenticated, isScanning, scannedTeam]);
 
     const handleLogin = (e) => {
         e.preventDefault();
@@ -73,168 +151,643 @@ const AdminPage = () => {
         }
     };
 
-    const fetchTeamData = async (teamId) => {
+    const handleViewChange = (newView) => {
+        setIsScanning(false);
+        if (scannerRef.current) {
+            scannerRef.current.clear().catch(console.error);
+            scannerRef.current = null;
+        }
+        setCurrentView(newView);
+    };
+
+    const [debugData, setDebugData] = useState(null);
+
+    const fetchAllTeams = async () => {
         setLoading(true);
         setError(null);
         try {
-            console.log("Fetching team data for:", teamId);
-            const response = await fetch(`${GSHEET_URL}?action=get_team&id=${teamId}`);
-            const result = await response.json();
-            console.log("Team data result:", result);
+            console.log(`Fetching from: ${API_BASE_URL}/teams`);
+            const res = await fetch(`${API_BASE_URL}/teams`);
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`Failed to fetch teams: ${res.status} ${res.statusText} \n ${text}`);
+            }
+            const data = await res.json();
+            console.log("API Response:", data);
+            setDebugData(data); // Save for debug view
 
-            if (result.status === "success") {
-                setTeamData(result.data);
+            // Handle potential response structures
+            if (Array.isArray(data)) {
+                setTeams(data);
+            } else if (data.teams && Array.isArray(data.teams)) {
+                setTeams(data.teams);
+            } else if (data.data && Array.isArray(data.data)) {
+                setTeams(data.data);
             } else {
-                setError(result.message || "Team not found");
+                console.warn("Unexpected data format:", data);
+                setError("Received data is not a list of teams.");
+                setTeams([]);
             }
         } catch (err) {
             console.error(err);
-            setError("Failed to fetch team data. Check your connection.");
+            setError(err.message || "Failed to load team data. Is the backend running?");
+            setTeams([]);
+            // Mock data for development if backend fails (Optional, but good for UI testing)
+            // setTeams([{ team_id: "T001", teamName: "Alpha", name: "John", payment_status: "PAID" }]);
         } finally {
             setLoading(false);
         }
     };
 
-    const markAttendance = async () => {
-        const tId = getVal(teamData, ['teamId', 'Team ID', 'id']);
-        if (!teamData || !tId) return;
+    const handleSearch = (query) => {
+        if (!teams || teams.length === 0) return;
 
+        const found = teams.find(t => {
+            // Robust check for fields
+            const tId = t.team_id || t.teamId || "";
+            const email = t.lead_email || t.email || "";
+            const tName = t.teamName || "";
+            const lName = t.name || "";
+
+            return tId.toLowerCase() === query.toLowerCase() ||
+                email.toLowerCase() === query.toLowerCase() ||
+                tName.toLowerCase().includes(query.toLowerCase()) ||
+                lName.toLowerCase().includes(query.toLowerCase());
+        });
+
+        if (found) {
+            setScannedTeam(found);
+            setScanTime(new Date().toLocaleString()); // Set scan time
+            setSelectedMember(null); // Reset member selection
+            if (currentView === "dashboard") {
+                setCurrentView("scanner-view"); // Directly go to scanner view to show details
+            }
+        } else {
+            alert("Team not found in loaded data!");
+        }
+    };
+
+    const updatePaymentStatus = async (teamId, newStatus) => {
         try {
-            const response = await fetch(`${GSHEET_URL}?action=mark_attendance&id=${tId}`);
-            const result = await response.json();
+            console.log(`Updating payment for ${teamId} to ${newStatus}`);
+            let res;
+            try {
+                res = await fetch(`${API_BASE_URL}/update_payment`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ team_id: teamId, status: newStatus })
+                });
+            } catch (networkErr) {
+                console.error("Network Fetch Error:", networkErr);
+                throw new Error("Could not connect to backend. Is it running? (Network Error)");
+            }
 
-            if (result.status === "success") {
-                setTeamData({ ...teamData, attendance: "PRESENT" });
-                alert(`✅ ${tId} marked PRESENT!`);
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`Server Error (${res.status}): ${text}`);
+            }
+
+            const data = await res.json();
+            if (data.status === "success" || data.message) {
+                // Update local state
+                setTeams(prevTeams => prevTeams.map(t =>
+                    t.team_id === teamId ? { ...t, payment_status: newStatus ? "PAID" : "UNPAID" } : t
+                ));
+                // Also update scanned team if it matches
+                if (scannedTeam && scannedTeam.team_id === teamId) {
+                    setScannedTeam(prev => ({ ...prev, payment_status: newStatus ? "PAID" : "UNPAID" }));
+                }
+                alert("Payment status updated successfully!");
             } else {
-                alert("❌ Failed to mark attendance: " + result.message);
+                alert("Failed to update status: " + JSON.stringify(data));
             }
         } catch (err) {
-            alert("❌ Error marking attendance");
+            console.error(err);
+            alert("Error updating payment: " + err.message);
         }
     };
 
-    const handleManualSearch = () => {
-        if (manualSearch.trim()) {
-            setScanResult(manualSearch.trim());
-            fetchTeamData(manualSearch.trim());
-        }
-    };
+    const markAttendance = async (teamId, status, memberName = null) => {
+        try {
+            const timestamp = new Date().toLocaleString();
+            console.log(`Marking attendance for ${teamId} to ${status} at ${timestamp}`);
 
-    const handleStartScan = () => {
-        setScanResult(null);
-        setTeamData(null);
-        setError(null);
-        setIsScanning(true);
-    };
-
-    const handleCancelScan = () => {
-        setIsScanning(false);
-        setScanResult(null);
-    };
-
-    const handleScanNext = () => {
-        setScanResult(null);
-        setTeamData(null);
-        setError(null);
-        setIsScanning(true);
-    };
-
-    // Helper to extract values checking multiple possible keys with FUZZY MATCHING (Improved)
-    const getVal = (obj, keys, defaultVal = "N/A") => {
-        if (!obj) return defaultVal;
-
-        // 1. Direct match first (Fastest)
-        for (const key of keys) {
-            if (obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
-                return obj[key];
+            // Optimistically update local state for immediate feedback
+            if (scannedTeam && scannedTeam.team_id === teamId) {
+                // Format: "12/02/2026, 10:30:00 AM" (approx)
+                setScanTime(timestamp);
             }
-        }
 
-        // 2. Fuzzy match: Search all object keys for partial matches
-        const objKeys = Object.keys(obj);
-        for (const searchKey of keys) {
-            // Clean search key: "Team Name" -> "teamname"
-            const cleanSearch = searchKey.toLowerCase().replace(/[^a-z0-9]/g, "");
+            let res;
+            try {
+                res = await fetch(`${API_BASE_URL}/mark_attendance`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        team_id: teamId,
+                        status: status,
+                        member_name: memberName,
+                        timestamp: timestamp // Send client timestamp
+                    })
+                });
+            } catch (networkErr) {
+                console.error("Network Fetch Error:", networkErr);
+                throw new Error("Could not connect to backend. Is it running? (Network Error)");
+            }
 
-            for (const actualKey of objKeys) {
-                const cleanActual = actualKey.toLowerCase().replace(/[^a-z0-9]/g, "");
+            if (!res.ok) {
+                const text = await res.text();
+                throw new Error(`Server Error (${res.status}): ${text}`);
+            }
 
-                // If the actual key *contains* the search term (e.g. "Enter your Team Name" contains "teamname")
-                // OR if search term contains actual key (e.g. "name" matches "Full Name")
-                if (cleanActual.includes(cleanSearch) || (cleanSearch.length > 3 && cleanSearch.includes(cleanActual))) {
-                    if (obj[actualKey] !== undefined && obj[actualKey] !== null && obj[actualKey] !== "") {
-                        return obj[actualKey];
+            const data = await res.json();
+            if (data.status === "success" || data.message) {
+                // Update local state
+                setTeams(prevTeams => prevTeams.map(t => {
+                    if (t.team_id !== teamId) return t;
+                    if (!memberName) {
+                        return { ...t, attendance: status ? "PRESENT" : "ABSENT" };
                     }
-                }
-            }
-        }
+                    return t;
+                }));
 
-        return defaultVal;
+                // Update Scanned Team View if active
+                if (scannedTeam && scannedTeam.team_id === teamId) {
+                    setScannedTeam(prev => ({ ...prev, attendance: status ? "PRESENT" : "ABSENT" }));
+                }
+
+                if (memberName) {
+                    alert(`Attendance marked for ${memberName}`);
+                    fetchAllTeams();
+                } else {
+                    alert("Team Attendance Marked!");
+                }
+            } else {
+                alert("Failed to mark attendance: " + JSON.stringify(data));
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Error marking attendance: " + err.message);
+        }
+    }
+
+    // --- RENDER HELPERS ---
+
+    const renderDashboard = () => {
+        const totalTeams = teams.length;
+        const totalPaid = teams.filter(t => t.payment_status === "PAID").length; // Fixed strict check
+        const totalPresent = teams.filter(t => t.attendance === "PRESENT").length;
+        const totalAbsent = totalTeams - totalPresent;
+
+        return (
+            <div className="dashboard-grid-container">
+                {/* VISITOR COUNT & TOP DATA */}
+                <div className="top-stats-row" style={{ marginBottom: '1.5rem' }}>
+                    <div className="visitor-badge" style={{
+                        display: 'inline-flex', alignItems: 'center', gap: '0.5rem',
+                        background: '#334155', padding: '0.5rem 1rem', borderRadius: '0.5rem',
+                        border: '1px solid #475569', color: '#f8fafc', fontWeight: 'bold'
+                    }}>
+                        <span style={{ color: '#3b82f6' }}>👥 VISITORS:</span>
+                        <span style={{ fontSize: '1.2rem' }}>{visitorCount}</span>
+                    </div>
+                </div>
+
+                {/* GLOBAL SEARCH & SCAN */}
+                <div className="action-row top" style={{ marginBottom: '2rem', width: '100%', display: 'flex', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                    <div className="search-bar" style={{ flex: 1, minWidth: '300px' }}>
+                        <input
+                            type="text"
+                            placeholder="🔍 Global Search by Team ID or Email..."
+                            value={manualSearch}
+                            onChange={(e) => setManualSearch(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && handleSearch(manualSearch)}
+                            style={{ width: '100%', padding: '1rem', boxSizing: 'border-box' }}
+                        />
+                    </div>
+                    <button className="dash-btn scan-btn large" onClick={() => { setCurrentView("scanner-view"); setIsScanning(true); _setScannedTeam(null); }}>
+                        📷 SCAN QR
+                    </button>
+                    <button className="dash-btn" onClick={() => handleSearch(manualSearch)}>SEARCH</button>
+                </div>
+
+                <div className="dashboard-grid">
+                    <div className="stat-card" onClick={() => handleViewChange("total-team")}>
+                        <h3>TOTAL TEAMS</h3>
+                        <p>{totalTeams}</p>
+                    </div>
+                    <div className="stat-card" onClick={() => handleViewChange("total-present")}>
+                        <h3>TOTAL PRESENT</h3>
+                        <p>{totalPresent}</p>
+                    </div>
+                    <div className="stat-card" onClick={() => handleViewChange("total-absent")} style={{ background: '#ef4444' }}>
+                        <h3>TOTAL ABSENT</h3>
+                        <p>{totalAbsent}</p>
+                    </div>
+                    <div className="stat-card" onClick={() => handleViewChange("total-paid")}>
+                        <h3>TOTAL PAID</h3>
+                        <p>{totalPaid}</p>
+                    </div>
+                </div>
+
+                {/* Custom Action Buttons */}
+                <div className="action-row">
+                    <button className="dash-btn" onClick={() => handleViewChange("edit-payment")}>
+                        📝 EDIT PAYMENT
+                    </button>
+                    <button className="dash-btn" onClick={() => handleViewChange("view-sheet")}>
+                        📊 VIEW SHEET
+                    </button>
+                    <button className="dash-btn" onClick={() => handleViewChange("total-team")}>
+                        👥 ALL TEAMS
+                    </button>
+                </div>
+
+                {/* DEBUG SECTION */}
+                <div style={{ marginTop: '3rem', padding: '1rem', background: '#334155', borderRadius: '1rem', maxWidth: '100%', overflow: 'hidden' }}>
+                    <h4 style={{ color: '#cbd5e1', marginBottom: '0.5rem' }}>🔧 Debug Info</h4>
+                    <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
+                        API URL: {API_BASE_URL}<br />
+                        Teams Loaded: {teams.length}<br />
+                        Loading: {loading ? "Yes" : "No"}<br />
+                        Error: {error || "None"}
+                    </p>
+                    <button
+                        onClick={fetchAllTeams}
+                        style={{ marginTop: '0.5rem', padding: '0.5rem 1rem', background: '#475569', color: 'white', border: 'none', borderRadius: '0.5rem', cursor: 'pointer' }}
+                    >
+                        🔄 Force Refresh Data
+                    </button>
+                    {error && (
+                        <div style={{ marginTop: '1rem', background: '#1e293b', padding: '1rem', borderRadius: '0.5rem', maxHeight: '200px', overflow: 'auto' }}>
+                            <code style={{ color: '#ef4444', fontSize: '0.8rem' }}>{JSON.stringify(error, null, 2)}</code>
+                        </div>
+                    )}
+                    <div style={{ marginTop: '1rem' }}>
+                        <details>
+                            <summary style={{ color: '#cbd5e1', cursor: 'pointer' }}>View Raw Response (First 2 items)</summary>
+                            <pre style={{ marginTop: '0.5rem', background: '#0f172a', padding: '1rem', borderRadius: '0.5rem', color: '#10b981', fontSize: '0.8rem', overflow: 'auto' }}>
+                                {JSON.stringify(teams.slice(0, 2), null, 2)}
+                            </pre>
+                        </details>
+                    </div>
+                </div>
+            </div>
+        );
     };
 
-    // Helper to get members list
-    const getMembers = (obj) => {
-        if (!obj) return [];
+    const renderTeamList = (filterFn, title, extraColumns = null, extraHeaders = null) => {
+        const filtered = teams.filter(filterFn);
+        return (
+            <div className="list-view">
+                <div className="list-header">
+                    <h2>{title} ({filtered.length})</h2>
+                    <button onClick={() => setCurrentView("dashboard")} className="back-btn">⬅ BACK</button>
+                    <div className="search-bar">
+                        <input
+                            type="text"
+                            placeholder="Search by ID or Name..."
+                            onChange={(e) => setManualSearch(e.target.value)}
+                        />
+                    </div>
+                </div>
+                <div className="table-responsive">
+                    <table className="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Team Name</th>
+                                <th>Leader Name</th>
+                                {extraHeaders}
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered.filter(t =>
+                                !manualSearch ||
+                                (t.team_id && t.team_id.toLowerCase().includes(manualSearch.toLowerCase())) ||
+                                (t.teamName && t.teamName.toLowerCase().includes(manualSearch.toLowerCase()))
+                            ).map(team => (
+                                <tr key={team.team_id}>
+                                    <td style={{ fontWeight: 'bold', color: '#fbbf24' }}>{team.team_id}</td>
+                                    <td>{team.teamName || "N/A"}</td>
+                                    <td>{team.name || "N/A"}</td>
+                                    {extraColumns && extraColumns(team)}
+                                    <td>
+                                        <button onClick={() => { setScannedTeam(team); setCurrentView("scanner-view"); }} className="action-btn small">
+                                            VIEW
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
 
-        let membersList = [];
+    const renderEditPayment = () => renderTeamList(
+        () => true,
+        "Edit Payment",
+        (team) => (
+            <>
+                <td>{team.transaction_id || "N/A"}</td>
+                <td>
+                    {team.screenshot_url ? (
+                        <a href={team.screenshot_url} target="_blank" rel="noreferrer" className="link-btn">View Proof</a>
+                    ) : (
+                        <span className="no-proof">No Proof</span>
+                    )}
+                </td>
+                <td>
+                    <select
+                        value={team.payment_status === "PAID" ? "PAID" : "UNPAID"}
+                        onChange={(e) => updatePaymentStatus(team.team_id, e.target.value === "PAID")}
+                        className={`status-select ${team.payment_status === "PAID" ? "success" : "warning"}`}
+                    >
+                        <option value="UNPAID">UNPAID</option>
+                        <option value="PAID">PAID</option>
+                    </select>
+                </td>
+            </>
+        ),
+        <>
+            <th>Txn ID</th>
+            <th>Proof</th>
+            <th>Status</th>
+        </>
+    );
 
-        // 1. Try explicit list field first
-        const rawMembers = getVal(obj, ['team_members', 'Team Members', 'members', 'Team Member Details'], null);
 
-        if (rawMembers) {
-            if (Array.isArray(rawMembers)) {
-                membersList = rawMembers;
-            } else if (typeof rawMembers === 'string' && rawMembers !== "N/A") {
-                membersList = rawMembers.split(',').map(m => m.trim()).filter(m => m);
-            }
-        }
 
-        // 2. If no list found, scan for individual fields (e.g., "Member 1 Name", "Team Member 2")
-        if (membersList.length === 0) {
-            const memberKeys = Object.keys(obj).filter(key =>
-                /member.*name|name.*member|student.*name|participant/i.test(key) &&
-                !/leader|team name|size|email|phone/i.test(key) // Exclude leader/meta info
+    const renderTotalPaid = () => renderTeamList(
+        (t) => t.payment_status === "PAID",
+        "Total Paid Teams",
+        (team) => (
+            <>
+                <td>{team.transaction_id || "N/A"}</td>
+                <td>
+                    {team.screenshot_url ? (
+                        <a href={team.screenshot_url} target="_blank" rel="noreferrer" className="link-btn">View Proof</a>
+                    ) : (
+                        <span className="no-proof">No Proof</span>
+                    )}
+                </td>
+                <td><span className="status-badge success">PAID</span></td>
+            </>
+        ),
+        <>
+            <th>Txn ID</th>
+            <th>Proof</th>
+            <th>Status</th>
+        </>
+    );
+
+    const renderTotalAbsentList = () => renderTeamList(
+        (t) => t.attendance !== "PRESENT",
+        "Total Absent Teams",
+        (team) => (
+            <>
+                <td><span className="status-badge error">ABSENT</span></td>
+            </>
+        ),
+        <>
+            <th>Attendance</th>
+        </>
+    );
+
+    const renderTotalPresentList = () => renderTeamList(
+        (t) => t.attendance === "PRESENT",
+        "Total Present Teams",
+        (team) => (
+            <>
+                <td><span className="status-badge success">PRESENT</span></td>
+            </>
+        ),
+        <>
+            <th>Attendance</th>
+        </>
+    );
+
+    const renderViewSheet = () => {
+        if (!teams || teams.length === 0) return <div>No data to display</div>;
+
+        // Dynamically get all keys from the first team object, excluding some internal ones if needed
+        const allKeys = Object.keys(teams[0]);
+
+        return (
+            <div className="sheet-view">
+                <div className="list-header">
+                    <h2>Full Sheet Data (Dynamic)</h2>
+                    <button onClick={() => setCurrentView("dashboard")} className="back-btn">⬅ BACK</button>
+                </div>
+                <div className="table-responsive">
+                    <table className="admin-table tiny">
+                        <thead>
+                            <tr>
+                                {allKeys.map(key => (
+                                    <th key={key}>{key.toUpperCase().replace(/_/g, ' ')}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {teams.map((t, idx) => (
+                                <tr key={t.team_id || idx}>
+                                    {allKeys.map(key => (
+                                        <td key={key}>
+                                            {typeof t[key] === 'object' ? JSON.stringify(t[key]) : t[key]}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        );
+    };
+
+    // Clean helper to set Scanned Team to null when changing logic
+    const _setScannedTeam = (val) => {
+        setScannedTeam(val);
+    }
+
+    const renderScannerView = () => {
+        if (scannedTeam) {
+            return (
+                <div className="detail-view">
+                    <button onClick={() => { _setScannedTeam(null); setScanTime(null); setCurrentView("dashboard"); }} className="back-btn">⬅ BACK</button>
+
+                    <div className="team-detail-card">
+                        <div className="detail-header">
+                            <h2>{scannedTeam.teamName}</h2>
+                            <span className="id-badge">{scannedTeam.team_id}</span>
+                        </div>
+
+                        {/* TIMESTAMP DISPLAY */}
+                        <div style={{ textAlign: 'center', margin: '1rem 0', color: '#fbbf24', fontWeight: 'bold' }}>
+                            SCAN TIME: {scanTime || "Just Now"}
+                        </div>
+
+                        <div className="detail-grid">
+                            <div className="detail-item">
+                                <label>Payment Status</label>
+                                <div className="status-row">
+                                    <span className={`status-badge ${scannedTeam.payment_status === "PAID" ? "success" : "error"}`}>
+                                        {scannedTeam.payment_status || "UNPAID"}
+                                    </span>
+                                    {scannedTeam.payment_status !== "PAID" && (
+                                        <button onClick={() => updatePaymentStatus(scannedTeam.team_id, true)} className="action-btn small">
+                                            Mark Paid
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="detail-item">
+                                <label>Attendance</label>
+                                <div className="status-row">
+                                    <span className={`status-badge ${scannedTeam.attendance === "PRESENT" ? "success" : "warning"}`}>
+                                        {scannedTeam.attendance || "ABSENT"}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div className="detail-item">
+                                <label>Transaction ID</label>
+                                <span>{scannedTeam.transaction_id || "N/A"}</span>
+                            </div>
+
+                            {/* EXTRA DETAILS SECTION */}
+                            <div className="detail-item">
+                                <label>College</label>
+                                <span>{scannedTeam.college || "N/A"}</span>
+                            </div>
+
+                            <div className="detail-item full">
+                                <label>Team Leader Details</label>
+                                <div style={{ background: '#0f172a', padding: '1rem', borderRadius: '0.5rem' }}>
+                                    <p style={{ margin: '0.2rem 0' }}><strong>Name:</strong> {scannedTeam.name}</p>
+                                    <p style={{ margin: '0.2rem 0' }}><strong>Phone:</strong> {scannedTeam.lead_phone || scannedTeam.phone || scannedTeam['Phone Number'] || scannedTeam.PhoneNumber || "N/A"}</p>
+                                    <p style={{ margin: '0.2rem 0' }}><strong>Email:</strong> {scannedTeam.lead_email || scannedTeam.email || scannedTeam['Email Address'] || scannedTeam.Email || "N/A"}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* MEMBER DROPDOWN */}
+                        <div className="detail-item full" style={{ marginTop: '1rem' }}>
+                            <label>View Member Details (Select to view)</label>
+                            <select
+                                onChange={(e) => {
+                                    const member = scannedTeam.team_members?.find(m => m.name === e.target.value);
+                                    setSelectedMember(member);
+                                }}
+                                style={{
+                                    width: '100%', padding: '0.8rem', borderRadius: '0.5rem',
+                                    background: '#1e293b', color: 'white', border: '1px solid #475569'
+                                }}
+                            >
+                                <option value="">Select a Member...</option>
+                                <option value={scannedTeam.name}>{scannedTeam.name} (Leader)</option>
+                                {scannedTeam.team_members && scannedTeam.team_members.map((m, i) => (
+                                    <option key={i} value={m.name}>{m.name}</option>
+                                ))}
+                            </select>
+                            {selectedMember && (
+                                <div style={{ marginTop: '1rem', padding: '1rem', background: '#334155', borderRadius: '0.5rem' }}>
+                                    <h4 style={{ margin: '0 0 1rem 0', color: '#fbbf24' }}>{selectedMember.name}</h4>
+                                    <p><strong>Email:</strong> {selectedMember.email || selectedMember.Email || selectedMember['Email Address'] || "N/A"}</p>
+                                    <p><strong>Phone:</strong> {selectedMember.phone || selectedMember.Phone || selectedMember.PhoneNumber || selectedMember['Phone Number'] || "N/A"}</p>
+                                    <p><strong>College:</strong> {selectedMember.college || scannedTeam.college || "N/A"}</p>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="members-section">
+                            <h3>Attendance Check</h3>
+                            <div className="actions">
+                                <button className="action-btn success" style={{ padding: '1.5rem', fontSize: '1.2rem', width: '100%' }} onClick={() => markAttendance(scannedTeam.team_id, true)}>
+                                    ✅ MARK TEAM PRESENT
+                                </button>
+                            </div>
+                            <br />
+                            <ul className="member-check-list">
+                                {/* Leader */}
+                                <li className="member-check-item">
+                                    <span className="member-name">Leader: {scannedTeam.name}</span>
+                                </li>
+                                {/* Members */}
+                                {scannedTeam.team_members && scannedTeam.team_members.map((m, i) => (
+                                    <li key={i} className="member-check-item">
+                                        <span className="member-name">Member: {m.name}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
             );
-
-            // Sort keys to maintain order (Member 1, Member 2...)
-            memberKeys.sort();
-
-            memberKeys.forEach(key => {
-                const val = obj[key];
-                if (val && typeof val === 'string' && val.trim() !== "" && val !== "N/A") {
-                    membersList.push(val.trim());
-                }
-            });
         }
 
-        return membersList;
+        // Scanner View
+        return (
+            <div className="scanner-container">
+                <div className="list-header">
+                    <h2>Scan for Attendance</h2>
+                    <button onClick={() => setCurrentView("dashboard")} className="back-btn">⬅ DASHBOARD</button>
+                </div>
+
+                {!isScanning && (
+                    <div className="scan-actions">
+                        <button onClick={() => setIsScanning(true)} className="start-scan-btn">
+                            📷 START SCANNER
+                        </button>
+
+                        <div className="manual-input">
+                            <input
+                                type="text"
+                                placeholder="Enter Team ID or Email..."
+                                value={manualSearch}
+                                onChange={(e) => setManualSearch(e.target.value)}
+                            />
+                            <button onClick={() => handleSearch(manualSearch)}>SEARCH</button>
+                        </div>
+                    </div>
+                )}
+
+                {isScanning && (
+                    <div className="scanner-wrapper">
+                        <div id="reader"></div>
+                        <button onClick={() => setIsScanning(false)} className="cancel-scan-btn">STOP SCANNING</button>
+                    </div>
+                )}
+            </div>
+        );
     };
+
+    // --- MAIN RENDER ---
 
     if (!isAuthenticated) {
         return (
-            <div className="admin-scanner-page">
-                <div className="login-container">
-                    <h1 className="login-title">🔐 ADMIN ACCESS</h1>
+            <div className="admin-page-login">
+                <div className="login-box">
+                    <h1>🔐 ADMIN ACCESS</h1>
                     <form onSubmit={handleLogin}>
                         <input
                             type="text"
                             placeholder="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            className="login-input"
                         />
                         <input
                             type="password"
                             placeholder="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="login-input"
                         />
-                        {loginError && <p className="login-error">{loginError}</p>}
-                        <button type="submit" className="login-btn">
-                            LOGIN
-                        </button>
+                        {loginError && <p className="error">{loginError}</p>}
+                        <button type="submit">LOGIN</button>
                     </form>
                 </div>
             </div>
@@ -242,224 +795,34 @@ const AdminPage = () => {
     }
 
     return (
-        <div className="admin-scanner-page">
-            <div className="admin-container">
-                <h1 className="admin-title">🔍 ADMIN SCANNER</h1>
-                <p className="admin-subtitle">Scan QR codes or search manually</p>
-
-                {/* MANUAL SEARCH */}
-                <div className="manual-search-section">
-                    <input
-                        type="text"
-                        placeholder="Enter Team ID (e.g., TX-26001)"
-                        value={manualSearch}
-                        onChange={(e) => setManualSearch(e.target.value)}
-                        className="manual-search-input"
-                    />
-                    <button onClick={handleManualSearch} className="search-btn">
-                        🔍 SEARCH
+        <div className="admin-page">
+            <header className="admin-header">
+                <h1>ADMIN DASHBOARD</h1>
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                    <button onClick={handleRefresh} className="icon-btn success" style={{ padding: '0.5rem 1rem', display: 'flex', gap: '0.5rem', fontWeight: 'bold' }}>
+                        🔄 REFRESH
+                    </button>
+                    <button onClick={() => { setIsAuthenticated(false); setUsername(""); setPassword("") }} className="logout-btn">
+                        LOGOUT
                     </button>
                 </div>
+            </header>
 
-                {/* QR SCANNER */}
-                {!isScanning && !scanResult && (
-                    <button onClick={handleStartScan} className="start-scan-btn">
-                        📷 START QR SCAN
-                    </button>
-                )}
-
-                {isScanning && (
-                    <div className="scanner-wrapper">
-                        <div id="reader"></div>
-                        <button onClick={handleCancelScan} className="cancel-scan-btn">
-                            ❌ CANCEL SCAN
-                        </button>
-                    </div>
-                )}
-
-                {/* LOADING */}
-                {loading && (
-                    <div className="loading-box">
-                        <div className="spinner"></div>
-                        <p>Loading team data...</p>
-                    </div>
-                )}
-
-                {/* ERROR */}
-                {error && !loading && (
-                    <div className="error-box">
-                        <p>❌ {error}</p>
-                        <button onClick={handleScanNext} className="scan-next-btn">
-                            SCAN NEXT TEAM
-                        </button>
-                    </div>
-                )}
-
-                {/* TEAM DATA */}
-                {teamData && !loading && (
-                    <div className="team-data-card">
-                        <div className="team-header">
-                            <h2>{getVal(teamData, ['teamId', 'Team ID', 'id'])}</h2>
-                            <span className={`attendance-badge ${getVal(teamData, ['attendance', 'Attendance']) === 'PRESENT' ? 'present' : 'absent'}`}>
-                                {getVal(teamData, ['attendance', 'Attendance']) || "ABSENT"}
-                            </span>
-                        </div>
-
-                        <div className="team-info-grid">
-                            <div className="info-item">
-                                <span className="info-label">TEAM NAME</span>
-                                <span className="info-value">{getVal(teamData, ['teamName', 'Team Name', 'team_name', 'Team_Name', 'Project Title', 'Title'])}</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">TEAM LEADER</span>
-                                <span className="info-value">{getVal(teamData, ['name', 'Name', 'Team Leader Name', 'leader_name', 'Leader Name', 'Full Name'])}</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">TEAM SIZE</span>
-                                <span className="info-value">{getVal(teamData, ['teamSize', 'Team Size', 'team_size', 'Number of Members', 'NO OF TEAM MEMBERS', 'NO OF TEAM MEMBERS(COLUMN)'], "4")} Members</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">COLLEGE</span>
-                                <span className="info-value">{getVal(teamData, ['college', 'College', 'Institute', 'Institution', 'University', 'College Name', 'College/Institute'])}</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">DOMAIN</span>
-                                <span className="info-value domain-highlight">{getVal(teamData, ['domain', 'Domain', 'Track', 'Theme', 'Selected Domain'])}</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">EMAIL</span>
-                                <span className="info-value">{getVal(teamData, ['email', 'Email', 'Email Address', 'lead_email', 'Email ID'])}</span>
-                            </div>
-
-                            <div className="info-item">
-                                <span className="info-label">PHONE</span>
-                                <span className="info-value">{getVal(teamData, ['phone', 'Phone', 'Phone Number', 'lead_phone', 'Mobile', 'Contact Number'])}</span>
-                            </div>
-
-                            <div className="info-item full-width">
-                                <span className="info-label">TRANSACTION ID</span>
-                                <span className="info-value transaction-id">{getVal(teamData, ['transactionId', 'Transaction ID', 'payment_id', 'Transaction Reference ID'])}</span>
-                            </div>
-
-                            {/* Members Section */}
-                            <div className="info-item full-width members-section">
-                                <span className="info-label">TEAM MEMBERS</span>
-                                <ul className="members-list">
-                                    {getMembers(teamData).length > 0 ? (
-                                        getMembers(teamData).map((member, idx) => (
-                                            <li key={idx} className="member-chip">
-                                                {typeof member === 'object' ? (member.name || JSON.stringify(member)) : member}
-                                            </li>
-                                        ))
-                                    ) : (
-                                        <li className="member-chip">No additional members found</li>
-                                    )}
-                                </ul>
-                            </div>
-                        </div>
-
-                        {/* DEBUG: RAW DATA TOGGLE */}
-                        <div style={{ marginTop: '20px', textAlign: 'center' }}>
-                            <button
-                                onClick={() => console.log(teamData) || alert(JSON.stringify(teamData, null, 2))}
-                                style={{
-                                    background: 'transparent',
-                                    border: '1px solid #555',
-                                    color: '#888',
-                                    padding: '5px 10px',
-                                    borderRadius: '5px',
-                                    fontSize: '0.8rem',
-                                    cursor: 'pointer'
-                                }}
-                            >
-                                🐞 DEBUG: SHOW RAW DATA
-                            </button>
-                        </div>
-
-                        {/* PAYMENT VERIFICATION SECTION */}
-                        <div className="payment-section">
-                            <h3 className="payment-title">💳 PAYMENT VERIFICATION</h3>
-
-                            {(() => {
-                                const txnId = getVal(teamData, ['transactionId', 'Transaction ID', 'payment_id'], "");
-                                return (
-                                    <>
-                                        <div className="payment-status">
-                                            <span className="payment-label">Payment Status:</span>
-                                            <span className={`payment-badge ${txnId && txnId !== "N/A" ? 'paid' : 'unpaid'}`}>
-                                                {txnId && txnId !== "N/A" ? "✅ PAID" : "❌ NOT PAID"}
-                                            </span>
-                                        </div>
-
-                                        {txnId && txnId !== "N/A" && (
-                                            <div className="transaction-details">
-                                                <p><strong>Transaction ID:</strong> {txnId}</p>
-                                                <button
-                                                    onClick={() => setShowPaymentProof(!showPaymentProof)}
-                                                    className="view-proof-btn"
-                                                >
-                                                    {showPaymentProof ? "HIDE" : "VIEW"} PAYMENT SCREENSHOT
-                                                </button>
-                                            </div>
-                                        )}
-
-                                        {!txnId || txnId === "N/A" && (
-                                            <div className="manual-payment-box">
-                                                <p className="warning-text">⚠️ No transaction ID found. If payment was made manually at venue:</p>
-                                                <button className="manual-verify-btn">
-                                                    MARK AS PAID (Manual Verification)
-                                                </button>
-                                                <p className="note-text">Note: This will update the Google Sheet</p>
-                                            </div>
-                                        )}
-                                    </>
-                                );
-                            })()}
-
-                            {showPaymentProof && (
-                                <div className="payment-proof-box">
-                                    <p className="proof-note">
-                                        📸 Payment screenshot should be verified in Google Sheet.<br />
-                                        Check the "SCREENSHOT UPLOAD" column for the image link.
-                                    </p>
-                                    <a
-                                        href={`https://docs.google.com/spreadsheets/d/${GSHEET_URL.split('/')[5]}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="open-sheet-btn"
-                                    >
-                                        OPEN GOOGLE SHEET
-                                    </a>
-                                </div>
-                            )}
-
-                        </div>
-
-                        {/* ACTION BUTTONS */}
-                        <div className="action-buttons">
-                            {getVal(teamData, ['attendance', 'Attendance']) !== "PRESENT" && (
-                                <button onClick={markAttendance} className="mark-present-btn">
-                                    ✅ MARK ATTENDANCE
-                                </button>
-                            )}
-
-                            {getVal(teamData, ['attendance', 'Attendance']) === "PRESENT" && (
-                                <div className="already-present">
-                                    <p>✅ Already marked PRESENT</p>
-                                </div>
-                            )}
-
-                            <button onClick={handleScanNext} className="scan-next-btn">
-                                SCAN NEXT TEAM
-                            </button>
-                        </div>
-                    </div>
-                )}
+            <div className="admin-content">
+                {currentView === "dashboard" && renderDashboard()}
+                {currentView === "edit-payment" && renderEditPayment()}
+                {currentView === "view-sheet" && renderViewSheet()}
+                {currentView === "total-team" && renderTeamList(() => true, "All Teams", (t) => (
+                    <td>
+                        <span className={`status-badge ${t.payment_status === "PAID" ? "success" : "error"}`}>
+                            {t.payment_status || "UNPAID"}
+                        </span>
+                    </td>
+                ), <th>Payment Status</th>)}
+                {currentView === "total-present" && renderTotalPresentList()}
+                {currentView === "total-absent" && renderTotalAbsentList()}
+                {currentView === "scanner-view" && renderScannerView()}
+                {currentView === "total-paid" && renderTotalPaid()}
             </div>
         </div>
     );
