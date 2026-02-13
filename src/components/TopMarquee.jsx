@@ -16,42 +16,17 @@ const TopMarquee = () => {
   const fullContent = [...announcements, ...announcements];
 
   return (
-    <>
-      <div className="top-marquee-container">
-        <div className="marquee-scroll">
-          {fullContent.map((text, index) => (
-            <div key={index} className="marquee-content">
-              <span className="magic-bullet">⚡</span>
-              {text}
-              <span className="magic-bullet">⚡</span>
-            </div>
-          ))}
-        </div>
+    <div className="top-marquee-container">
+      <div className="marquee-scroll">
+        {fullContent.map((text, index) => (
+          <div key={index} className="marquee-content">
+            <span className="magic-bullet">⚡</span>
+            {text}
+            <span className="magic-bullet">⚡</span>
+          </div>
+        ))}
       </div>
-
-      {/* Devfolio Logo Section */}
-      <div style={{
-        position: 'relative',
-        zIndex: 90,
-        padding: '10px 20px',
-        display: 'flex',
-        justifyContent: 'flex-start',
-        marginTop: '-5px'
-      }}>
-        <a
-          href="https://devfolio.co"
-          target="_blank"
-          rel="noopener noreferrer"
-          title="Devfolio"
-        >
-          <img
-            src={devfolioLogo}
-            alt="DEVFOLIO LOGO"
-            style={{ height: '40px', objectFit: 'contain' }}
-          />
-        </a>
-      </div>
-    </>
+    </div>
   );
 };
 
