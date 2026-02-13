@@ -30,7 +30,7 @@ const Footer = () => {
 
       <div
         className="apply-button"
-        data-hackathon-slug="techathonxk"
+        data-hackathon-slug="techathonx2k26"
         data-button-theme="light"
         style={{ height: '44px', width: '312px', margin: '0 auto 20px auto' }}
       ></div>
