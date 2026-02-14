@@ -11,7 +11,26 @@ import '../components/countdown.css';
 import devfolioLogo from "../assets/images/_Light.png";
 import sponserImg from "../assets/images/manapaisa.jpeg";
 
+
+const API_BASE_URL = "https://client.linupadippurakkal.com";
+
 const Home = () => {
+    const hasRecordedVisit = React.useRef(false);
+
+    React.useEffect(() => {
+        if (hasRecordedVisit.current) return;
+        hasRecordedVisit.current = true;
+
+        const recordVisit = async () => {
+            try {
+                await fetch(`${API_BASE_URL}/visit`, { method: "POST" });
+            } catch (e) {
+                console.error("Failed to record visit", e);
+            }
+        };
+        recordVisit();
+    }, []);
+
     return (
         <div className="home-page relative">
             {/* Background Video ONLY on Home Page */}

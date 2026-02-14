@@ -34,32 +34,27 @@ const AdminPage = () => {
     const [selectedMember, setSelectedMember] = useState(null);
 
     // Initial Fetch on Login
-    const hasRecordedVisitRef = useRef(false);
 
     useEffect(() => {
         if (isAuthenticated) {
             fetchAllTeams();
 
-            // Visitor Count Logic - Real Backend Integration
-            const initVisitorCount = async () => {
-                if (hasRecordedVisitRef.current) return;
-                hasRecordedVisitRef.current = true;
-
+            // Visitor Count Fetch
+            const fetchVisitorCount = async () => {
                 try {
-                    console.log("Recording visit...");
-                    const res = await fetch(`${API_BASE_URL}/visit`, { method: "POST" });
+                    const res = await fetch(`${API_BASE_URL}/visitor_count`);
                     if (res.ok) {
                         const data = await res.json();
                         setVisitorCount(data.count || data.visitor_count || 0);
                     }
                 } catch (e) {
-                    console.error("Failed to record visit:", e);
+                    console.error("Failed to fetch visitor count:", e);
                 }
             };
-
-            initVisitorCount();
+            fetchVisitorCount();
         }
     }, [isAuthenticated]);
+
 
     const handleRefresh = async () => {
         await fetchAllTeams();
