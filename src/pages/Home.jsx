@@ -73,20 +73,9 @@ const Home = () => {
                             borderRadius: '16px',
                             backdropFilter: 'blur(10px)',
                             border: '1px solid rgba(241, 196, 15, 0.2)',
-                            transition: 'all 0.3s ease',
                             cursor: 'pointer'
                         }}
                             className="home-sponsor-card"
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'scale(1.05)';
-                                e.currentTarget.style.borderColor = '#f1c40f';
-                                e.currentTarget.style.boxShadow = '0 0 20px rgba(241, 196, 15, 0.2)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'scale(1)';
-                                e.currentTarget.style.borderColor = 'rgba(241, 196, 15, 0.2)';
-                                e.currentTarget.style.boxShadow = 'none';
-                            }}
                         >
                             <a
                                 href="https://devfolio.co"
