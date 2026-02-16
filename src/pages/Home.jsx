@@ -86,7 +86,7 @@ const Home = () => {
                             >
                                 <img
                                     src={devfolioLogo}
-                                    alt="DEVFOLIO LOGO"
+                                    alt="Devfolio"
                                     style={{ height: '60px', objectFit: 'contain', display: 'block' }}
                                 />
                             </a>

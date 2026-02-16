@@ -1,19 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import './footer-majestic.css';
 import devfolioLogo from "../assets/images/_Light.png";
 
 const Footer = () => {
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://apply.devfolio.co/v2/sdk.js';
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-    return () => {
-      document.body.removeChild(script);
-    }
-  }, []);
+
 
   return (
     <footer className="footer-section">
