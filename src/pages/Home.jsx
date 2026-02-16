@@ -9,6 +9,8 @@ import '../components/about.css';
 import '../components/countdown.css';
 
 import devfolioLogo from "../assets/images/_Light.png";
+import polygonLogo from "../assets/images/Polygon_blockchain_logo.png";
+import ethIndiaLogo from "../assets/images/ETHIndia.png";
 import sponserImg from "../assets/images/manapaisa.jpeg";
 
 
@@ -63,61 +65,60 @@ const Home = () => {
                         display: 'flex',
                         justifyContent: 'center',
                         alignItems: 'center',
-                        gap: '60px',
+                        gap: '40px',
                         flexWrap: 'wrap'
                     }}>
                         {/* Devfolio Logo */}
-                        <div style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            padding: '20px 30px',
-                            borderRadius: '16px',
-                            backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(241, 196, 15, 0.2)',
-                            cursor: 'pointer'
-                        }}
-                            className="home-sponsor-card"
-                        >
+                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
                             <a
                                 href="https://devfolio.co"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                title="Devfolio"
-                                style={{ display: 'block' }}
                             >
                                 <img
                                     src={devfolioLogo}
                                     alt="Devfolio"
-                                    style={{ height: '60px', objectFit: 'contain', display: 'block' }}
+                                    style={{ height: '40px', objectFit: 'contain' }}
+                                />
+                            </a>
+                        </div>
+
+                        {/* Polygon Logo */}
+                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
+                            <a
+                                href="https://polygon.technology"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <img
+                                    src={polygonLogo}
+                                    alt="Polygon"
+                                    style={{ height: '40px', objectFit: 'contain' }}
+                                />
+                            </a>
+                        </div>
+
+                        {/* ETHIndia Logo */}
+                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
+                            <a
+                                href="https://ethindia.co"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <img
+                                    src={ethIndiaLogo}
+                                    alt="ETHIndia"
+                                    style={{ height: '40px', objectFit: 'contain' }}
                                 />
                             </a>
                         </div>
 
                         {/* Manapaisa Logo */}
-                        <div style={{
-                            background: 'rgba(255, 255, 255, 0.05)',
-                            padding: '20px 30px',
-                            borderRadius: '16px',
-                            backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(241, 196, 15, 0.2)',
-                            transition: 'all 0.3s ease',
-                            cursor: 'pointer'
-                        }}
-                            className="home-sponsor-card"
-                            onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = 'scale(1.05)';
-                                e.currentTarget.style.borderColor = '#f1c40f';
-                                e.currentTarget.style.boxShadow = '0 0 20px rgba(241, 196, 15, 0.2)';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = 'scale(1)';
-                                e.currentTarget.style.borderColor = 'rgba(241, 196, 15, 0.2)';
-                                e.currentTarget.style.boxShadow = 'none';
-                            }}
-                        >
+                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
                             <img
                                 src={sponserImg}
                                 alt="Manapaisa Sponsor"
-                                style={{ height: '60px', objectFit: 'contain', display: 'block' }}
+                                style={{ height: '50px', objectFit: 'contain' }}
                             />
                         </div>
                     </div>

@@ -28,6 +28,9 @@ const Footer = () => {
       </div>
 
       <div className="footer-copyright">
+        <a href="https://devfolio.co" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginBottom: '10px' }}>
+          <img src={devfolioLogo} alt="Devfolio" style={{ height: '30px' }} />
+        </a>
         <p>PRATHYUSHA ENGINEERING COLLEGE</p>
         <p>DEPARTMENT OF ARTIFICIAL INTELLIGENCE & DATA SCIENCE</p>
         <p>© 2026 ALL RIGHTS RESERVED</p>
