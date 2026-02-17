@@ -1,6 +1,6 @@
 import React from 'react';
 import './footer-majestic.css';
-const devfolioLogo = "/sponsors/Devfolio_Logo-Colored.png";
+const devfolioLogo = "/Devfolio_Logo-Colored.png";
 
 const Footer = () => {
 

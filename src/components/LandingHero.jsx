@@ -18,8 +18,8 @@ import nba from "../assets/images/logo(reward)/nba.jpg";
 import nss from "../assets/images/logo(reward)/nss.jpeg";
 import yrc from "../assets/images/logo(reward)/yrc22.jpg";
 import partner from "../assets/images/logo(reward)/partner_generic.png";
-const devfolioLogo = "/sponsors/Devfolio_Logo-Colored.png";
-const sponserImg = "/sponsors/manapaisa.jpeg";
+const devfolioLogo = "/Devfolio_Logo-Colored.png";
+const sponserImg = "/manapaisa.jpeg";
 
 const rewardLogos = [
     autonomous, anna, aicte, nba, naac,

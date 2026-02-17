@@ -8,10 +8,10 @@ import VideoBackground from '../components/VideoBackground';
 import '../components/about.css';
 import '../components/countdown.css';
 
-const devfolioLogo = "/sponsors/Devfolio_Logo-Colored.png";
-const polygonLogo = "/sponsors/Polygon_Logo-Colored.png";
-const ethIndiaLogo = "/sponsors/ETHIndia.png";
-const sponserImg = "/sponsors/manapaisa.jpeg";
+const devfolioLogo = "/Devfolio_Logo-Colored.png";
+const polygonLogo = "/Polygon_Logo-Colored.png";
+const ethIndiaLogo = "/ETHIndia.png";
+const sponserImg = "/manapaisa.jpeg";
 
 
 const API_BASE_URL = "https://client.linupadippurakkal.com";
