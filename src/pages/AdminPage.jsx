@@ -42,10 +42,11 @@ const AdminPage = () => {
             // Visitor Count Fetch
             const fetchVisitorCount = async () => {
                 try {
-                    const res = await fetch(`${API_BASE_URL}/visitor_count`);
+                    // Using CounterAPI.dev persistent counter
+                    const res = await fetch("https://api.counterapi.dev/v1/techathonx2k26/homepage_visits");
                     if (res.ok) {
                         const data = await res.json();
-                        setVisitorCount(data.count || data.visitor_count || 0);
+                        setVisitorCount(data.count || 0);
                     }
                 } catch (e) {
                     console.error("Failed to fetch visitor count:", e);
@@ -59,10 +60,10 @@ const AdminPage = () => {
     const handleRefresh = async () => {
         await fetchAllTeams();
         try {
-            const res = await fetch(`${API_BASE_URL}/visitor_count`);
+            const res = await fetch("https://api.counterapi.dev/v1/techathonx2k26/homepage_visits");
             if (res.ok) {
                 const data = await res.json();
-                setVisitorCount(data.count || data.visitor_count || visitorCount);
+                setVisitorCount(data.count || visitorCount);
             }
         } catch (e) {
             console.error("Failed to refresh visitor count:", e);

@@ -25,7 +25,11 @@ const Home = () => {
 
         const recordVisit = async () => {
             try {
-                await fetch(`${API_BASE_URL}/visit`, { method: "POST" });
+                // Using CounterAPI.dev for persistent tracking
+                // Namespace: techathonx2k26, Key: homepage_visits
+                const res = await fetch("https://api.counterapi.dev/v1/techathonx2k26/homepage_visits/up");
+                const data = await res.json();
+                console.log("Visitor count updated:", data.count);
             } catch (e) {
                 console.error("Failed to record visit", e);
             }
