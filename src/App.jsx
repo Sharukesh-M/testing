@@ -14,7 +14,6 @@ import RegisterPage from "./pages/RegisterPage";
 import ContactPage from "./pages/ContactPage";
 import AdminPage from "./pages/AdminPage";
 import SponsorsPage from "./pages/SponsorsPage";
-import HarryPotterChatbot from "./components/HarryPotterChatbot";
 
 import "./styles/global.css";
 
@@ -72,7 +71,6 @@ const AppContent = () => {
             </Routes>
           </main>
           <Footer />
-          <HarryPotterChatbot />
         </div>
       )}
     </>

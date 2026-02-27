@@ -27,7 +27,6 @@ const ScrollVideo = () => {
                 style={{
                     scale: scale,
                     borderRadius: radius,
-                    // width: width // Optional, scale handles size mostly.
                 }}
             >
                 <video

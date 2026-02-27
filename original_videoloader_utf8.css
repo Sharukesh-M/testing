@@ -1,233 +1,4 @@
-/* VideoLoader.css */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
-
-.hp-loader-overlay {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    z-index: 99999;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-family: 'Cinzel', serif;
-}
-
-.hp-fog {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
-    z-index: 1;
-    pointer-events: none;
-}
-
-/* Waiting Screen */
-.hp-waiting-screen {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.hp-wand-cursor {
-    width: 60px;
-    height: 60px;
-    background: url('data:image/svg+xml;utf8,<svg fill="%23f1c40f" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 21.5L21.5 2.5" stroke="%23f1c40f" stroke-width="2" stroke-linecap="round"/><circle cx="21" cy="3" r="2" fill="%23fff"/></svg>') no-repeat center;
-    margin-bottom: 20px;
-    animation: hp-float 2s infinite ease-in-out alternate;
-}
-
-.hp-start-text {
-    font-size: 2rem;
-    color: #f1c40f;
-    letter-spacing: 5px;
-    text-shadow: 0 0 15px rgba(241, 196, 15, 0.5);
-    margin: 0;
-}
-
-.hp-sub-text {
-    font-size: 1rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 10px;
-    letter-spacing: 2px;
-    animation: hp-pulse 2s infinite;
-}
-
-/* Drawing Screen */
-.hp-drawing-screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 10;
-}
-
-.hp-hallows-svg {
-    width: 300px;
-    height: 300px;
-    filter: drop-shadow(0 0 20px rgba(241, 196, 15, 0.4));
-}
-
-.hp-incantation {
-    margin-top: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.2rem;
-    color: #f1c40f;
-    letter-spacing: 4px;
-    font-weight: 700;
-}
-
-.incant-word {
-    text-shadow: 0 0 10px rgba(241, 196, 15, 0.8);
-}
-
-/* Particles */
-.hp-particles-container {
-    position: absolute;
-    inset: 0;
-    z-index: 15;
-    pointer-events: none;
-}
-
-.hp-spark {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-}
-
-/* Title Screen */
-.hp-title-screen {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 20;
-    background: radial-gradient(circle at center, #101622 0%, #000 100%);
-}
-
-.hp-bg-star {
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: #fff;
-    border-radius: 50%;
-    animation: hp-twinkle 4s infinite alternate;
-}
-
-.hp-college {
-    font-size: clamp(1rem, 3vw, 1.2rem);
-    color: #a0aab5;
-    letter-spacing: clamp(4px, 1vw, 8px);
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.hp-main-headline {
-    font-size: clamp(3rem, 8vw, 6rem);
-    color: #eae1c9;
-    letter-spacing: clamp(5px, 2vw, 10px);
-    text-align: center;
-    margin: 0;
-    text-transform: uppercase;
-    font-weight: 700;
-    /* Harry Potter metallic effect */
-    background: linear-gradient(to bottom, #fff 0%, #d4af37 50%, #8a6a1c 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.8));
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.hp-year-badge {
-    margin-top: 30px;
-    font-size: 2rem;
-    color: #f1c40f;
-    letter-spacing: 5px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.bolt {
-    font-size: 1.5rem;
-    color: #fff;
-    filter: drop-shadow(0 0 10px #f1c40f);
-}
-
-/* Skip btn */
-.hp-skip-btn {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background: transparent;
-    border: 1px solid rgba(241, 196, 15, 0.4);
-    color: #f1c40f;
-    font-family: 'Cinzel', serif;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s;
-}
-
-.hp-skip-btn:hover {
-    background: rgba(241, 196, 15, 0.1);
-    box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);
-}
-
-@keyframes hp-float {
-    0% {
-        transform: translateY(0px) rotate(0deg);
-    }
-
-    100% {
-        transform: translateY(-10px) rotate(5deg);
-    }
-}
-
-@keyframes hp-pulse {
-    0% {
-        opacity: 0.4;
-    }
-
-    50% {
-        opacity: 1;
-    }
-
-    100% {
-        opacity: 0.4;
-    }
-}
-
-@keyframes hp-twinkle {
-    0% {
-        opacity: 0.1;
-        transform: scale(0.5);
-    }
-
-    100% {
-        opacity: 1;
-        transform: scale(1.5);
-    }
-}
-
-.video-loader-overlay {
+﻿.video-loader-overlay {
     position: fixed;
     inset: 0;
     background: #0d0d0d;
@@ -257,9 +28,7 @@
     /* This makes it true fullscreen */
 }
 
-/* =============================================
-   ENVELOPE SCENE — GOLDEN PARCHMENT
-   ============================================= */
+/* --- ENVELOPE SCENE --- */
 .envelope-scene {
     position: relative;
     width: 100%;
@@ -268,7 +37,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle at center, #1a1408 0%, #0a0804 100%);
+    background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
     cursor: none;
     perspective: 1000px;
 }
@@ -289,8 +58,9 @@
     width: 100%;
     height: 100%;
     background: #e9dcc9;
+    /* Parchment color */
     border-radius: 5px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 40px rgba(241, 196, 15, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     overflow: hidden;
     z-index: 2;
 }
@@ -370,9 +140,9 @@
     left: 10px;
     right: 10px;
     bottom: 10px;
-    background: #fffdf5;
+    background: #fff;
     padding: 20px;
-    box-shadow: 0 0 20px rgba(241, 196, 15, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
     transform: translateY(100px);
     opacity: 0;
     transition: all 0.8s ease;
@@ -393,27 +163,28 @@
     font-family: 'Cinzel', serif;
     font-weight: 700;
     color: #8b0000;
-    border-bottom: 1px solid #e0d5c0;
+    border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
 }
 
 .letter-body {
     font-family: 'Alice', serif;
     font-size: 0.8rem;
-    color: #3a3020;
+    color: #333;
     line-height: 1.4;
 }
 
 .letter-footer {
     font-family: 'Cinzel', serif;
     font-size: 1rem;
-    color: #c8a000;
+    color: #f1c40f;
     font-weight: 700;
     letter-spacing: 4px;
     margin-top: 10px;
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.5s ease 1s;
+    /* Delay appearance by 1s */
 }
 
 .is-opening .letter-footer {

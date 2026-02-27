@@ -11,14 +11,15 @@ export const SoundProvider = ({ children }) => {
         transition: 'https://assets.mixkit.co/active_storage/sfx/2015/2015-preview.mp3', // Deep magic whoosh
         paper: 'https://assets.mixkit.co/active_storage/sfx/1103/1103-preview.mp3', // Paper rustle
         seal: 'https://assets.mixkit.co/active_storage/sfx/2572/2572-preview.mp3', // Wax seal break
-        assemble: 'https://www.myinstants.com/media/sounds/avengers-assemble-mudith.mp3' // Avengers Assemble voice
+        assemble: 'https://www.myinstants.com/media/sounds/avengers-assemble-mudith.mp3', // Avengers Assemble voice
+        theme: 'https://www.myinstants.com/media/sounds/harry-potter-hedwigs-theme-short.mp3' // Harry Potter Theme
     };
 
     const playSound = useCallback((type) => {
         const url = sounds[type];
         if (url) {
             const audio = new Audio(url);
-            audio.volume = type === 'transition' ? 0.6 : 0.4;
+            audio.volume = type === 'transition' ? 0.6 : type === 'theme' ? 0.8 : 0.4;
             audio.play().catch(e => console.log('Sound blocked by browser until interaction'));
         }
     }, []);

@@ -8,9 +8,6 @@ import VideoBackground from '../components/VideoBackground';
 import '../components/about.css';
 import '../components/countdown.css';
 
-const devfolioLogo = "/Devfolio_Logo-Colored.png";
-const polygonLogo = "/Polygon_Logo-Colored.png";
-const ethIndiaLogo = "/ETHIndia.png";
 const sponserImg = "/manapaisa.jpeg";
 
 
@@ -39,7 +36,7 @@ const Home = () => {
 
     return (
         <div className="home-page relative">
-            {/* Background Video ONLY on Home Page */}
+            {/* Magical Background on Home Page */}
             <VideoBackground />
 
             <div className="relative z-10">
@@ -72,51 +69,6 @@ const Home = () => {
                         gap: '40px',
                         flexWrap: 'wrap'
                     }}>
-                        {/* Devfolio Logo */}
-                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
-                            <a
-                                href="https://devfolio.co"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <img
-                                    src={devfolioLogo}
-                                    alt="Devfolio"
-                                    style={{ height: '40px', objectFit: 'contain' }}
-                                />
-                            </a>
-                        </div>
-
-                        {/* Polygon Logo */}
-                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
-                            <a
-                                href="https://polygon.technology"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <img
-                                    src={polygonLogo}
-                                    alt="Polygon"
-                                    style={{ height: '40px', objectFit: 'contain' }}
-                                />
-                            </a>
-                        </div>
-
-                        {/* ETHIndia Logo */}
-                        <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
-                            <a
-                                href="https://ethindia.co"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <img
-                                    src={ethIndiaLogo}
-                                    alt="ETHIndia"
-                                    style={{ height: '40px', objectFit: 'contain' }}
-                                />
-                            </a>
-                        </div>
-
                         {/* Manapaisa Logo */}
                         <div className="home-sponsor-card" style={{ cursor: 'pointer', padding: '10px' }}>
                             <img

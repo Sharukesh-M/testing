@@ -1,9 +1,6 @@
 import React from 'react';
 import '../styles/global.css';
 
-const devfolioLogo = "/Devfolio_Logo-Colored.png";
-const polygonLogo = "/Polygon_Logo-Colored.png";
-const ethIndiaLogo = "/ETHIndia.png";
 const sponserImg = "/manapaisa.jpeg";
 
 const SponsorsPage = () => {
@@ -14,54 +11,6 @@ const SponsorsPage = () => {
             </h1>
 
             <div className="flex flex-wrap justify-center items-center gap-12 max-w-6xl w-full">
-                {/* Devfolio Logo */}
-                <div className="sponsor-card p-4">
-                    <a
-                        href="https://devfolio.co"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                    >
-                        <img
-                            src={devfolioLogo}
-                            alt="Devfolio"
-                            className="h-16 md:h-20 object-contain mx-auto"
-                        />
-                    </a>
-                </div>
-
-                {/* Polygon Logo */}
-                <div className="sponsor-card p-4">
-                    <a
-                        href="https://polygon.technology"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                    >
-                        <img
-                            src={polygonLogo}
-                            alt="Polygon"
-                            className="h-16 md:h-20 object-contain mx-auto"
-                        />
-                    </a>
-                </div>
-
-                {/* ETHIndia Logo */}
-                <div className="sponsor-card p-4">
-                    <a
-                        href="https://ethindia.co"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block"
-                    >
-                        <img
-                            src={ethIndiaLogo}
-                            alt="ETHIndia"
-                            className="h-16 md:h-20 object-contain mx-auto"
-                        />
-                    </a>
-                </div>
-
                 {/* Manapaisa Logo */}
                 <div className="sponsor-card p-4">
                     <img
